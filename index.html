@@ -305,7 +305,7 @@ select.form-input option { background:var(--card2); }
   <!-- EQUIPMENT -->
   <div class="view" id="view-equipment">
     <div class="equip-note">
-      ✅ Check off the equipment you have. Workouts in your feed will only use available equipment. Add new gear anytime — the feed updates automatically.
+      ✅ <strong>Have it</strong> — check to include in your feed. &nbsp;❌ <strong>Don't Have</strong> section — check to permanently block those movements from appearing.
     </div>
     <div id="equipmentPanels"></div>
     <div class="equip-section">
@@ -383,7 +383,7 @@ const EQUIP_CATALOG = {
     {id:"kb_170", name:"170 lb KB", detail:"Single heavy bell", tags:["kettlebell","heavy-kb"]},
     {id:"kb_50x2", name:"50 lb KB (x2)", detail:"Pair — double KB work", tags:["kettlebell","double-kb"]},
     {id:"kb_35", name:"35 lb KB", detail:"", tags:["kettlebell"]},
-    {id:"kb_20", name:"20 lb KB", detail:"Wall balls / lighter work", tags:["kettlebell","wall-ball"]},
+    {id:"kb_20", name:"20 lb KB", detail:"Lighter conditioning work", tags:["kettlebell"]},
     {id:"kb_15", name:"15 lb KB", detail:"", tags:["kettlebell"]},
     {id:"kb_10", name:"10 lb KB", detail:"", tags:["kettlebell"]},
     {id:"kb_5", name:"5 lb KB", detail:"Warm-up / mobility", tags:["kettlebell"]},
@@ -394,6 +394,16 @@ const EQUIP_CATALOG = {
   "Sandbag": [
     {id:"sandbag", name:"Variable Sandbag", detail:"4 × 50 lb inserts — use 50/100/150/200 lb", tags:["sandbag"]},
     {id:"sandbag_inserts", name:"Sandbag Inserts (solo)", detail:"50 lb each — use independently", tags:["sandbag","sandbag-insert"]},
+  ],
+  "❌ Don't Have (blocks these from feed)": [
+    {id:"wall_ball", name:"Wall Ball", detail:"Substituted with KB goblet press", tags:["wall-ball"]},
+    {id:"rope_climb", name:"Rope Climb", detail:"", tags:["rope-climb"]},
+    {id:"rower", name:"Rowing Machine", detail:"", tags:["rower","rowing-machine"]},
+    {id:"assault_bike", name:"Assault / Air Bike", detail:"", tags:["assault-bike"]},
+    {id:"ski_erg", name:"Ski Erg", detail:"", tags:["ski-erg"]},
+    {id:"ghd_machine", name:"GHD Machine", detail:"We use foot roller + bench instead", tags:["ghd-machine"]},
+    {id:"plyo_box_set", name:"Multiple Boxes", detail:"Only have one box", tags:["multiple-boxes"]},
+    {id:"pegboard", name:"Pegboard", detail:"", tags:["pegboard"]},
   ],
 };
 
@@ -489,7 +499,7 @@ const WORKOUT_LIBRARY = [
   // ---- LEGS / SQUAT ----
   {id:15, name:"Squat Therapy", focus:["Legs","Squat"], type:"Strength + Metcon", timecap:"35 MIN",
    partnerMode:"solo", equipReq:["squat-rack","barbell","box","kettlebell"],
-   movements:"Back Squat: 5×3 (heavy)\n\nMetcon — For Time:\n50 Wall Balls (20 lb KB)\n40 Box Jumps\n30 Front Squats (95/65 lb)\n20 Goblet Squats (53 lb KB)",
+   movements:"Back Squat: 5×3 (heavy)\n\nMetcon — For Time:\n50 KB Goblet Squat + Press (20 lb KB, sub for wall ball)\n40 Box Jumps\n30 Front Squats (95/65 lb)\n20 Goblet Squats (53 lb KB)",
    notes:"Hit depth on every squat rep — no shortcuts.", tags:["legs","squat","kettlebell"]},
 
   {id:16, name:"Bulgarian Death", focus:["Legs","Accessory"], type:"For Time", timecap:"25 MIN",
@@ -911,15 +921,47 @@ function saveCustomWods(list) {
 }
 function getAllWorkouts() { return [...WORKOUT_LIBRARY, ...getCustomWods()]; }
 
-// Get all equipment tags currently available
+function getBlockedEquipment() {
+  try { const s = localStorage.getItem('dojoBlocked'); if(s) return JSON.parse(s); } catch(e){}
+  // Default: wall ball and rope climb blocked since Ryan doesn't have them
+  return ["wall_ball","rope_climb"];
+}
+function saveBlockedEquipment(list) {
+  try { localStorage.setItem('dojoBlocked', JSON.stringify(list)); } catch(e){}
+}
+function toggleBlockedEquipment(id) {
+  let blocked = getBlockedEquipment();
+  if(blocked.includes(id)) blocked = blocked.filter(e=>e!==id);
+  else blocked.push(id);
+  saveBlockedEquipment(blocked);
+  renderEquipmentPanel();
+  const state = getState();
+  state.feed = state.feed.filter(wid => {
+    const wod = getAllWorkouts().find(w=>w.id===wid);
+    return wod && workoutFeasible(wod);
+  });
+  saveState(state);
+  renderFeed();
+  showToast('Equipment updated — feed refreshed');
+}
+
+// Get all equipment tags currently available (owned AND not blocked)
 function getAvailableEquipTags() {
   const owned = getEquipment();
+  const blocked = getBlockedEquipment();
   const customOwned = getCustomEquip().filter(e => e.owned).map(e => e.tag);
+
+  // Collect blocked tags
+  const blockedTags = new Set();
+  Object.values(EQUIP_CATALOG).flat().forEach(item => {
+    if(blocked.includes(item.id)) item.tags.forEach(t => blockedTags.add(t));
+  });
+
   const tags = new Set();
   Object.values(EQUIP_CATALOG).flat().forEach(item => {
-    if (owned.includes(item.id)) item.tags.forEach(t => tags.add(t));
+    if(owned.includes(item.id)) item.tags.forEach(t => { if(!blockedTags.has(t)) tags.add(t); });
   });
-  customOwned.forEach(t => tags.add(t));
+  customOwned.forEach(t => { if(!blockedTags.has(t)) tags.add(t); });
   return tags;
 }
 
@@ -1045,15 +1087,95 @@ function markComplete(wid) {
   showToast(`💪 ${currentAthlete} crushed it!`);
 }
 
+function toggleRetest(athlete, timestamp) {
+  const state = getState();
+  const entry = state.history.find(e => e.athlete===athlete && e.timestamp===timestamp);
+  if(!entry) return;
+  entry.retest = !entry.retest;
+  const key = `${entry.wid}_${athlete}`;
+  if(state.completions[key]) state.completions[key].retest = entry.retest;
+
+  if(entry.retest) {
+    // Add back to feed if not already there — insert after the first pending workout
+    const alreadyInFeed = state.feed.includes(entry.wid);
+    if(!alreadyInFeed) {
+      // Find first pending slot (index 1 so it's not immediate next, but coming soon)
+      const insertAt = Math.min(2, state.feed.length);
+      state.feed.splice(insertAt, 0, entry.wid);
+    }
+    showToast('🔁 Retest added to your upcoming queue!');
+  } else {
+    // Remove from feed if it's still pending (not completed again)
+    const completionKey = `${entry.wid}_${athlete}`;
+    // Only remove the retest instance — check if there's a second copy or it's pending
+    const idx = state.feed.lastIndexOf(entry.wid);
+    if(idx !== -1 && !state.completions[completionKey + '_retest']) {
+      state.feed.splice(idx, 1);
+    }
+    showToast('Retest removed from queue');
+  }
+
+  saveState(state);
+  renderHistory();
+  renderFeed();
+}
+
+function rateWorkout(athlete, timestamp, rating) {
+  const state = getState();
+  const entry = state.history.find(e => e.athlete===athlete && e.timestamp===timestamp);
+  if(entry) {
+    entry.rating = rating;
+    const key = `${entry.wid}_${athlete}`;
+    if(state.completions[key]) state.completions[key].rating = rating;
+
+    // Auto-suggest retest for highly rated workouts (4–5 stars) if not already flagged
+    if(rating >= 4 && !entry.retest) {
+      showToast(`${rating===5?'🔥 Legendary':'⭐ Great workout'} — hit ↩ Retest to queue it again!`);
+    } else {
+      showToast('Rating saved ⭐');
+    }
+    saveState(state);
+    renderHistory();
+  }
+}
+
 function getNextWod(currentFeed) {
+  const state = getState();
+
+  // Check if any retest workouts are flagged but not currently in feed
+  const retestWids = state.history
+    .filter(e => e.retest && e.athlete === currentAthlete && !currentFeed.includes(e.wid))
+    .map(e => e.wid);
+  if(retestWids.length > 0) {
+    const wod = getAllWorkouts().find(w => w.id === retestWids[0] && workoutFeasible(w));
+    if(wod) return wod;
+  }
+
+  // Otherwise pick smart — avoid recent muscle groups, prefer high-rated workouts
   const recentFocus = currentFeed.slice(-2).flatMap(wid => {
     const w = getAllWorkouts().find(x => x.id===wid);
     return w ? w.focus : [];
   });
+
+  // Build rating map from history
+  const ratingMap = {};
+  state.history.forEach(e => {
+    if(!ratingMap[e.wid] || e.rating > ratingMap[e.wid]) ratingMap[e.wid] = e.rating;
+  });
+
   const all = getAllWorkouts().filter(w => workoutFeasible(w) && !currentFeed.includes(w.id));
   const ideal = all.filter(w => !w.focus.some(f => recentFocus.includes(f)));
-  const pool = ideal.length>0 ? ideal : all;
-  return pool[Math.floor(Math.random()*pool.length)] || null;
+  const pool = ideal.length > 0 ? ideal : all;
+
+  // Weighted selection — higher rated workouts appear more often
+  const weighted = [];
+  pool.forEach(w => {
+    const r = ratingMap[w.id] || 3;
+    const weight = r >= 4 ? 3 : r >= 3 ? 2 : 1;
+    for(let i=0; i<weight; i++) weighted.push(w);
+  });
+
+  return weighted[Math.floor(Math.random()*weighted.length)] || null;
 }
 
 // =====================================================================
@@ -1074,17 +1196,28 @@ function renderHistory() {
     const focusTags = wod.focus.map(f=>`<span class="tag focus">${f}</span>`).join('');
     const stars = [1,2,3,4,5].map(s=>`<span class="star ${entry.rating>=s?'filled':''}" onclick="rateWorkout('${entry.athlete}',${entry.timestamp},${s})">★</span>`).join('');
     const partnerLabel = wod.partnerMode && wod.partnerMode!=='solo' ? ` · <span style="color:var(--blue)">${wod.partnerMode==='igyo'?'I-Go-You-Go':'Partner'}</span>` : '';
+    const isRetest = entry.retest === true;
+    const retestBtn = `<button onclick="toggleRetest('${entry.athlete}',${entry.timestamp})" style="
+      font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;
+      text-transform:uppercase;padding:0.25rem 0.65rem;border-radius:2px;cursor:pointer;margin-top:0.5rem;
+      border:1px solid ${isRetest?'var(--orange)':'var(--border)'};
+      background:${isRetest?'rgba(245,132,31,0.15)':'transparent'};
+      color:${isRetest?'var(--orange)':'var(--muted)'};
+      transition:all 0.2s;display:block;width:100%;text-align:center;">
+      ${isRetest?'🔁 RETEST QUEUED':'↩ Queue Retest'}
+    </button>`;
     return `
-    <div class="history-entry">
-      <div>
+    <div class="history-entry" style="${isRetest?'border-color:rgba(245,132,31,0.3);':''}" >
+      <div style="flex:1;min-width:0;">
         <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.25rem;">${entry.athlete} · ${entry.date}</div>
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">${wod.name}</div>
         <div class="wod-tags" style="margin-top:0.3rem;">${focusTags}</div>
         <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem;">${wod.type} · ${wod.timecap}${partnerLabel}</div>
       </div>
-      <div>
-        <div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-bottom:0.3rem;letter-spacing:0.1em;">RATE IT</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0.1rem;min-width:80px;">
+        <div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-bottom:0.2rem;letter-spacing:0.1em;">RATE IT</div>
         <div class="stars">${stars}</div>
+        ${retestBtn}
       </div>
     </div>`;
   }).join('');
@@ -1238,20 +1371,38 @@ function deleteCustomWod(id){
 // =====================================================================
 function renderEquipmentPanel() {
   const owned = getEquipment();
+  const blocked = getBlockedEquipment();
   const el = document.getElementById('equipmentPanels');
   let html = '';
   Object.entries(EQUIP_CATALOG).forEach(([cat, items]) => {
-    html += `<div class="equip-section"><div class="equip-section-title">${cat}</div><div class="equip-grid">`;
+    const isDontHave = cat.startsWith('❌');
+    const sectionColor = isDontHave ? 'var(--red)' : 'var(--orange)';
+    const sectionNote = isDontHave
+      ? '<div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.6rem;">Check these to permanently block them from your feed. Uncheck if you get the equipment.</div>'
+      : '';
+    html += `<div class="equip-section"><div class="equip-section-title" style="color:${sectionColor}">${cat}</div>${sectionNote}<div class="equip-grid">`;
     items.forEach(item => {
-      const has = owned.includes(item.id);
-      html += `
-      <div class="equip-item ${has?'has':''}" onclick="toggleEquipment('${item.id}')">
-        <div class="equip-check">${has?'✓':''}</div>
-        <div>
-          <div class="equip-name">${item.name}</div>
-          ${item.detail?`<div class="equip-detail">${item.detail}</div>`:''}
-        </div>
-      </div>`;
+      if (isDontHave) {
+        const isBlocked = blocked.includes(item.id);
+        html += `
+        <div class="equip-item ${isBlocked?'blocked':''}" onclick="toggleBlockedEquipment('${item.id}')" style="${isBlocked?'border-color:rgba(229,57,53,0.4);background:rgba(229,57,53,0.07);':''}">
+          <div class="equip-check" style="${isBlocked?'border-color:var(--red);background:var(--red);color:#fff;':''}"> ${isBlocked?'✕':''}</div>
+          <div>
+            <div class="equip-name">${item.name}</div>
+            ${item.detail?`<div class="equip-detail">${item.detail}</div>`:''}
+          </div>
+        </div>`;
+      } else {
+        const has = owned.includes(item.id);
+        html += `
+        <div class="equip-item ${has?'has':''}" onclick="toggleEquipment('${item.id}')">
+          <div class="equip-check">${has?'✓':''}</div>
+          <div>
+            <div class="equip-name">${item.name}</div>
+            ${item.detail?`<div class="equip-detail">${item.detail}</div>`:''}
+          </div>
+        </div>`;
+      }
     });
     html += `</div></div>`;
   });
