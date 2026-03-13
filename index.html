@@ -172,6 +172,17 @@ select.form-input option { background:var(--card2); }
 /* EMPTY */
 .empty { text-align:center; padding:3rem 1rem; color:var(--muted); font-family:'Barlow Condensed',sans-serif; font-size:1rem; letter-spacing:0.05em; }
 
+/* SCALE TABS */
+.scale-tabs { display:flex; gap:0; margin-bottom:0.75rem; border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+.scale-tab { flex:1; font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:0.35rem 0; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; border-right:1px solid var(--border); }
+.scale-tab:last-child { border-right:none; }
+.scale-tab.active-easy { background:rgba(76,175,80,0.15); color:#4CAF50; }
+.scale-tab.active-med { background:rgba(255,193,7,0.15); color:#FFC107; }
+.scale-tab.active-rx { background:rgba(245,132,31,0.15); color:var(--orange); }
+.scale-tab:hover:not(.active-easy):not(.active-med):not(.active-rx) { background:var(--card2); color:var(--text); }
+.scale-badge { display:inline-block; font-size:0.62rem; padding:0.1rem 0.35rem; border-radius:2px; margin-left:0.3rem; vertical-align:middle; }
+.scale-badge.auto { background:rgba(255,255,255,0.07); color:var(--muted); }
+
 @media(max-width:500px){
   .brand-text h1{font-size:1.4rem;}
   .logo-img{width:44px;height:44px;}
@@ -239,8 +250,88 @@ select.form-input option { background:var(--card2); }
 
   <!-- ADD WOD -->
   <div class="view" id="view-add">
+
+    <!-- BULK IMPORT -->
+    <div class="add-wod-form" style="margin-bottom:1.5rem;">
+      <div class="section-label" style="margin-bottom:0.75rem;">📥 Bulk Import Workouts</div>
+
+      <!-- Format reference (collapsible) -->
+      <div id="importFormatToggle" onclick="toggleImportFormat()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0.75rem;background:var(--card2);border:1px solid var(--border);border-radius:3px;margin-bottom:0.75rem;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">📋 View Format Template & AI Prompt</span>
+        <span id="importFormatArrow" style="color:var(--muted);font-size:0.8rem;">▼</span>
+      </div>
+      <div id="importFormatGuide" style="display:none;margin-bottom:0.75rem;">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:0.9rem;margin-bottom:0.6rem;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:0.5rem;">Format Template</div>
+          <pre style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;color:var(--text);line-height:1.7;white-space:pre-wrap;">NAME: Workout Name Here
+TYPE: For Time
+TIMECAP: 25 MIN
+FOCUS: Shoulders, Push
+PARTNER: solo
+EQUIPMENT: barbell, pull-up-bar
+TAGS: conditioning, barbell
+MOVEMENTS:
+5 Rounds:
+10 Push Press (95 lb)
+15 Pull-Ups
+400m Run
+NOTES: Keep the bar moving.
+MEDIUM:
+5 Rounds:
+10 Push Press (75 lb)
+15 Ring Rows
+400m Run
+EASY:
+4 Rounds:
+10 Push Press (55 lb)
+15 Ring Rows
+200m Run
+---
+NAME: Next Workout Here
+TYPE: AMRAP
+...</pre>
+        </div>
+        <div style="background:rgba(245,132,31,0.06);border:1px solid rgba(245,132,31,0.2);border-radius:3px;padding:0.9rem;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:0.5rem;">AI Formatting Prompt</div>
+          <div style="font-size:0.82rem;color:var(--text);line-height:1.6;">Copy this prompt and paste it into any AI along with your raw workout list:</div>
+          <div id="aiPromptBox" style="background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:0.75rem;margin-top:0.5rem;font-size:0.78rem;color:var(--muted);line-height:1.6;font-style:italic;white-space:pre-wrap;">Format the following workouts into this exact plain text template. Separate each workout with ---. Use only these PARTNER values: solo, partner, igyo. Use only these TYPE values: For Time, AMRAP, EMOM, Strength, Strength + Metcon, Circuit, Partner WOD, I-Go-You-Go, Flow, Other. For EQUIPMENT list only the gear tags needed from: barbell, pull-up-bar, rings, kettlebell, dumbbell, box, bench, sandbag, jump-rope, foot-roller, weight-belt, landmine, double-kb, heavy-kb. If unsure leave EQUIPMENT blank. Keep MOVEMENTS as written but clean up formatting. Optionally include MEDIUM: and EASY: blocks after NOTES with scaled versions (reduce loads by 20% for Medium, 40% + reduce reps/rounds for Easy, substitute movements like pull-ups→ring rows, muscle-ups→pull-ups, etc). Output only the formatted workouts, nothing else.
+
+NAME: [workout name]
+TYPE: [type]
+TIMECAP: [e.g. 20 MIN]
+FOCUS: [e.g. Legs, Conditioning]
+PARTNER: [solo/partner/igyo]
+EQUIPMENT: [comma separated tags]
+TAGS: [comma separated]
+MOVEMENTS:
+[movement text]
+NOTES: [coach notes or blank]
+MEDIUM:
+[optional medium scale]
+EASY:
+[optional easy scale]
+---</div>
+          <button class="copy-btn" onclick="copyAiPrompt()" style="margin-top:0.5rem;font-size:0.72rem;padding:0.3rem 0.75rem;">Copy AI Prompt</button>
+        </div>
+      </div>
+
+      <!-- Paste area -->
+      <div class="form-group">
+        <label class="form-label">Paste Formatted Workouts Here</label>
+        <textarea class="form-input form-textarea" id="bulkImportText" style="min-height:180px;font-size:0.8rem;" placeholder="NAME: My Workout&#10;TYPE: For Time&#10;TIMECAP: 20 MIN&#10;FOCUS: Conditioning, Full Body&#10;PARTNER: solo&#10;EQUIPMENT: barbell, pull-up-bar&#10;TAGS: barbell, conditioning&#10;MOVEMENTS:&#10;5 Rounds:&#10;10 Deadlifts&#10;15 Pull-Ups&#10;---&#10;NAME: Next Workout&#10;..."></textarea>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="runBulkImport(true)">Import → Top of Feed</button>
+        <button class="btn-secondary" onclick="runBulkImport(false)">Import → End of Feed</button>
+        <button class="btn-secondary" onclick="document.getElementById('bulkImportText').value=''">Clear</button>
+      </div>
+      <div id="bulkImportResult" style="margin-top:0.75rem;font-size:0.82rem;display:none;"></div>
+    </div>
+
+    <!-- SINGLE WOD FORM -->
     <div class="add-wod-form">
-      <div class="section-label" style="margin-bottom:1.2rem;">Add a Custom Workout</div>
+      <div class="section-label" style="margin-bottom:1.2rem;">Add a Single Workout</div>
       <div class="form-group">
         <label class="form-label">WOD Name *</label>
         <input class="form-input" id="addName" placeholder="e.g. Garage Grinder">
@@ -275,7 +366,7 @@ select.form-input option { background:var(--card2); }
       </div>
       <div class="form-group">
         <label class="form-label">Equipment Required (comma separated)</label>
-        <input class="form-input" id="addEquipReq" placeholder="e.g. barbell, pull-up bar, box">
+        <input class="form-input" id="addEquipReq" placeholder="e.g. barbell, pull-up-bar, box">
       </div>
       <div class="form-group">
         <label class="form-label">Tags (comma separated)</label>
@@ -1037,6 +1128,93 @@ function renderFeed() {
   el.innerHTML = html;
 }
 
+// =====================================================================
+// SCALING ENGINE
+// Auto-generates Easy / Medium versions from Rx movements
+// =====================================================================
+const SCALE_RULES = [
+  // Barbell loads → reduce by %
+  { rx:/(\d+)\s*lb/gi, med:(m)=>m.replace(/(\d+)\s*lb/gi,(_,n)=>Math.round(parseInt(n)*0.8/5)*5+' lb'), easy:(m)=>m.replace(/(\d+)\s*lb/gi,(_,n)=>Math.round(parseInt(n)*0.6/5)*5+' lb') },
+  // Pull-ups
+  { rx:/\bpull-ups\b/gi, med:'Ring Rows or Banded Pull-Ups', easy:'Ring Rows' },
+  { rx:/\bmuscle[-\s]?ups\b/gi, med:'Chest-to-Bar Pull-Ups', easy:'Pull-Ups' },
+  { rx:/\bchest[-\s]?to[-\s]?bar\b/gi, med:'Pull-Ups', easy:'Ring Rows' },
+  // Dips
+  { rx:/\bring dips\b/gi, med:'Bar Dips', easy:'Push-Ups' },
+  // Handstand
+  { rx:/\bhandstand push[-\s]?ups\b/gi, med:'Pike Push-Ups', easy:'Push-Ups' },
+  { rx:/\bhandstand walk\b/gi, med:'Bear Crawl', easy:'Bear Crawl (10m)' },
+  // Double-unders
+  { rx:/\bdouble[-\s]?unders\b/gi, med:'Single-Unders (1.5×)', easy:'Single-Unders' },
+  // Box jumps
+  { rx:/\bbox jumps\b/gi, med:'Box Step-Ups', easy:'Box Step-Ups (lower)' },
+  // Toes to bar
+  { rx:/\btoes[-\s]?to[-\s]?bar\b/gi, med:'Hanging Knee Raises', easy:'Sit-Ups' },
+  // KB swings
+  { rx:/\bKB swings\b/gi, med:'KB Swings (lighter)', easy:'KB Swings (light, Russian)' },
+  // Burpees
+  { rx:/\bburpees\b/gi, med:'Burpees (step-up)', easy:'Squat Thrusts' },
+  // Pistols
+  { rx:/\bpistol squats\b/gi, med:'Box Pistols (assisted)', easy:'Split Squats' },
+  // Rope climb
+  { rx:/\brope climb\b/gi, med:'3 Strict Pull-Ups (sub)', easy:'5 Ring Rows (sub)' },
+  // Rounds / reps reduction (applied last for Easy)
+];
+
+function autoScale(movements, level) {
+  if (!movements) return '';
+  let scaled = movements;
+
+  // Apply movement substitutions
+  SCALE_RULES.forEach(rule => {
+    if (typeof rule.med === 'string' && typeof rule.easy === 'string') {
+      if (level === 'med') scaled = scaled.replace(rule.rx, rule.med);
+      if (level === 'easy') scaled = scaled.replace(rule.rx, rule.easy);
+    } else if (typeof rule.med === 'function') {
+      // Weight scaling functions
+      if (level === 'med') scaled = rule.med(scaled);
+      if (level === 'easy') scaled = rule.easy(scaled);
+    }
+  });
+
+  // For Easy: also reduce rep counts by ~20%
+  if (level === 'easy') {
+    scaled = scaled.replace(/\b(\d{2,3})\s+(reps?|cal|m\b)/gi, (_, n, unit) => {
+      return Math.round(parseInt(n) * 0.8) + ' ' + unit;
+    });
+    // Reduce round counts if ≥ 4
+    scaled = scaled.replace(/\b([4-9]|1\d)\s+Rounds?\b/gi, (_, n) => {
+      return Math.max(2, Math.round(parseInt(n) * 0.7)) + ' Rounds';
+    });
+  }
+
+  return scaled;
+}
+
+function getScales(wod) {
+  return {
+    rx:   { text: wod.movements, auto: false },
+    med:  { text: wod.scaleMed  || autoScale(wod.movements, 'med'),  auto: !wod.scaleMed },
+    easy: { text: wod.scaleEasy || autoScale(wod.movements, 'easy'), auto: !wod.scaleEasy },
+  };
+}
+
+// Track active scale per card: { [wodId]: 'rx'|'med'|'easy' }
+const cardScales = {};
+
+function setCardScale(wodId, level) {
+  cardScales[wodId] = level;
+  // Re-render just the movements + tabs inside this card
+  const movEl = document.getElementById(`movements-${wodId}`);
+  const scales = getScales(getAllWorkouts().find(w => w.id === wodId));
+  if (movEl && scales[level]) movEl.textContent = scales[level].text;
+  // Update tab active states
+  ['easy','med','rx'].forEach(l => {
+    const tab = document.getElementById(`scale-tab-${l}-${wodId}`);
+    if (tab) { tab.className = 'scale-tab' + (l===level ? ` active-${l}` : ''); }
+  });
+}
+
 function renderWodCard(wod, isCompleted, completionData, isNext) {
   const focusTags = wod.focus.map(f=>`<span class="tag focus">${f}</span>`).join('');
   const otherTags = (wod.tags||[]).slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('');
@@ -1048,6 +1226,24 @@ function renderWodCard(wod, isCompleted, completionData, isNext) {
     : `<span class="btn-complete done">✓ ${currentAthlete} Completed</span>`;
   const feasible = workoutFeasible(wod);
   const equipWarning = !feasible ? `<div style="font-size:0.72rem;color:var(--red);margin-top:0.4rem;">⚠ Missing equipment — check Equipment tab</div>` : '';
+
+  const activeScale = cardScales[wod.id] || 'rx';
+  const scales = getScales(wod);
+  const activeText = scales[activeScale].text;
+
+  const scaleTabs = `
+  <div class="scale-tabs">
+    <button id="scale-tab-easy-${wod.id}" class="scale-tab${activeScale==='easy'?' active-easy':''}" onclick="setCardScale(${wod.id},'easy')">
+      Easy${scales.easy.auto?`<span class="scale-badge auto">auto</span>`:''}
+    </button>
+    <button id="scale-tab-med-${wod.id}" class="scale-tab${activeScale==='med'?' active-med':''}" onclick="setCardScale(${wod.id},'med')">
+      Med${scales.med.auto?`<span class="scale-badge auto">auto</span>`:''}
+    </button>
+    <button id="scale-tab-rx-${wod.id}" class="scale-tab${activeScale==='rx'?' active-rx':''}" onclick="setCardScale(${wod.id},'rx')">
+      Rx 🔥
+    </button>
+  </div>`;
+
   return `
   <div class="wod-card ${isCompleted?'completed':''} ${isNext&&!isCompleted?'next-up':''} ${isPartner?'partner-wod':''}">
     <div class="wod-card-header">
@@ -1064,7 +1260,8 @@ function renderWodCard(wod, isCompleted, completionData, isNext) {
     </div>
     <div class="wod-body">
       ${partnerBadge}
-      <div class="wod-movements">${wod.movements}</div>
+      ${scaleTabs}
+      <div class="wod-movements" id="movements-${wod.id}">${activeText}</div>
       ${wod.notes?`<div class="wod-notes">💡 ${wod.notes}</div>`:''}
     </div>
     <div class="wod-footer">
@@ -1331,6 +1528,121 @@ function clearAddForm(){
   document.getElementById('addType').selectedIndex=0;
   document.getElementById('addPartner').selectedIndex=0;
   document.getElementById('addError').style.display='none';
+}
+
+// =====================================================================
+// BULK IMPORT
+// =====================================================================
+function toggleImportFormat() {
+  const guide = document.getElementById('importFormatGuide');
+  const arrow = document.getElementById('importFormatArrow');
+  const visible = guide.style.display !== 'none';
+  guide.style.display = visible ? 'none' : 'block';
+  arrow.textContent = visible ? '▼' : '▲';
+}
+
+function copyAiPrompt() {
+  const text = document.getElementById('aiPromptBox').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('AI prompt copied! 📋'));
+}
+
+function parseBulkImport(raw) {
+  const blocks = raw.split(/\n---+\n?/).map(b => b.trim()).filter(Boolean);
+  const results = [];
+  const errors = [];
+
+  blocks.forEach((block, i) => {
+    try {
+      const get = (key) => {
+        const regex = new RegExp(`^${key}:\\s*(.*)$`, 'im');
+        const m = block.match(regex);
+        return m ? m[1].trim() : '';
+      };
+
+      // Extract MOVEMENTS block (everything after MOVEMENTS: line until NOTES:, EASY:, MEDIUM:, or end)
+      const movMatch = block.match(/^MOVEMENTS:\s*\n([\s\S]*?)(?=\n^(?:NOTES|EASY|MEDIUM):|$)/im);
+      const movements = movMatch ? movMatch[1].trim() : '';
+
+      // Extract optional scale overrides (multi-line blocks)
+      const easyMatch = block.match(/^EASY:\s*\n([\s\S]*?)(?=\n^(?:NOTES|MEDIUM|---):|$)/im);
+      const medMatch  = block.match(/^MEDIUM:\s*\n([\s\S]*?)(?=\n^(?:NOTES|EASY|---):|$)/im);
+      const scaleEasy = easyMatch ? easyMatch[1].trim() : '';
+      const scaleMed  = medMatch  ? medMatch[1].trim()  : '';
+
+      const name = get('NAME');
+      if (!name) { errors.push(`Block ${i+1}: Missing NAME`); return; }
+
+      const focus = get('FOCUS').split(',').map(s=>s.trim()).filter(Boolean);
+      if (!focus.length) { errors.push(`Block ${i+1} (${name}): Missing FOCUS`); return; }
+      if (!movements) { errors.push(`Block ${i+1} (${name}): Missing MOVEMENTS`); return; }
+
+      const typeRaw = get('TYPE') || 'For Time';
+      const validTypes = ['For Time','AMRAP','EMOM','Strength','Strength + Metcon','Circuit','Partner WOD','I-Go-You-Go','Flow','Other'];
+      const type = validTypes.find(t => t.toLowerCase() === typeRaw.toLowerCase()) || 'For Time';
+
+      const partnerRaw = get('PARTNER').toLowerCase();
+      const partnerMode = partnerRaw === 'igyo' ? 'igyo' : partnerRaw === 'partner' ? 'partner' : 'solo';
+
+      const equipReq = get('EQUIPMENT').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+      const tagsRaw = get('TAGS').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+      const tags = tagsRaw.length ? tagsRaw : focus.map(f=>f.toLowerCase());
+
+      results.push({
+        id: 2000 + Date.now()%100000 + i,
+        name,
+        type,
+        timecap: get('TIMECAP') || 'No Cap',
+        focus,
+        partnerMode,
+        equipReq,
+        tags,
+        movements,
+        notes: get('NOTES'),
+        scaleEasy: scaleEasy || undefined,
+        scaleMed:  scaleMed  || undefined,
+        custom: true
+      });
+    } catch(e) {
+      errors.push(`Block ${i+1}: Parse error — ${e.message}`);
+    }
+  });
+
+  return { results, errors };
+}
+
+function runBulkImport(addToTop) {
+  const raw = document.getElementById('bulkImportText').value.trim();
+  const resultEl = document.getElementById('bulkImportResult');
+  if (!raw) { resultEl.style.display='block'; resultEl.innerHTML='<span style="color:var(--red);">Nothing to import — paste your workouts first.</span>'; return; }
+
+  const { results, errors } = parseBulkImport(raw);
+
+  if (results.length === 0) {
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `<span style="color:var(--red);">❌ No valid workouts found.<br>${errors.map(e=>`• ${e}`).join('<br>')}</span>`;
+    return;
+  }
+
+  // Save all parsed workouts
+  const customs = getCustomWods();
+  const state = getState();
+  results.forEach(wod => {
+    // Ensure unique IDs
+    wod.id = 2000 + Math.floor(Math.random()*900000);
+    customs.push(wod);
+    if (addToTop) state.feed.unshift(wod.id);
+    else state.feed.push(wod.id);
+  });
+  saveCustomWods(customs);
+  saveState(state);
+  renderCustomWodList();
+  renderFeed();
+  document.getElementById('bulkImportText').value = '';
+
+  const errHtml = errors.length ? `<br><span style="color:var(--muted);">⚠ ${errors.length} block(s) skipped:<br>${errors.map(e=>`• ${e}`).join('<br>')}</span>` : '';
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `<span style="color:var(--green);">✅ ${results.length} workout${results.length>1?'s':''} imported successfully!</span>${errHtml}`;
+  showToast(`💪 ${results.length} WOD${results.length>1?'s':''} imported!`);
 }
 
 function renderCustomWodList(){
