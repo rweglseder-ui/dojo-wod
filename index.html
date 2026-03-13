@@ -172,6 +172,16 @@ select.form-input option { background:var(--card2); }
 /* EMPTY */
 .empty { text-align:center; padding:3rem 1rem; color:var(--muted); font-family:'Barlow Condensed',sans-serif; font-size:1rem; letter-spacing:0.05em; }
 
+/* BACKUP BAR */
+.backup-bar { display:flex; align-items:center; gap:0.6rem; background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.5rem 0.85rem; margin-bottom:1rem; flex-wrap:wrap; }
+.backup-status { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; color:var(--muted); display:flex; align-items:center; gap:0.4rem; flex:1; min-width:160px; letter-spacing:0.05em; }
+.backup-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.backup-dot.ok { background:#4CAF50; box-shadow:0 0 5px #4CAF50; }
+.backup-dot.warn { background:var(--orange); box-shadow:0 0 5px var(--orange); }
+.btn-backup { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.3rem 0.75rem; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.btn-backup:hover { border-color:var(--green); color:var(--green); }
+.btn-backup.restore:hover { border-color:#60a5fa; color:#60a5fa; }
+
 /* SCALE TABS */
 .scale-tabs { display:flex; gap:0; margin-bottom:0.75rem; border:1px solid var(--border); border-radius:4px; overflow:hidden; }
 .scale-tab { flex:1; font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:0.35rem 0; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; border-right:1px solid var(--border); }
@@ -225,6 +235,17 @@ select.form-input option { background:var(--card2); }
 </div>
 
 <div class="main">
+
+  <!-- BACKUP BAR -->
+  <div class="backup-bar">
+    <div class="backup-status">
+      <div class="backup-dot warn" id="backupDot"></div>
+      <span id="backupStatusText">No backup yet this session</span>
+    </div>
+    <button class="btn-backup" onclick="exportBackup()">⬇ Export Backup</button>
+    <button class="btn-backup restore" onclick="document.getElementById('restoreFileInput').click()">⬆ Restore Backup</button>
+    <input type="file" id="restoreFileInput" accept=".json" onchange="importBackup(event)" style="display:none;">
+  </div>
 
   <!-- WOD FEED -->
   <div class="view active" id="view-wod">
@@ -987,6 +1008,7 @@ function getState() {
 }
 function saveState(s) {
   try { localStorage.setItem('dojoWOD_v2', JSON.stringify(s)); } catch(e){}
+  autoBackup();
 }
 
 function getEquipment() {
@@ -1874,6 +1896,114 @@ function showIGCaption(wid) {
 function copyCaption() {
   const text = document.getElementById('igCaptionText').textContent;
   navigator.clipboard.writeText(text).then(()=>showToast('Caption copied! 📋'));
+}
+
+// =====================================================================
+// BACKUP & RESTORE
+// =====================================================================
+let lastBackupTime = null;
+
+function getBackupData() {
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    dojoWOD_v2:      JSON.parse(localStorage.getItem('dojoWOD_v2')   || '{}'),
+    dojoEquip:       JSON.parse(localStorage.getItem('dojoEquip')     || '[]'),
+    dojoCustomEquip: JSON.parse(localStorage.getItem('dojoCustomEquip')|| '[]'),
+    dojoCustomWods:  JSON.parse(localStorage.getItem('dojoCustomWods') || '[]'),
+    dojoBlocked:     JSON.parse(localStorage.getItem('dojoBlocked')   || '[]'),
+  };
+}
+
+function exportBackup() {
+  const data = getBackupData();
+  const json = JSON.stringify(data, null, 2);
+  const dateStr = new Date().toISOString().split('T')[0];
+  const filename = `dojo_wod_backup_${dateStr}.json`;
+  try {
+    // Try blob URL first (works in most browsers)
+    const blob = new Blob([json], { type:'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+  } catch(e) {
+    // Fallback: open JSON in new tab so user can File → Save
+    const w = window.open('', '_blank');
+    w.document.write('<pre>' + json.replace(/</g,'&lt;') + '</pre>');
+    w.document.title = filename;
+    showToast('Save the page as ' + filename);
+    return;
+  }
+  lastBackupTime = new Date();
+  updateBackupStatus();
+  showToast('Backup saved to Downloads 💾');
+}
+
+function autoBackup() {
+  try {
+    const lastAuto = sessionStorage.getItem('dojoLastAutoBackup');
+    const now = Date.now();
+    if (lastAuto && now - parseInt(lastAuto) < 10 * 60 * 1000) {
+      updateBackupStatus(); return;
+    }
+    const data = getBackupData();
+    const json = JSON.stringify(data, null, 2);
+    const dateStr = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
+    const filename = `dojo_wod_auto_${dateStr}.json`;
+    const blob = new Blob([json], { type:'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+    sessionStorage.setItem('dojoLastAutoBackup', now.toString());
+    lastBackupTime = new Date();
+    updateBackupStatus();
+  } catch(e) { console.warn('Auto-backup failed:', e); }
+}
+
+function updateBackupStatus() {
+  const dot  = document.getElementById('backupDot');
+  const text = document.getElementById('backupStatusText');
+  if (!dot || !text) return;
+  if (lastBackupTime) {
+    dot.className  = 'backup-dot ok';
+    text.textContent = `Backed up at ${lastBackupTime.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`;
+  } else {
+    dot.className  = 'backup-dot warn';
+    text.textContent = 'No backup yet — auto-saves on first data change';
+  }
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.version || !data.dojoWOD_v2) {
+        alert('This does not look like a valid Dojo WOD backup file.'); return;
+      }
+      const dateStr = data.exportedAt ? new Date(data.exportedAt).toLocaleString() : 'unknown date';
+      if (!confirm(`Restore backup from ${dateStr}?\n\nThis will replace your current workout history, queue, custom WODs, and equipment settings.`)) return;
+      if (data.dojoWOD_v2)      localStorage.setItem('dojoWOD_v2',       JSON.stringify(data.dojoWOD_v2));
+      if (data.dojoEquip)       localStorage.setItem('dojoEquip',        JSON.stringify(data.dojoEquip));
+      if (data.dojoCustomEquip) localStorage.setItem('dojoCustomEquip',  JSON.stringify(data.dojoCustomEquip));
+      if (data.dojoCustomWods)  localStorage.setItem('dojoCustomWods',   JSON.stringify(data.dojoCustomWods));
+      if (data.dojoBlocked)     localStorage.setItem('dojoBlocked',      JSON.stringify(data.dojoBlocked));
+      lastBackupTime = new Date();
+      updateBackupStatus();
+      renderFeed(); renderHistory(); renderEquipmentPanel();
+      showToast('✅ Backup restored successfully!');
+    } catch(err) { alert('Could not read the backup file. Make sure it\'s a valid Dojo WOD backup.'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
 }
 
 // =====================================================================
