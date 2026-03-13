@@ -1049,6 +1049,12 @@ function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); retu
 function fmtDate(d) { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
 function fmtShort(d) { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
 function isoDate(d) { return d.toISOString().split('T')[0]; }
+// Parse YYYY-MM-DD as local time (not UTC) to prevent timezone date shift
+function parseDate(str) {
+  if (!str) return null;
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
 
 // ── Phase layout per cycle length ─────────────────────────────────────────────
 function getPhases(cl) {
@@ -1170,11 +1176,11 @@ function renderQuarters() {
     const momentRow = document.createElement('div');
     momentRow.className = 'moment-dot-row';
     const qMoments = moments.filter(m => {
-      const md = new Date(m.date); md.setHours(0,0,0,0);
+      const md = parseDate(m.date); md.setHours(0,0,0,0);
       return md >= q.start && md <= q.end;
     });
     qMoments.forEach(m => {
-      const md = new Date(m.date); md.setHours(0,0,0,0);
+      const md = parseDate(m.date); md.setHours(0,0,0,0);
       const offset = (md - q.start) / (1000*60*60*24);
       const pct = ((offset + 0.5) / cycleLength) * 100;
       const dot = document.createElement('div');
@@ -1381,7 +1387,7 @@ function editConf(quarterIdx) {
   if (!c) return;
   pendingQuarterIdx = quarterIdx;
   const isHistorical = quarterIdx < 0;
-  document.getElementById('modalQuarterLabel').value = isHistorical ? `Historical entry · ${fmtDate(new Date(c.startDate))}` : `Cycle ${quarterIdx + 1}`;
+  document.getElementById('modalQuarterLabel').value = isHistorical ? `Historical entry · ${fmtDate(parseDate(c.startDate))}` : `Cycle ${quarterIdx + 1}`;
   document.getElementById('modalStartDate').value = c.startDate;
   document.getElementById('modalDuration').value = c.duration || 5;
   document.getElementById('modalNotes').value = c.notes || '';
@@ -1539,7 +1545,7 @@ function renderMoments() {
     const col = MOMENT_COLORS[m.type] || 'var(--accent)';
     const phaseLabel = m.phase ? PHASE_DATA[m.phase].label : '—';
     return `<tr>
-      <td><strong>${fmtDate(new Date(m.date))}</strong></td>
+      <td><strong>${fmtDate(parseDate(m.date))}</strong></td>
       <td style="color:var(--text-muted)">Day ${m.cycleDay || '—'}</td>
       <td><span style="font-size:0.72rem;padding:0.15rem 0.55rem;border-radius:10px;background:${m.phase ? `rgba(0,0,0,0.2)` : 'transparent'};color:${m.phase ? PHASE_DATA[m.phase].color : 'var(--text-muted)'};">${phaseLabel}</span></td>
       <td><span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.78rem"><span style="width:7px;height:7px;border-radius:50%;background:${col};box-shadow:0 0 5px ${col};display:inline-block"></span>${capitalize(m.type)}</span></td>
@@ -1610,12 +1616,12 @@ function renderLog() {
     const logDate = fmtDate(new Date(c.loggedAt));
     let gapCell = '&mdash;';
     if (i < sorted.length - 1) {
-      const gap = Math.round((new Date(sorted[i+1].startDate) - new Date(c.startDate)) / (1000*60*60*24));
+      const gap = Math.round((parseDate(sorted[i+1].startDate) - parseDate(c.startDate)) / (1000*60*60*24));
       if (gap > 0) gapCell = `<span style="color:${gap >= 25 && gap <= 35 ? 'var(--ovulation)' : 'var(--luteal)'}">${gap}d to next</span>`;
     }
     return `<tr>
       <td style="color:var(--text-muted)">${logDate}</td>
-      <td><strong>${fmtDate(new Date(c.startDate))}</strong></td>
+      <td><strong>${fmtDate(parseDate(c.startDate))}</strong></td>
       <td>${c.duration} days</td>
       <td><span style="font-size:0.72rem;padding:0.15rem 0.5rem;border-radius:10px;background:${isHistorical ? 'rgba(139,92,246,0.15)' : 'rgba(96,165,250,0.12)'};color:${isHistorical ? '#a78bfa' : 'var(--follicular)'}">${qLabel}</span></td>
       <td>${gapCell}</td>
