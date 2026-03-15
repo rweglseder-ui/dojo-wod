@@ -240,7 +240,7 @@ select.form-input option { background:var(--card2); }
   <div class="backup-bar">
     <div class="backup-status">
       <div class="backup-dot warn" id="backupDot"></div>
-      <span id="backupStatusText">No backup yet this session</span>
+      <span id="backupStatusText">No backup yet — export anytime to save your data</span>
     </div>
     <button class="btn-backup" onclick="exportBackup()">⬇ Export Backup</button>
     <button class="btn-backup restore" onclick="document.getElementById('restoreFileInput').click()">⬆ Restore Backup</button>
@@ -1008,7 +1008,6 @@ function getState() {
 }
 function saveState(s) {
   try { localStorage.setItem('dojoWOD_v2', JSON.stringify(s)); } catch(e){}
-  autoBackup();
 }
 
 function getEquipment() {
@@ -1942,29 +1941,6 @@ function exportBackup() {
   showToast('Backup saved to Downloads 💾');
 }
 
-function autoBackup() {
-  try {
-    const lastAuto = sessionStorage.getItem('dojoLastAutoBackup');
-    const now = Date.now();
-    if (lastAuto && now - parseInt(lastAuto) < 10 * 60 * 1000) {
-      updateBackupStatus(); return;
-    }
-    const data = getBackupData();
-    const json = JSON.stringify(data, null, 2);
-    const dateStr = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
-    const filename = `dojo_wod_auto_${dateStr}.json`;
-    const blob = new Blob([json], { type:'application/json' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = filename;
-    a.style.display = 'none';
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
-    sessionStorage.setItem('dojoLastAutoBackup', now.toString());
-    lastBackupTime = new Date();
-    updateBackupStatus();
-  } catch(e) { console.warn('Auto-backup failed:', e); }
-}
 
 function updateBackupStatus() {
   const dot  = document.getElementById('backupDot');
