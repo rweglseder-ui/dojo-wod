@@ -3,1009 +3,1979 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cycle Awareness Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>The Dojo WOD Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f0e11;
-    --surface: #1a1820;
-    --surface2: #221f2a;
-    --border: #2e2a38;
-    --text: #f0edf8;
-    --text-muted: #8a8499;
-    --accent: #c084fc;
+:root {
+  --orange: #F5841F;
+  --orange-dark: #D4690A;
+  --orange-glow: rgba(245,132,31,0.25);
+  --black: #0D0D0D;
+  --dark: #141414;
+  --card: #1C1C1C;
+  --card2: #222222;
+  --border: #2E2E2E;
+  --text: #F0EDE8;
+  --muted: #888;
+  --white: #FFFFFF;
+  --green: #4CAF50;
+  --red: #E53935;
+  --gold: #FFD700;
+  --blue: #42A5F5;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--black); color:var(--text); font-family:'Barlow',sans-serif; min-height:100vh; overflow-x:hidden; }
 
-    --menstrual: #f87171;
-    --menstrual-soft: rgba(248,113,113,0.15);
-    --follicular: #60a5fa;
-    --follicular-soft: rgba(96,165,250,0.15);
-    --ovulation: #34d399;
-    --ovulation-soft: rgba(52,211,153,0.15);
-    --luteal: #fb923c;
-    --luteal-soft: rgba(251,146,60,0.15);
-  }
+/* HEADER */
+header { background:linear-gradient(180deg,#000 0%,var(--dark) 100%); border-bottom:2px solid var(--orange); padding:0 1rem; position:sticky; top:0; z-index:100; box-shadow:0 4px 30px rgba(245,132,31,0.2); }
+.header-inner { max-width:960px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:0.6rem 0; }
+.logo-area { display:flex; align-items:center; gap:0.75rem; }
+.logo-img { width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid var(--orange); box-shadow:0 0 12px var(--orange-glow); }
+.brand-text h1 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.08em; color:var(--orange); line-height:1; text-shadow:0 0 20px var(--orange-glow); }
+.brand-text span { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; }
+.header-actions { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ATHLETE BAR */
+.athlete-bar { background:var(--dark); border-bottom:1px solid var(--border); padding:0.5rem 1rem; }
+.athlete-bar-inner { max-width:960px; margin:0 auto; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; }
+.athlete-label { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:0.15em; color:var(--muted); text-transform:uppercase; }
+.athlete-btn { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.1em; padding:0.3rem 1rem; border-radius:3px; border:2px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+.athlete-btn.active { border-color:var(--orange); color:var(--orange); background:rgba(245,132,31,0.1); box-shadow:0 0 8px var(--orange-glow); }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* TABS */
+.tabs { max-width:960px; margin:1.5rem auto 0; padding:0 1rem; display:flex; gap:0; border-bottom:2px solid var(--border); overflow-x:auto; }
+.tab { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.6rem 1rem; border:none; background:transparent; color:var(--muted); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s; white-space:nowrap; }
+.tab.active { color:var(--orange); border-bottom-color:var(--orange); }
 
-  /* Ambient background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(192,132,252,0.06) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 50% at 80% 90%, rgba(248,113,113,0.05) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
+/* MAIN */
+.main { max-width:960px; margin:0 auto; padding:1.5rem 1rem 5rem; }
+.view { display:none; }
+.view.active { display:block; }
 
-  .app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+/* BUTTONS */
+.btn-primary { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:0.1em; padding:0.45rem 1.2rem; border-radius:3px; border:none; background:var(--orange); color:#000; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+.btn-primary:hover { background:var(--orange-dark); box-shadow:0 0 16px var(--orange-glow); }
+.btn-secondary { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.45rem 1rem; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+.btn-secondary:hover { border-color:var(--text); color:var(--text); }
 
-  /* Header */
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .header-left h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-  .header-left p {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-  .cycle-length-control {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.6rem 1rem;
-  }
-  .cycle-length-control label {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-  }
-  .cycle-length-control input[type=number] {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-    width: 60px;
-    padding: 0.3rem 0.5rem;
-    text-align: center;
-  }
-  .cycle-length-control input:focus { outline: none; border-color: var(--accent); }
+/* WOD CARD */
+.wod-card { background:var(--card); border:1px solid var(--border); border-radius:6px; margin-bottom:1rem; overflow:hidden; transition:border-color 0.2s,box-shadow 0.2s; position:relative; }
+.wod-card.next-up { border-color:var(--orange); box-shadow:0 0 20px rgba(245,132,31,0.15); }
+.wod-card.next-up::before { content:'NEXT UP'; position:absolute; top:0; right:0; background:var(--orange); color:#000; font-family:'Bebas Neue',sans-serif; font-size:0.75rem; letter-spacing:0.12em; padding:0.2rem 0.6rem; border-radius:0 0 0 4px; }
+.wod-card.partner-wod { border-left:3px solid var(--blue); }
+.wod-card.completed { opacity:0.5; border-color:#333; }
+.wod-card-header { padding:0.9rem 1rem 0.6rem; display:flex; align-items:flex-start; justify-content:space-between; gap:0.5rem; }
+.wod-day { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.18em; color:var(--orange); text-transform:uppercase; margin-bottom:0.15rem; }
+.wod-name { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:0.06em; color:var(--white); line-height:1; }
+.wod-tags { display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.4rem; }
+.tag { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:0.15rem 0.5rem; border-radius:2px; background:var(--card2); color:var(--muted); border:1px solid var(--border); }
+.tag.focus { background:rgba(245,132,31,0.12); color:var(--orange); border-color:rgba(245,132,31,0.3); }
+.tag.partner { background:rgba(66,165,245,0.12); color:var(--blue); border-color:rgba(66,165,245,0.3); }
+.wod-meta { text-align:right; flex-shrink:0; }
+.wod-type { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); }
+.wod-timecap { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--text); }
+.wod-body { padding:0.75rem 1rem; border-top:1px solid var(--border); }
+.wod-movements { font-family:'Barlow Condensed',sans-serif; font-size:0.95rem; font-weight:600; color:var(--text); line-height:1.7; white-space:pre-line; }
+.wod-notes { margin-top:0.5rem; font-size:0.8rem; color:var(--muted); font-style:italic; line-height:1.5; }
+.partner-badge { display:inline-flex; align-items:center; gap:0.3rem; background:rgba(66,165,245,0.1); border:1px solid rgba(66,165,245,0.3); color:var(--blue); font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.2rem 0.6rem; border-radius:2px; margin-bottom:0.6rem; }
+.wod-footer { padding:0.6rem 1rem; background:var(--card2); display:flex; align-items:center; justify-content:space-between; gap:0.5rem; flex-wrap:wrap; border-top:1px solid var(--border); }
+.complete-group { display:flex; gap:0.5rem; flex-wrap:wrap; }
+.btn-complete { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.4rem 0.9rem; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+.btn-complete:hover { border-color:var(--green); color:var(--green); background:rgba(76,175,80,0.08); }
+.btn-complete.done { border-color:var(--green); color:var(--green); background:rgba(76,175,80,0.12); cursor:default; }
+.btn-ig { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.35rem 0.75rem; border-radius:3px; border:1px solid rgba(245,132,31,0.3); background:rgba(245,132,31,0.08); color:var(--orange); cursor:pointer; transition:all 0.2s; }
+.btn-ig:hover { background:rgba(245,132,31,0.18); border-color:var(--orange); }
 
-  /* Phase legend */
-  .legend {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    letter-spacing: 0.03em;
-  }
-  .legend-dot {
-    width: 9px; height: 9px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+/* SECTION LABEL */
+.section-label { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border); padding-bottom:0.4rem; margin-bottom:1rem; }
+.week-divider { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--orange); margin:1.5rem 0 0.75rem; display:flex; align-items:center; gap:0.5rem; }
+.week-divider::after { content:''; flex:1; height:1px; background:linear-gradient(to right,var(--border),transparent); }
 
-  /* Quarters grid */
-  .quarters-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-    margin-bottom: 2rem;
-  }
-  @media (max-width: 680px) { .quarters-grid { grid-template-columns: 1fr; } }
+/* HISTORY */
+.history-entry { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.9rem 1rem; margin-bottom:0.75rem; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+.stars { display:flex; gap:0.2rem; align-items:center; }
+.star { font-size:1.1rem; cursor:pointer; color:var(--border); transition:color 0.15s; line-height:1; }
+.star.filled { color:var(--gold); }
+.star:hover { color:var(--gold); }
 
-  .quarter-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .quarter-card:hover { border-color: var(--border); }
+/* FILTER ROW */
+.filter-row { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; align-items:center; }
+.filter-btn { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.25rem 0.75rem; border-radius:2px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
+.filter-btn.active { border-color:var(--orange); color:var(--orange); background:rgba(245,132,31,0.1); }
 
-  .quarter-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.9rem 1.1rem 0.7rem;
-  }
-  .quarter-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.95rem;
-    font-style: italic;
-    color: var(--text-muted);
-  }
-  .quarter-dates {
-    font-size: 0.73rem;
-    color: var(--text-muted);
-    opacity: 0.6;
-    letter-spacing: 0.03em;
-  }
+/* MANAGE QUEUE */
+.manage-item { background:var(--card); border:1px solid var(--border); border-radius:5px; padding:0.75rem 1rem; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.75rem; cursor:grab; transition:border-color 0.15s,box-shadow 0.15s; user-select:none; }
+.manage-item:active { cursor:grabbing; }
+.manage-item.dragging { border-color:var(--orange); box-shadow:0 4px 20px rgba(245,132,31,0.2); opacity:0.85; }
+.manage-item.drag-over { border-color:var(--orange); border-style:dashed; }
+.drag-handle { color:#444; font-size:1rem; cursor:grab; flex-shrink:0; line-height:1; }
+.manage-item-num { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--orange); min-width:1.5rem; flex-shrink:0; }
+.manage-item-info { flex:1; min-width:0; }
+.manage-item-name { font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.manage-item-meta { font-size:0.72rem; color:var(--muted); margin-top:0.1rem; }
+.btn-remove { background:none; border:none; color:#555; font-size:1rem; cursor:pointer; padding:0.2rem 0.4rem; border-radius:3px; transition:color 0.15s,background 0.15s; flex-shrink:0; line-height:1; }
+.btn-remove:hover { color:var(--red); background:rgba(229,57,53,0.1); }
 
-  /* Timeline bar */
-  .timeline-wrap {
-    padding: 0 1.1rem 0.6rem;
-    position: relative;
-  }
-  .timeline-bar {
-    position: relative;
-    height: 28px;
-    border-radius: 6px;
-    overflow: hidden;
-    background: var(--surface2);
-    display: flex;
-  }
-  .phase-segment {
-    height: 100%;
-    position: relative;
-    cursor: default;
-    transition: filter 0.15s;
-  }
-  .phase-segment:hover { filter: brightness(1.3); }
-  .phase-segment.menstrual { background: var(--menstrual); }
-  .phase-segment.follicular { background: var(--follicular); }
-  .phase-segment.ovulation { background: var(--ovulation); }
-  .phase-segment.luteal { background: var(--luteal); }
+/* ADD WOD FORM */
+.add-wod-form { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:1.25rem; }
+.form-group { margin-bottom:0.9rem; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+@media(max-width:480px){.form-row{grid-template-columns:1fr;}}
+.form-label { display:block; font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:0.35rem; }
+.form-input { width:100%; background:var(--card2); border:1px solid var(--border); color:var(--text); font-family:'Barlow',sans-serif; font-size:0.88rem; padding:0.55rem 0.75rem; border-radius:3px; outline:none; transition:border-color 0.2s; appearance:none; }
+.form-input:focus { border-color:var(--orange); }
+.form-input::placeholder { color:#555; }
+.form-textarea { resize:vertical; min-height:110px; line-height:1.6; font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; }
+select.form-input { cursor:pointer; }
+select.form-input option { background:var(--card2); }
 
-  /* Confirmed actual marker */
-  .confirmed-marker {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    background: rgba(255,255,255,0.22);
-    border-left: 2px solid rgba(255,255,255,0.5);
-    border-right: 2px solid rgba(255,255,255,0.5);
-    pointer-events: none;
-    border-radius: 2px;
-  }
+/* EQUIPMENT TAB */
+.equip-section { margin-bottom:1.75rem; }
+.equip-section-title { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:0.1em; color:var(--orange); margin-bottom:0.75rem; }
+.equip-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:0.5rem; }
+.equip-item { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.6rem 0.85rem; display:flex; align-items:center; gap:0.6rem; cursor:pointer; transition:all 0.2s; }
+.equip-item.has { border-color:rgba(76,175,80,0.4); background:rgba(76,175,80,0.07); }
+.equip-item.has .equip-check { color:var(--green); }
+.equip-check { width:16px; height:16px; border:2px solid var(--border); border-radius:3px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.65rem; transition:all 0.2s; }
+.equip-item.has .equip-check { border-color:var(--green); background:var(--green); color:#000; }
+.equip-name { font-family:'Barlow Condensed',sans-serif; font-size:0.88rem; font-weight:600; color:var(--text); }
+.equip-detail { font-size:0.72rem; color:var(--muted); }
+.equip-add-row { display:flex; gap:0.5rem; margin-top:0.75rem; }
+.equip-note { font-size:0.8rem; color:var(--muted); background:rgba(245,132,31,0.05); border:1px solid rgba(245,132,31,0.15); border-radius:4px; padding:0.6rem 0.85rem; margin-bottom:1rem; line-height:1.5; }
 
-  /* Day ticks */
-  .day-ticks {
-    position: relative;
-    height: 16px;
-    margin-top: 3px;
-  }
-  .tick {
-    position: absolute;
-    top: 0;
-    width: 1px;
-    height: 5px;
-    background: var(--border);
-    transform: translateX(-50%);
-  }
-  .tick-label {
-    position: absolute;
-    top: 7px;
-    font-size: 0.6rem;
-    color: var(--text-muted);
-    transform: translateX(-50%);
-    opacity: 0.6;
-  }
-  .today-line {
-    position: absolute;
-    top: -28px;
-    width: 1.5px;
-    height: 28px;
-    background: white;
-    opacity: 0.9;
-    transform: translateX(-50%);
-    z-index: 10;
-    border-radius: 1px;
-    box-shadow: 0 0 6px rgba(255,255,255,0.4);
-  }
-  .today-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: white;
-    position: absolute;
-    top: 0;
-    transform: translateX(-50%) translateY(-50%);
-  }
+/* LUCKY RESULT */
+.lucky-result { background:var(--card2); border:1px solid var(--orange); border-radius:4px; padding:1rem; margin-top:0.75rem; display:none; }
+.lucky-result.show { display:block; }
+.lucky-result-name { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; color:var(--orange); margin-bottom:0.5rem; }
 
-  /* Hormone mood annotations */
-  .mood-annotations {
-    padding: 0.5rem 1.1rem 1rem;
-    display: flex;
-    gap: 0.35rem;
-    flex-wrap: wrap;
-  }
-  .mood-tag {
-    font-size: 0.68rem;
-    padding: 0.22rem 0.55rem;
-    border-radius: 20px;
-    letter-spacing: 0.03em;
-    white-space: nowrap;
-    font-weight: 400;
-  }
-  .mood-tag.menstrual { background: var(--menstrual-soft); color: var(--menstrual); border: 1px solid rgba(248,113,113,0.25); }
-  .mood-tag.follicular { background: var(--follicular-soft); color: var(--follicular); border: 1px solid rgba(96,165,250,0.25); }
-  .mood-tag.ovulation { background: var(--ovulation-soft); color: var(--ovulation); border: 1px solid rgba(52,211,153,0.25); }
-  .mood-tag.luteal { background: var(--luteal-soft); color: var(--luteal); border: 1px solid rgba(251,146,60,0.25); }
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:1000; align-items:center; justify-content:center; padding:1rem; }
+.modal-overlay.show { display:flex; }
+.modal { background:var(--card); border:1px solid var(--orange); border-radius:6px; max-width:540px; width:100%; padding:1.5rem; box-shadow:0 0 40px rgba(245,132,31,0.2); position:relative; max-height:90vh; overflow-y:auto; }
+.modal-close { position:absolute; top:0.75rem; right:0.75rem; background:none; border:none; color:var(--muted); font-size:1.2rem; cursor:pointer; line-height:1; padding:0.2rem; }
+.modal-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--orange); letter-spacing:0.08em; margin-bottom:1rem; }
+.ig-caption-box { background:var(--card2); border:1px solid var(--border); border-radius:4px; padding:1rem; font-size:0.9rem; line-height:1.6; color:var(--text); margin-bottom:0.75rem; white-space:pre-wrap; word-break:break-word; }
+.copy-btn { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.4rem 1rem; border-radius:3px; border:1px solid var(--orange); background:rgba(245,132,31,0.1); color:var(--orange); cursor:pointer; transition:all 0.2s; }
+.copy-btn:hover { background:rgba(245,132,31,0.2); }
 
-  /* Confirm button area */
-  .confirm-area {
-    padding: 0.6rem 1.1rem 1.1rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-  .confirm-status {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .confirm-status .dot-confirmed {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--ovulation);
-    box-shadow: 0 0 6px var(--ovulation);
-  }
-  .confirm-status .dot-unconfirmed {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--border);
-  }
-  .btn-confirm {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.76rem;
-    font-weight: 500;
-    padding: 0.4rem 0.9rem;
-    border-radius: 7px;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .btn-confirm:hover { border-color: var(--menstrual); color: var(--menstrual); }
-  .btn-confirm.confirmed { border-color: var(--ovulation); color: var(--ovulation); }
-  .btn-confirm.confirmed:hover { border-color: var(--menstrual); color: var(--menstrual); }
+/* CUSTOM WOD CHIPS */
+.custom-wod-chip { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.6rem 0.9rem; margin-bottom:0.5rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; flex-wrap:wrap; }
+.chip-actions { display:flex; gap:0.4rem; flex-shrink:0; }
+.btn-chip { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.2rem 0.5rem; border-radius:2px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+.btn-chip:hover { border-color:var(--orange); color:var(--orange); }
+.btn-chip.danger:hover { border-color:var(--red); color:var(--red); }
 
-  /* Connection moment dots */
-  .moment-dot-row {
-    position: relative;
-    height: 18px;
-    margin-bottom: 2px;
-  }
-  .moment-dot {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    transform: translateX(-50%);
-    top: 3px;
-    cursor: pointer;
-    transition: transform 0.15s;
-  }
-  .moment-dot:hover { transform: translateX(-50%) scale(1.4); }
-  .moment-dot.affectionate { background: #f9a8d4; box-shadow: 0 0 6px 2px rgba(249,168,212,0.6); }
-  .moment-dot.flirty      { background: #fde68a; box-shadow: 0 0 6px 2px rgba(253,230,138,0.6); }
-  .moment-dot.intimate    { background: #c084fc; box-shadow: 0 0 8px 3px rgba(192,132,252,0.7); }
-  .moment-dot.spontaneous { background: #6ee7b7; box-shadow: 0 0 6px 2px rgba(110,231,183,0.6); }
+/* TOAST */
+.toast { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(3rem); background:var(--orange); color:#000; font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.6rem 1.5rem; border-radius:3px; z-index:9999; opacity:0; transition:all 0.3s ease; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* Clickable timeline overlay for logging */
-  .timeline-click-overlay {
-    position: absolute;
-    inset: 0;
-    cursor: crosshair;
-    z-index: 5;
-    border-radius: 6px;
-  }
-  .timeline-click-overlay:hover::after {
-    content: 'Click to log a moment';
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 0.68rem;
-    padding: 0.25rem 0.6rem;
-    border-radius: 6px;
-    white-space: nowrap;
-    pointer-events: none;
-  }
+/* EMPTY */
+.empty { text-align:center; padding:3rem 1rem; color:var(--muted); font-family:'Barlow Condensed',sans-serif; font-size:1rem; letter-spacing:0.05em; }
 
-  /* Moment legend */
-  .moment-legend {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-    padding: 0.75rem 1rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    align-items: center;
-  }
-  .moment-legend-label {
-    font-size: 0.68rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-right: 0.25rem;
-  }
-  .moment-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-  .moment-glow {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+/* BACKUP BAR */
+.backup-bar { display:flex; align-items:center; gap:0.6rem; background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.5rem 0.85rem; margin-bottom:1rem; flex-wrap:wrap; }
+.backup-status { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; color:var(--muted); display:flex; align-items:center; gap:0.4rem; flex:1; min-width:160px; letter-spacing:0.05em; }
+.backup-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.backup-dot.ok { background:#4CAF50; box-shadow:0 0 5px #4CAF50; }
+.backup-dot.warn { background:var(--orange); box-shadow:0 0 5px var(--orange); }
+.btn-backup { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.3rem 0.75rem; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.btn-backup:hover { border-color:var(--green); color:var(--green); }
+.btn-backup.restore:hover { border-color:#60a5fa; color:#60a5fa; }
 
-  /* Moments section */
-  .moments-section { margin-top: 2rem; }
-  .moments-section h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    font-style: italic;
-  }
+/* SCALE TABS */
+.scale-tabs { display:flex; gap:0; margin-bottom:0.75rem; border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+.scale-tab { flex:1; font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:0.35rem 0; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; border-right:1px solid var(--border); }
+.scale-tab:last-child { border-right:none; }
+.scale-tab.active-easy { background:rgba(76,175,80,0.15); color:#4CAF50; }
+.scale-tab.active-med { background:rgba(255,193,7,0.15); color:#FFC107; }
+.scale-tab.active-rx { background:rgba(245,132,31,0.15); color:var(--orange); }
+.scale-tab:hover:not(.active-easy):not(.active-med):not(.active-rx) { background:var(--card2); color:var(--text); }
+.scale-badge { display:inline-block; font-size:0.62rem; padding:0.1rem 0.35rem; border-radius:2px; margin-left:0.3rem; vertical-align:middle; }
+.scale-badge.auto { background:rgba(255,255,255,0.07); color:var(--muted); }
 
-  /* Phase detail panel */
-  .phase-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.4rem 1.5rem;
-    margin-bottom: 2rem;
-    display: none;
-  }
-  .phase-panel.visible { display: block; animation: fadeIn 0.25s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-
-  .phase-panel h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.05rem;
-    margin-bottom: 0.5rem;
-  }
-  .phase-panel .phase-desc {
-    font-size: 0.84rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-  .hormone-bars { display: flex; gap: 1.2rem; margin-top: 1rem; flex-wrap: wrap; }
-  .hormone-row { flex: 1; min-width: 130px; }
-  .hormone-label {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 0.35rem;
-    display: flex;
-    justify-content: space-between;
-  }
-  .hormone-bar-track {
-    height: 5px;
-    background: var(--surface2);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .hormone-bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.6s ease;
-  }
-
-  /* Confirmation log */
-  .log-section { margin-top: 2.5rem; }
-  .log-section h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    color: var(--text-muted);
-    font-style: italic;
-  }
-  .log-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-  }
-  .log-table thead th {
-    text-align: left;
-    padding: 0.5rem 0.75rem;
-    color: var(--text-muted);
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-weight: 400;
-    border-bottom: 1px solid var(--border);
-  }
-  .log-table tbody tr {
-    border-bottom: 1px solid rgba(46,42,56,0.5);
-    transition: background 0.15s;
-  }
-  .log-table tbody tr:hover { background: var(--surface2); }
-  .log-table tbody td { padding: 0.6rem 0.75rem; color: var(--text); vertical-align: middle; }
-  .phase-pill {
-    display: inline-block;
-    padding: 0.15rem 0.55rem;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 500;
-  }
-  .phase-pill.menstrual { background: var(--menstrual-soft); color: var(--menstrual); }
-  .phase-pill.ovulation { background: var(--ovulation-soft); color: var(--ovulation); }
-  .empty-log {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-muted);
-    font-size: 0.82rem;
-    font-style: italic;
-  }
-
-  /* Tooltip */
-  .tooltip {
-    position: fixed;
-    background: #1e1c28;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.55rem 0.75rem;
-    font-size: 0.75rem;
-    color: var(--text);
-    pointer-events: none;
-    z-index: 1000;
-    display: none;
-    max-width: 200px;
-    line-height: 1.5;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  }
-  .tooltip.show { display: block; }
-
-  /* Confirm dialog */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    width: min(420px, 90vw);
-    animation: fadeIn 0.2s ease;
-  }
-  .modal h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    margin-bottom: 0.35rem;
-  }
-  .modal p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5; }
-  .modal-fields { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem; }
-  .field-row { display: flex; flex-direction: column; gap: 0.3rem; }
-  .field-row label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-  .field-row input[type=date], .field-row input[type=number], .field-row textarea {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    padding: 0.5rem 0.75rem;
-    width: 100%;
-    color-scheme: dark;
-  }
-  .field-row textarea { resize: vertical; min-height: 60px; }
-  .field-row input:focus, .field-row textarea:focus { outline: none; border-color: var(--accent); }
-  .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
-  .btn { font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; padding: 0.5rem 1.1rem; border-radius: 8px; cursor: pointer; border: none; letter-spacing: 0.03em; transition: all 0.15s; }
-  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
-  .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
-  .btn-primary { background: var(--menstrual); color: white; }
-  .btn-primary:hover { opacity: 0.85; }
-
-  /* Backup bar */
-  .backup-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.55rem 1rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .backup-status {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex: 1;
-    min-width: 160px;
-  }
-  .backup-status .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .backup-status .dot.ok { background: var(--ovulation); box-shadow: 0 0 5px var(--ovulation); }
-  .backup-status .dot.warn { background: var(--luteal); box-shadow: 0 0 5px var(--luteal); }
-  .btn-backup {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.73rem;
-    font-weight: 500;
-    padding: 0.35rem 0.8rem;
-    border-radius: 7px;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .btn-backup:hover { border-color: var(--ovulation); color: var(--ovulation); }
-  .btn-backup.restore:hover { border-color: var(--follicular); color: var(--follicular); }
-  #restoreFileInput { display: none; }
-
-  /* Nav dots for current cycle position */
-  .cycle-position-bar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.1rem 1.4rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    flex-wrap: wrap;
-  }
-  .cycle-position-bar .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
-  .cycle-bar-visual { flex: 1; height: 8px; border-radius: 4px; background: var(--surface2); overflow: hidden; position: relative; min-width: 120px; }
-  .cycle-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
-  .cycle-position-text { font-size: 0.82rem; white-space: nowrap; }
-  .phase-name-badge {
-    padding: 0.2rem 0.7rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-
-  .set-start-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.74rem;
-    padding: 0.35rem 0.75rem;
-    border-radius: 7px;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    transition: all 0.15s;
-  }
-  .set-start-btn:hover { border-color: var(--accent); color: var(--accent); }
+@media(max-width:500px){
+  .brand-text h1{font-size:1.4rem;}
+  .logo-img{width:44px;height:44px;}
+  .wod-name{font-size:1.3rem;}
+  .equip-grid{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div class="header-left">
-      <h1>Cycle Awareness</h1>
-      <p>Hormonal rhythm · quarterly view</p>
-    </div>
-    <div class="cycle-length-control">
-      <label>Cycle length</label>
-      <input type="number" id="cycleLength" value="28" min="21" max="35" />
-      <span style="font-size:0.78rem;color:var(--text-muted)">days</span>
-    </div>
-  </header>
 
-  <!-- Backup bar -->
+<header>
+  <div class="header-inner">
+    <div class="logo-area">
+      <img src="./Gemini_Generated_Image_l3rr4fl3rr4fl3rr.png" alt="The Dojo" class="logo-img" id="logoImg">
+      <div class="brand-text">
+        <h1>The Dojo</h1>
+        <span>WOD Board · Est. 2024</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" onclick="showLuckyModal()" style="font-size:0.85rem;padding:0.4rem 0.8rem;">🎲 I'm Feeling Lucky</button>
+    </div>
+  </div>
+</header>
+
+<div class="athlete-bar">
+  <div class="athlete-bar-inner">
+    <span class="athlete-label">Athlete:</span>
+    <button class="athlete-btn active" id="athleteRyan" onclick="setAthlete('Ryan')">Ryan</button>
+    <button class="athlete-btn" id="athleteMarc" onclick="setAthlete('Marc')">Marc</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('wod')">WOD Feed</button>
+  <button class="tab" onclick="switchTab('history')">History</button>
+  <button class="tab" onclick="switchTab('manage')">Manage Queue</button>
+  <button class="tab" onclick="switchTab('add')">+ Add WOD</button>
+  <button class="tab" onclick="switchTab('equipment')">⚙ Equipment</button>
+</div>
+
+<div class="main">
+
+  <!-- BACKUP BAR -->
   <div class="backup-bar">
-    <div class="backup-status" id="backupStatus">
-      <div class="dot warn" id="backupDot"></div>
+    <div class="backup-status">
+      <div class="backup-dot warn" id="backupDot"></div>
       <span id="backupStatusText">No backup yet this session</span>
     </div>
-    <button class="btn-backup" onclick="exportBackup()">&#8659; Export backup</button>
-    <button class="btn-backup restore" onclick="document.getElementById('restoreFileInput').click()">&#8657; Restore from backup</button>
-    <input type="file" id="restoreFileInput" accept=".json" onchange="importBackup(event)">
+    <button class="btn-backup" onclick="exportBackup()">⬇ Export Backup</button>
+    <button class="btn-backup restore" onclick="document.getElementById('restoreFileInput').click()">⬆ Restore Backup</button>
+    <input type="file" id="restoreFileInput" accept=".json" onchange="importBackup(event)" style="display:none;">
   </div>
 
-  <!-- Current position -->
-  <div class="cycle-position-bar" id="cyclePositionBar">
-    <span class="label">Today</span>
-    <div class="cycle-bar-visual">
-      <div class="cycle-bar-fill" id="cycleBarFill"></div>
+  <!-- WOD FEED -->
+  <div class="view active" id="view-wod">
+    <div id="wodFeed"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="view" id="view-history">
+    <div class="filter-row">
+      <span class="athlete-label" style="font-size:0.72rem;">Show:</span>
+      <button class="filter-btn active" id="filterAll" onclick="setHistoryFilter('all')">All</button>
+      <button class="filter-btn" id="filterRyan" onclick="setHistoryFilter('Ryan')">Ryan</button>
+      <button class="filter-btn" id="filterMarc" onclick="setHistoryFilter('Marc')">Marc</button>
     </div>
-    <span class="cycle-position-text" id="cyclePositionText">—</span>
-    <span class="phase-name-badge" id="currentPhaseBadge"></span>
-    <button class="set-start-btn" onclick="openSetStartModal()">Set last period start</button>
+    <div id="historyLog"></div>
   </div>
 
-  <!-- Legend -->
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--menstrual)"></div>Menstrual</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--follicular)"></div>Follicular</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--ovulation)"></div>Ovulation</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--luteal)"></div>Luteal</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.3)"></div>Confirmed actual</div>
+  <!-- MANAGE QUEUE -->
+  <div class="view" id="view-manage">
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem;line-height:1.5;">Drag to reorder your upcoming queue. Top card is always next. Click ✕ to remove.</p>
+    <div id="manageList"></div>
   </div>
 
-  <!-- Quarters -->
-  <div class="quarters-grid" id="quartersGrid"></div>
+  <!-- ADD WOD -->
+  <div class="view" id="view-add">
 
-  <!-- Moment legend -->
-  <div class="moment-legend">
-    <span class="moment-legend-label">Moments</span>
-    <div class="moment-legend-item"><div class="moment-glow" style="background:#f9a8d4;box-shadow:0 0 5px rgba(249,168,212,0.7)"></div>Affectionate</div>
-    <div class="moment-legend-item"><div class="moment-glow" style="background:#fde68a;box-shadow:0 0 5px rgba(253,230,138,0.7)"></div>Flirty</div>
-    <div class="moment-legend-item"><div class="moment-glow" style="background:#c084fc;box-shadow:0 0 5px rgba(192,132,252,0.7)"></div>Intimate</div>
-    <div class="moment-legend-item"><div class="moment-glow" style="background:#6ee7b7;box-shadow:0 0 5px rgba(110,231,183,0.7)"></div>Spontaneous</div>
-    <span style="font-size:0.7rem;color:var(--text-muted);margin-left:auto">Click the timeline bar or use the button below to log</span>
-  </div>
+    <!-- BULK IMPORT -->
+    <div class="add-wod-form" style="margin-bottom:1.5rem;">
+      <div class="section-label" style="margin-bottom:0.75rem;">📥 Bulk Import Workouts</div>
 
-  <!-- Moments log section -->
-  <div class="moments-section">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem">
-      <h2>Connection moments</h2>
-      <button class="set-start-btn" onclick="openMomentModal(null, null)" style="font-size:0.76rem;padding:0.4rem 0.9rem">+ Log a moment</button>
-    </div>
-    <div id="momentsPatternBar" style="margin-bottom:1rem"></div>
-    <table class="log-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Cycle day</th>
-          <th>Phase</th>
-          <th>Type</th>
-          <th>Notes</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="momentsBody">
-        <tr><td colspan="6" class="empty-log">No moments logged yet — click the timeline or use the button above</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Log -->
-  <div class="log-section">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem">
-      <h2 style="margin-bottom:0">Confirmation log</h2>
-      <button class="set-start-btn" onclick="openHistoricalModal()" style="font-size:0.76rem;padding:0.4rem 0.9rem">+ Log historical date</button>
-    </div>
-    <table class="log-table">
-      <thead>
-        <tr>
-          <th>Logged</th>
-          <th>Period start</th>
-          <th>Duration</th>
-          <th>Cycle</th>
-          <th>Gap to next</th>
-          <th>Notes</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="logBody">
-        <tr><td colspan="6" class="empty-log">No cycles confirmed yet — use the "Confirm" button on any quarter</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Tooltip -->
-<div class="tooltip" id="tooltip"></div>
-
-<!-- Confirm modal -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h3>Confirm cycle</h3>
-    <p>Log the actual start date of this menstrual period to keep predictions accurate over time.</p>
-    <div class="modal-fields">
-      <div class="field-row">
-        <label>Quarter</label>
-        <input type="text" id="modalQuarterLabel" readonly style="color:var(--text-muted)">
+      <!-- Format reference (collapsible) -->
+      <div id="importFormatToggle" onclick="toggleImportFormat()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0.75rem;background:var(--card2);border:1px solid var(--border);border-radius:3px;margin-bottom:0.75rem;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">📋 View Format Template & AI Prompt</span>
+        <span id="importFormatArrow" style="color:var(--muted);font-size:0.8rem;">▼</span>
       </div>
-      <div class="field-row">
-        <label>Actual period start date</label>
-        <input type="date" id="modalStartDate">
-      </div>
-      <div class="field-row">
-        <label>Period duration (days)</label>
-        <input type="number" id="modalDuration" value="5" min="1" max="10">
-      </div>
-      <div class="field-row">
-        <label>Notes (optional)</label>
-        <textarea id="modalNotes" placeholder="e.g. heavy flow, cramps, mood…"></textarea>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitConfirmation()">Confirm cycle</button>
-    </div>
-  </div>
-</div>
+      <div id="importFormatGuide" style="display:none;margin-bottom:0.75rem;">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:0.9rem;margin-bottom:0.6rem;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:0.5rem;">Format Template</div>
+          <pre style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;color:var(--text);line-height:1.7;white-space:pre-wrap;">NAME: Workout Name Here
+TYPE: For Time
+TIMECAP: 25 MIN
+FOCUS: Shoulders, Push
+PARTNER: solo
+EQUIPMENT: barbell, pull-up-bar
+TAGS: conditioning, barbell
+MOVEMENTS:
+5 Rounds:
+10 Push Press (95 lb)
+15 Pull-Ups
+400m Run
+NOTES: Keep the bar moving.
+MEDIUM:
+5 Rounds:
+10 Push Press (75 lb)
+15 Ring Rows
+400m Run
+EASY:
+4 Rounds:
+10 Push Press (55 lb)
+15 Ring Rows
+200m Run
+---
+NAME: Next Workout Here
+TYPE: AMRAP
+...</pre>
+        </div>
+        <div style="background:rgba(245,132,31,0.06);border:1px solid rgba(245,132,31,0.2);border-radius:3px;padding:0.9rem;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:0.5rem;">AI Formatting Prompt</div>
+          <div style="font-size:0.82rem;color:var(--text);line-height:1.6;">Copy this prompt and paste it into any AI along with your raw workout list:</div>
+          <div id="aiPromptBox" style="background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:0.75rem;margin-top:0.5rem;font-size:0.78rem;color:var(--muted);line-height:1.6;font-style:italic;white-space:pre-wrap;">Format the following workouts into this exact plain text template. Separate each workout with ---. Use only these PARTNER values: solo, partner, igyo. Use only these TYPE values: For Time, AMRAP, EMOM, Strength, Strength + Metcon, Circuit, Partner WOD, I-Go-You-Go, Flow, Other. For EQUIPMENT list only the gear tags needed from: barbell, pull-up-bar, rings, kettlebell, dumbbell, box, bench, sandbag, jump-rope, foot-roller, weight-belt, landmine, double-kb, heavy-kb. If unsure leave EQUIPMENT blank. Keep MOVEMENTS as written but clean up formatting. Optionally include MEDIUM: and EASY: blocks after NOTES with scaled versions (reduce loads by 20% for Medium, 40% + reduce reps/rounds for Easy, substitute movements like pull-ups→ring rows, muscle-ups→pull-ups, etc). Output only the formatted workouts, nothing else.
 
-<!-- Moment modal -->
-<div class="modal-overlay" id="momentModalOverlay">
-  <div class="modal">
-    <h3>Log a connection moment</h3>
-    <p>Record a day where she felt especially vibrant, affectionate, or connected.</p>
-    <div class="modal-fields">
-      <div class="field-row">
-        <label>Date</label>
-        <input type="date" id="momentDate">
-      </div>
-      <div class="field-row">
-        <label>Type of moment</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.25rem" id="momentTypeGrid">
-          <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.82rem" id="type-affectionate">
-            <input type="radio" name="momentType" value="affectionate" style="accent-color:#f9a8d4"> <span style="color:#f9a8d4">&#9679;</span> Affectionate
-          </label>
-          <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.82rem" id="type-flirty">
-            <input type="radio" name="momentType" value="flirty" style="accent-color:#fde68a"> <span style="color:#fde68a">&#9679;</span> Flirty
-          </label>
-          <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.82rem" id="type-intimate">
-            <input type="radio" name="momentType" value="intimate" style="accent-color:#c084fc"> <span style="color:#c084fc">&#9679;</span> Intimate
-          </label>
-          <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:0.82rem" id="type-spontaneous">
-            <input type="radio" name="momentType" value="spontaneous" style="accent-color:#6ee7b7"> <span style="color:#6ee7b7">&#9679;</span> Spontaneous
-          </label>
+NAME: [workout name]
+TYPE: [type]
+TIMECAP: [e.g. 20 MIN]
+FOCUS: [e.g. Legs, Conditioning]
+PARTNER: [solo/partner/igyo]
+EQUIPMENT: [comma separated tags]
+TAGS: [comma separated]
+MOVEMENTS:
+[movement text]
+NOTES: [coach notes or blank]
+MEDIUM:
+[optional medium scale]
+EASY:
+[optional easy scale]
+---</div>
+          <button class="copy-btn" onclick="copyAiPrompt()" style="margin-top:0.5rem;font-size:0.72rem;padding:0.3rem 0.75rem;">Copy AI Prompt</button>
         </div>
       </div>
-      <div class="field-row">
-        <label>Notes (optional)</label>
-        <textarea id="momentNotes" placeholder="e.g. very playful at dinner, initiated affection, great conversation..."></textarea>
+
+      <!-- Paste area -->
+      <div class="form-group">
+        <label class="form-label">Paste Formatted Workouts Here</label>
+        <textarea class="form-input form-textarea" id="bulkImportText" style="min-height:180px;font-size:0.8rem;" placeholder="NAME: My Workout&#10;TYPE: For Time&#10;TIMECAP: 20 MIN&#10;FOCUS: Conditioning, Full Body&#10;PARTNER: solo&#10;EQUIPMENT: barbell, pull-up-bar&#10;TAGS: barbell, conditioning&#10;MOVEMENTS:&#10;5 Rounds:&#10;10 Deadlifts&#10;15 Pull-Ups&#10;---&#10;NAME: Next Workout&#10;..."></textarea>
       </div>
+
+      <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="runBulkImport(true)">Import → Top of Feed</button>
+        <button class="btn-secondary" onclick="runBulkImport(false)">Import → End of Feed</button>
+        <button class="btn-secondary" onclick="document.getElementById('bulkImportText').value=''">Clear</button>
+      </div>
+      <div id="bulkImportResult" style="margin-top:0.75rem;font-size:0.82rem;display:none;"></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeMomentModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitMoment()" style="background:#c084fc">Save moment</button>
+
+    <!-- SINGLE WOD FORM -->
+    <div class="add-wod-form">
+      <div class="section-label" style="margin-bottom:1.2rem;">Add a Single Workout</div>
+      <div class="form-group">
+        <label class="form-label">WOD Name *</label>
+        <input class="form-input" id="addName" placeholder="e.g. Garage Grinder">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-input" id="addType">
+            <option>For Time</option><option>AMRAP</option><option>EMOM</option>
+            <option>Strength</option><option>Strength + Metcon</option><option>Circuit</option>
+            <option>Partner WOD</option><option>I-Go-You-Go</option><option>Flow</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time Cap</label>
+          <input class="form-input" id="addTimecap" placeholder="e.g. 20 MIN">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Focus Areas (comma separated) *</label>
+          <input class="form-input" id="addFocus" placeholder="e.g. Shoulders, Push">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Partner Mode</label>
+          <select class="form-input" id="addPartner">
+            <option value="solo">Solo</option>
+            <option value="partner">Partner (simultaneous)</option>
+            <option value="igyo">I-Go-You-Go (alternating)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Equipment Required (comma separated)</label>
+        <input class="form-input" id="addEquipReq" placeholder="e.g. barbell, pull-up-bar, box">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags (comma separated)</label>
+        <input class="form-input" id="addTags" placeholder="e.g. barbell, pressing, conditioning">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Movements / Description *</label>
+        <textarea class="form-input form-textarea" id="addMovements" placeholder="e.g. 3 Rounds:&#10;10 Deadlifts (225 lb)&#10;15 Box Jumps&#10;20 KB Swings"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Coach Notes (optional)</label>
+        <input class="form-input" id="addNotes" placeholder="e.g. Keep a neutral spine on deadlifts.">
+      </div>
+      <div style="display:flex;gap:0.75rem;margin-top:0.5rem;flex-wrap:wrap;align-items:center;">
+        <button class="btn-primary" onclick="saveCustomWod(true)">Add to Top of Feed</button>
+        <button class="btn-secondary" onclick="saveCustomWod(false)">Add to End of Feed</button>
+        <button class="btn-secondary" onclick="clearAddForm()" style="margin-left:auto;">Clear</button>
+      </div>
+      <div id="addError" style="color:var(--red);font-size:0.8rem;margin-top:0.6rem;display:none;"></div>
+    </div>
+    <div style="margin-top:2rem;">
+      <div class="section-label">Your Custom WODs</div>
+      <div id="customWodList" style="margin-top:0.75rem;"></div>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="view" id="view-equipment">
+    <div class="equip-note">
+      ✅ <strong>Have it</strong> — check to include in your feed. &nbsp;❌ <strong>Don't Have</strong> section — check to permanently block those movements from appearing.
+    </div>
+    <div id="equipmentPanels"></div>
+    <div class="equip-section">
+      <div class="equip-section-title">Add Custom Equipment</div>
+      <div class="equip-add-row">
+        <input class="form-input" id="customEquipName" placeholder="Equipment name (e.g. Ski Erg)" style="flex:1;">
+        <button class="btn-primary" onclick="addCustomEquipment()" style="font-size:0.85rem;padding:0.45rem 1rem;">Add</button>
+      </div>
+      <div id="customEquipList" style="margin-top:0.75rem;"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- LUCKY MODAL -->
+<div class="modal-overlay" id="luckyModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('luckyModal')">✕</button>
+    <div class="modal-title">🎲 I'm Feeling Lucky</div>
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem;">Only uses equipment you have. Respects your recent muscle groups.</div>
+    <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+      <input class="form-input" id="luckyMovement" placeholder="Include a movement? (optional)" style="flex:1;min-width:150px;">
+      <button class="btn-primary" onclick="rollLucky()">Roll</button>
+    </div>
+    <div class="lucky-result" id="luckyResult">
+      <div class="lucky-result-name" id="luckyName"></div>
+      <div id="luckyPartnerBadge"></div>
+      <div class="wod-movements" id="luckyMovements" style="font-size:0.9rem;"></div>
+      <div class="wod-notes" id="luckyNotes" style="margin-top:0.4rem;"></div>
+      <div style="display:flex;gap:0.5rem;margin-top:1rem;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="rollLucky()" style="font-size:0.85rem;padding:0.4rem 0.9rem;">Roll Again</button>
+        <button class="btn-secondary" onclick="addLuckyToFeed()">Add to Feed</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Historical date modal -->
-<div class="modal-overlay" id="historicalModalOverlay">
+<!-- IG CAPTION MODAL -->
+<div class="modal-overlay" id="igModal">
   <div class="modal">
-    <h3>Log historical period</h3>
-    <p>Add a past confirmed period start date to improve prediction accuracy.</p>
-    <div class="modal-fields">
-      <div class="field-row">
-        <label>Period start date</label>
-        <input type="date" id="histStartDate">
-      </div>
-      <div class="field-row">
-        <label>Period duration (days)</label>
-        <input type="number" id="histDuration" value="5" min="1" max="10">
-      </div>
-      <div class="field-row">
-        <label>Notes (optional)</label>
-        <textarea id="histNotes" placeholder="e.g. heavy flow, cramps, mood..."></textarea>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeHistoricalModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitHistorical()">Save</button>
-    </div>
+    <button class="modal-close" onclick="closeModal('igModal')">✕</button>
+    <div class="modal-title">📸 Instagram Caption</div>
+    <div class="ig-caption-box" id="igCaptionText"></div>
+    <button class="copy-btn" onclick="copyCaption()">Copy Caption</button>
   </div>
 </div>
 
-<!-- Set start modal -->
-<div class="modal-overlay" id="startModalOverlay">
-  <div class="modal">
-    <h3>Set last period start</h3>
-    <p>Enter the first day of your wife's most recent period. This anchors all quarter predictions.</p>
-    <div class="modal-fields">
-      <div class="field-row">
-        <label>Last period start date</label>
-        <input type="date" id="startDateInput">
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeStartModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveStartDate()">Save</button>
-    </div>
-  </div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ── Data ──────────────────────────────────────────────────────────────────────
-const PHASE_DATA = {
-  menstrual: {
-    label: 'Menstrual',
-    color: 'var(--menstrual)',
-    moods: ['Fatigued', 'Introspective', 'Low energy', 'Cramps possible', 'Need comfort'],
-    hormones: { estrogen: 10, progesterone: 5, lh: 5, fsh: 20 },
-    desc: 'Hormone levels are at their lowest. She may feel tired, withdrawn, and need extra rest and comfort. This is a time for gentleness—avoid big decisions or confrontations.',
-  },
-  follicular: {
-    label: 'Follicular',
-    color: 'var(--follicular)',
-    moods: ['Rising energy', 'Optimistic', 'Social', 'Creative', 'Open to plans'],
-    hormones: { estrogen: 60, progesterone: 10, lh: 30, fsh: 55 },
-    desc: "Estrogen rises and she'll feel increasingly energetic, positive, and social. Great time for new plans, adventures, and meaningful conversations.",
-  },
-  ovulation: {
-    label: 'Ovulation',
-    color: 'var(--ovulation)',
-    moods: ['Peak confidence', 'High libido', 'Articulate', 'Magnetic', 'Socially sharp'],
-    hormones: { estrogen: 90, progesterone: 20, lh: 100, fsh: 70 },
-    desc: 'Peak estrogen and an LH surge. She\'s likely at her most confident, communicative, and socially vibrant. Excellent time for important conversations, date nights, and connection.',
-  },
-  luteal: {
-    label: 'Luteal',
-    color: 'var(--luteal)',
-    moods: ['Reflective', 'Sensitive', 'PMS possible', 'Need reassurance', 'Emotionally deep'],
-    hormones: { estrogen: 50, progesterone: 85, lh: 10, fsh: 15 },
-    desc: 'Progesterone dominates. Mood can shift—she may feel more sensitive, irritable, or anxious, especially in the later days. Extra patience, reassurance, and low-pressure environments help enormously.',
-  },
+// =====================================================================
+// EQUIPMENT CATALOG
+// Each item has: id, name, detail, category, tags (used to match workouts)
+// =====================================================================
+const EQUIP_CATALOG = {
+  "Barbell & Weights": [
+    {id:"barbell", name:"Barbell (x2)", detail:"Two barbells available", tags:["barbell"]},
+    {id:"bumper260", name:"Bumper Plates", detail:"260 lb total", tags:["barbell","heavy-barbell"]},
+    {id:"metal160", name:"Metal Plates", detail:"160 lb + micro plates (5/2.5 lb)", tags:["barbell","metal-plates"]},
+    {id:"squat_rack", name:"Squat Rack", detail:"Collapsible, with trap-bar squat attachment", tags:["squat-rack","back-squat","front-squat"]},
+    {id:"adj_bench", name:"Adjustable Bench", detail:"Full incline/decline range", tags:["bench","incline-bench","decline-bench"]},
+    {id:"landmine", name:"Landmine Attachment", detail:"Rotational & unilateral work", tags:["landmine"]},
+  ],
+  "Bodyweight / Gymnastics": [
+    {id:"pullup_bar", name:"Pull-Up Bars (x2)", detail:"Two bars available", tags:["pull-up-bar","pull-ups","muscle-ups"]},
+    {id:"dip_rings", name:"Dip Rings", detail:"Ring dips, push-ups, rows, muscle-ups", tags:["rings","ring-dips","ring-rows","muscle-ups"]},
+    {id:"weight_belt", name:"Weight Belt & Chain", detail:"Weighted pull-ups and dips", tags:["weight-belt","weighted-pull-ups","weighted-dips"]},
+    {id:"jump_rope", name:"Speed Jump Ropes", detail:"Double-unders capable", tags:["jump-rope","double-unders","singles"]},
+  ],
+  "Accessories & Stations": [
+    {id:"box", name:"Box (single)", detail:"Box jumps, step-ups, stepovers", tags:["box","box-jumps","step-ups","stepovers"]},
+    {id:"foot_roller", name:"Foot Roller", detail:"Bulgarian split squats + decline GHD sit-ups (with bench)", tags:["foot-roller","bulgarian-split-squat","ghd-situps"]},
+  ],
+  "Kettlebells": [
+    {id:"kb_170", name:"170 lb KB", detail:"Single heavy bell", tags:["kettlebell","heavy-kb"]},
+    {id:"kb_50x2", name:"50 lb KB (x2)", detail:"Pair — double KB work", tags:["kettlebell","double-kb"]},
+    {id:"kb_35", name:"35 lb KB", detail:"", tags:["kettlebell"]},
+    {id:"kb_20", name:"20 lb KB", detail:"Lighter conditioning work", tags:["kettlebell"]},
+    {id:"kb_15", name:"15 lb KB", detail:"", tags:["kettlebell"]},
+    {id:"kb_10", name:"10 lb KB", detail:"", tags:["kettlebell"]},
+    {id:"kb_5", name:"5 lb KB", detail:"Warm-up / mobility", tags:["kettlebell"]},
+  ],
+  "Dumbbells": [
+    {id:"db_50x2", name:"50 lb Dumbbells (x2)", detail:"Bumper style — pair available", tags:["dumbbell","heavy-db"]},
+  ],
+  "Sandbag": [
+    {id:"sandbag", name:"Variable Sandbag", detail:"4 × 50 lb inserts — use 50/100/150/200 lb", tags:["sandbag"]},
+    {id:"sandbag_inserts", name:"Sandbag Inserts (solo)", detail:"50 lb each — use independently", tags:["sandbag","sandbag-insert"]},
+  ],
+  "❌ Don't Have (blocks these from feed)": [
+    {id:"wall_ball", name:"Wall Ball", detail:"Substituted with KB goblet press", tags:["wall-ball"]},
+    {id:"rope_climb", name:"Rope Climb", detail:"", tags:["rope-climb"]},
+    {id:"rower", name:"Rowing Machine", detail:"", tags:["rower","rowing-machine"]},
+    {id:"assault_bike", name:"Assault / Air Bike", detail:"", tags:["assault-bike"]},
+    {id:"ski_erg", name:"Ski Erg", detail:"", tags:["ski-erg"]},
+    {id:"ghd_machine", name:"GHD Machine", detail:"We use foot roller + bench instead", tags:["ghd-machine"]},
+    {id:"plyo_box_set", name:"Multiple Boxes", detail:"Only have one box", tags:["multiple-boxes"]},
+    {id:"pegboard", name:"Pegboard", detail:"", tags:["pegboard"]},
+  ],
 };
 
-const HORMONE_COLORS = {
-  estrogen: '#c084fc',
-  progesterone: '#fb923c',
-  lh: '#34d399',
-  fsh: '#60a5fa',
-};
+// Default equipment (everything Ryan listed)
+const DEFAULT_EQUIPMENT = [
+  "barbell","bumper260","metal160","squat_rack","adj_bench","landmine",
+  "pullup_bar","dip_rings","weight_belt","jump_rope",
+  "box","foot_roller",
+  "kb_170","kb_50x2","kb_35","kb_20","kb_15","kb_10","kb_5",
+  "db_50x2",
+  "sandbag","sandbag_inserts"
+];
 
-let cycleLength = 26;
-let lastPeriodStart = null;
-let confirmations = [];
-let moments = [];
-let pendingQuarterIdx = null;
-let pendingMomentDate = null;
+// =====================================================================
+// WORKOUT LIBRARY
+// equipReq: array of equipment tag IDs — workout is only shown if all are available
+// partnerMode: "solo" | "partner" | "igyo" (I-Go-You-Go)
+// =====================================================================
+const WORKOUT_LIBRARY = [
+  // ---- SHOULDERS / PUSH ----
+  {id:1, name:"Shoulder Smasher", focus:["Shoulders","Push"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"5 Rounds:\n15 Shoulder Press (95/65 lb)\n12 Push Press\n9 Push Jerk\n:30 rest",
+   notes:"Increase weight each round if form holds.", tags:["shoulders","barbell","pressing"]},
 
-// ── Persist ───────────────────────────────────────────────────────────────────
-function load() {
-  try {
-    const d = JSON.parse(localStorage.getItem('cycleData') || '{}');
-    cycleLength = d.cycleLength || 26;
-    lastPeriodStart = d.lastPeriodStart ? new Date(d.lastPeriodStart) : null;
-    confirmations = d.confirmations || [];
-    moments = d.moments || [];
-  } catch(e) {}
+  {id:2, name:"Delta Force", focus:["Shoulders","Accessory"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar","dumbbell"],
+   movements:"21-15-9:\nHandstand Push-Ups (scale: Pike Push-Ups)\nDB Lateral Raises (20/15 lb)\n\n3 × Max Effort L-Sit Hold",
+   notes:"Scale HSPU to Pike Push-Ups or DB Press.", tags:["shoulders","gymnastics","accessory"]},
+
+  {id:3, name:"Overhead Assault", focus:["Shoulders","Push"], type:"EMOM", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["barbell","dumbbell"],
+   movements:"EMOM 20:\nOdd: 5 Strict Press @ 80%\nEven: 10 DB Arnold Press (50 lb DBs)\n\nFinisher: 50 Banded Pull-Aparts",
+   notes:"Control the descent on every rep.", tags:["shoulders","barbell","emom"]},
+
+  {id:4, name:"Press Conference", focus:["Shoulders","Core"], type:"For Time", timecap:"22 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"4 Rounds:\n10 Push Press\n10 Front Rack Reverse Lunges\n20 Hollow Rocks\n200m Run",
+   notes:"Keep elbows high in the front rack.", tags:["shoulders","lunges","core"]},
+
+  {id:5, name:"Shoulder Armor", focus:["Shoulders","Prehab"], type:"Prehab Circuit", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["dumbbell"],
+   movements:"4 Rounds:\n15 DB Lateral Raises\n12 DB External Rotations\n10 DB Front Raises\n10 Prone Y-T-W\n:45 rest",
+   notes:"Light weight, high reps. Feel the stabilizers — not the traps.", tags:["shoulders","prehab","accessory"]},
+
+  // ---- BACK / PULL ----
+  {id:6, name:"Back Attack", focus:["Back","Pull"], type:"Strength + Metcon", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["barbell","pull-up-bar"],
+   movements:"Strength: 5-5-5 Deadlift (build heavy)\n\nMetcon — 3 Rounds:\n12 Bent Over Rows\n10 Pull-Ups\n8 Single-Arm DB Row (each side, 50 lb DB)",
+   notes:"Brace your core tight on every deadlift.", tags:["back","deadlift","pull"]},
+
+  {id:7, name:"Row & Pull Ladder", focus:["Back","Pull"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar"],
+   movements:"10-9-8-7-6-5-4-3-2-1:\nPull-Ups\nRing Rows\n\n(Between each round: 10 KB Swings, 35 lb KB)",
+   notes:"Pace the pull-ups — short sets beat big sets that break.", tags:["back","pull-ups","rings","kettlebell"]},
+
+  {id:8, name:"Rhomboid Riot", focus:["Back","Accessory"], type:"Circuit", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["rings","dumbbell"],
+   movements:"4 Rounds:\n12 Ring Rows (feet elevated)\n10 DB Seal Rows (50 lb)\n12 Band Pull-Aparts\n10 GHD Hip Extensions (foot roller + bench)\n:45 rest",
+   notes:"Squeeze shoulder blades hard every rep.", tags:["back","accessory","rings"]},
+
+  {id:9, name:"Deadlift Domination", focus:["Back","Posterior Chain"], type:"Strength + AMRAP", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["barbell","kettlebell","box"],
+   movements:"Deadlift:\n3×5 @ 75% · 1×3 @ 85% · 1×1+ @ 95%\n\nAMRAP 12:\n10 KB Swings (53 lb)\n10 Box Jumps\n10 Toes-to-Bar",
+   notes:"Log your 1RM and track percentages each cycle.", tags:["back","deadlift","kettlebell"]},
+
+  {id:10, name:"Weighted Pull-Up Builder", focus:["Back","Pull"], type:"Strength", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar","weight-belt"],
+   movements:"Weighted Pull-Ups:\n5-5-3-3-1-1 (build to heavy)\n\nSuperset each set:\n10 Ring Rows\n\nFinisher: 3×Max Unweighted Pull-Ups (rest 2 min between)",
+   notes:"Full dead hang start every rep. No kipping.", tags:["back","weighted-pull-ups","rings"]},
+
+  // ---- BENCH / CHEST ----
+  {id:11, name:"Bench Mark", focus:["Chest","Bench Press"], type:"Strength", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["barbell","bench"],
+   movements:"Bench Press:\n5-5-3-3-1-1 (build to max)\n\nSuperset each set: 10 DB Chest Flyes (50 lb DBs)\n\nFinisher: 3×15 Dips (rings)",
+   notes:"Feet flat, arch controlled, touch chest.", tags:["chest","bench","dumbbell"]},
+
+  {id:12, name:"Pressing Matters", focus:["Chest","Triceps"], type:"Circuit", timecap:"28 MIN",
+   partnerMode:"solo", equipReq:["barbell","bench","rings"],
+   movements:"3 Rounds:\n10 Bench Press (moderate)\n10 Close-Grip Bench Press\n12 Ring Dips\n15 Push-Ups\n:60 rest",
+   notes:"Narrow grip activates triceps more.", tags:["chest","triceps","rings"]},
+
+  {id:13, name:"Chest Day Chaos", focus:["Chest","Push"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["bench","rings","dumbbell"],
+   movements:"AMRAP 20:\n10 Push-Ups\n8 DB Bench Press (50 lb DBs)\n6 Ring Dips\n4 Ring Push-Ups",
+   notes:"Go heavier on DB bench as fatigue sets in.", tags:["chest","push-ups","rings"]},
+
+  {id:14, name:"Incline & Dip Day", focus:["Chest","Accessory"], type:"Superset Circuit", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["bench","barbell","rings","weight-belt"],
+   movements:"3 Rounds:\n8 Incline Bench Press (build)\n10 Weighted Dips (belt + chain)\n12 DB Incline Flyes\n:90 rest",
+   notes:"Incline hits upper chest — your weakest link in pressing.", tags:["chest","bench","weighted-dips"]},
+
+  // ---- LEGS / SQUAT ----
+  {id:15, name:"Squat Therapy", focus:["Legs","Squat"], type:"Strength + Metcon", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["squat-rack","barbell","box","kettlebell"],
+   movements:"Back Squat: 5×3 (heavy)\n\nMetcon — For Time:\n50 KB Goblet Squat + Press (20 lb KB, sub for wall ball)\n40 Box Jumps\n30 Front Squats (95/65 lb)\n20 Goblet Squats (53 lb KB)",
+   notes:"Hit depth on every squat rep — no shortcuts.", tags:["legs","squat","kettlebell"]},
+
+  {id:16, name:"Bulgarian Death", focus:["Legs","Accessory"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["foot-roller","kettlebell"],
+   movements:"Buy In: 400m Run\n\n4 Rounds:\n12 Bulgarian Split Squats each leg (35 lb KB)\n15 Goblet Squats (53 lb KB)\n12 KB Swings (53 lb)\n\nCash Out: 400m Run",
+   notes:"Foot roller for rear foot elevation. Control the descent.", tags:["legs","bulgarian-split-squat","kettlebell"]},
+
+  {id:17, name:"Leg Day Test", focus:["Legs","Conditioning"], type:"AMRAP", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["kettlebell","box"],
+   movements:"AMRAP 30:\n400m Run\n20 Air Squats\n15 KB Swings (53 lb)\n10 Step-Ups (box, 50 lb DBs)",
+   notes:"Consistent pacing is the key.", tags:["legs","running","kettlebell"]},
+
+  {id:18, name:"Sandbag Legs", focus:["Legs","Posterior Chain"], type:"Circuit", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["sandbag","box"],
+   movements:"4 Rounds:\n10 Sandbag Back Squats (100 lb)\n10 Sandbag Good Mornings\n10 Box Step-Overs (sandbag on shoulder)\n12 KB Swings (heavy)\n:90 rest",
+   notes:"Use 2 inserts (100 lb) for squats. Drop to 1 (50 lb) for step-overs.", tags:["legs","sandbag","posterior"]},
+
+  // ---- GYMNASTICS / BODY MOVEMENT ----
+  {id:19, name:"Bodyweight Beatdown", focus:["Body Movement","Gymnastics"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar","rings"],
+   movements:"5 Rounds:\n10 Pull-Ups\n10 Ring Dips\n10 Toes-to-Bar\n20 Air Squats\n20 Push-Ups\n:30 rest",
+   notes:"Strict movements only. No kipping on pull-ups.", tags:["gymnastics","bodyweight","core"]},
+
+  {id:20, name:"Ring Thing", focus:["Body Movement","Gymnastics"], type:"Circuit", timecap:"28 MIN",
+   partnerMode:"solo", equipReq:["rings"],
+   movements:"4 Rounds:\n8 Ring Rows\n6 Ring Push-Ups\n4 Ring Dips\n2 Ring Muscle-Ups (or 8 transitions)\n:90 rest",
+   notes:"Scale muscle-ups to jumping muscle-ups or transitions.", tags:["rings","gymnastics"]},
+
+  {id:21, name:"Murph Lite", focus:["Body Movement","Cardio"], type:"For Time", timecap:"45 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar"],
+   movements:"800m Run\n50 Pull-Ups\n100 Push-Ups\n150 Air Squats\n800m Run\n\nPartition as needed",
+   notes:"Vest optional. Partition any way — 5/10/15 works well.", tags:["benchmark","bodyweight","running"]},
+
+  {id:22, name:"Double-Under Death", focus:["Cardio","Body Movement"], type:"For Time", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["jump-rope","pull-up-bar"],
+   movements:"5 Rounds:\n50 Double-Unders\n15 Pull-Ups\n10 Burpees",
+   notes:"Shake out the forearms between rounds.", tags:["jump-rope","pull-ups","cardio"]},
+
+  {id:23, name:"Weighted Bodyweight", focus:["Body Movement","Strength"], type:"Strength", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar","rings","weight-belt"],
+   movements:"Weighted Pull-Ups: 3×5 (build)\nWeighted Dips: 3×8 (belt + chain)\nWeighted Ring Dips: 3×6\n\nFinisher: 3×Max Unweighted Pull-Ups",
+   notes:"Belt and chain opens up progressive overload on bodyweight.", tags:["weighted-pull-ups","weighted-dips","gymnastics"]},
+
+  // ---- OLYMPIC LIFTING ----
+  {id:24, name:"Clean Scene", focus:["Olympic Lifting","Full Body"], type:"Skill + Metcon", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["barbell","box"],
+   movements:"Skill: Power Clean 5×3 @ 70%\n\nMetcon — AMRAP 15:\n5 Power Cleans (135/95 lb)\n10 Front Squats\n15 Box Jumps",
+   notes:"Drive elbows up fast in the clean catch.", tags:["olympic","cleans","full-body"]},
+
+  {id:25, name:"Snatch Session", focus:["Olympic Lifting","Shoulders"], type:"Skill + Conditioning", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["barbell","jump-rope"],
+   movements:"Hang Power Snatch: 5×3 (technique focus)\n\n3 Rounds For Time:\n7 Snatches (75/55 lb)\n14 Overhead Squats\n21 Double-Unders",
+   notes:"Locked-out arms overhead. Do not rush the catch.", tags:["olympic","snatch","overhead"]},
+
+  {id:26, name:"Landmine Complex", focus:["Full Body","Olympic Lifting"], type:"AMRAP", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["landmine","barbell"],
+   movements:"AMRAP 25:\n5 Landmine Press (each arm)\n5 Landmine Row (each arm)\n5 Landmine Rotational Press\n10 Landmine Squats\n\n200m Run between rounds",
+   notes:"Landmine reduces shoulder stress vs strict barbell.", tags:["landmine","full-body","unilateral"]},
+
+  // ---- CARDIO / CONDITIONING ----
+  {id:27, name:"Engine Builder", focus:["Cardio","Conditioning"], type:"For Time", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["jump-rope","kettlebell"],
+   movements:"800m Run\n3 Rounds:\n50 Double-Unders\n20 Burpees\n15 KB Swings (53 lb)\n800m Run",
+   notes:"Second run should be faster. Bank time in the middle.", tags:["cardio","running","jump-rope","conditioning"]},
+
+  {id:28, name:"Chipper", focus:["Conditioning","Full Body"], type:"For Time", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["kettlebell","box","barbell","pull-up-bar"],
+   movements:"For Time (one pass):\n50 KB Swings (35 lb)\n40 Box Jumps\n30 Pull-Ups\n20 Toes-to-Bar\n10 Thrusters (95/65 lb)\n20 Toes-to-Bar\n30 Push-Ups\n40 Air Squats\n50 Double-Unders",
+   notes:"Attack the first half, survive the second.", tags:["chipper","full-body","conditioning"]},
+
+  {id:29, name:"The Grunt", focus:["Conditioning","Barbell"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["barbell","pull-up-bar","box"],
+   movements:"AMRAP 20:\n5 Thrusters (95/65 lb)\n10 Pull-Ups\n15 Box Jumps",
+   notes:"Classic Fran-adjacent. Steady pace = more rounds.", tags:["thrusters","pull-ups","conditioning"]},
+
+  // ---- KETTLEBELL ----
+  {id:30, name:"Kettle Logic", focus:["Kettlebell","Full Body"], type:"AMRAP", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["kettlebell"],
+   movements:"AMRAP 25:\n10 KB Swings (heavy — 70 lb)\n10 Goblet Squats (53 lb)\n10 KB Clean & Press (each arm, 35 lb)\n10 KB Romanian Deadlifts (53 lb)",
+   notes:"One KB at a time. No rushing transitions.", tags:["kettlebell","full-body","swings"]},
+
+  {id:31, name:"Double KB Domination", focus:["Kettlebell","Shoulders"], type:"EMOM", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["double-kb"],
+   movements:"EMOM 20:\nOdd: 5 Double KB Clean & Press (2×50 lb)\nEven: 8 Double KB Front Squats\n\nFinisher: 3×10 Double KB Swings",
+   notes:"Two 50s means serious load. Clean every rep.", tags:["kettlebell","double-kb","shoulders"]},
+
+  {id:32, name:"KB Complex Hell", focus:["Kettlebell","Stability"], type:"EMOM", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["kettlebell"],
+   movements:"EMOM 20 (alternating):\nOdd: 3 KB Turkish Get-Ups each side (35 lb)\nEven: 10 KB Windmills each side (20 lb)",
+   notes:"TGU is a full-body diagnostic. Go light and controlled.", tags:["kettlebell","stability","tgu"]},
+
+  {id:33, name:"Sandbag & KB Grind", focus:["Kettlebell","Conditioning"], type:"For Time", timecap:"28 MIN",
+   partnerMode:"solo", equipReq:["kettlebell","sandbag"],
+   movements:"5 Rounds:\n20 KB Swings (53 lb)\n10 Sandbag Cleans (100 lb)\n15 Goblet Squats (53 lb)\n200m Sandbag Carry (50 lb)",
+   notes:"Sandbag carry — bear hug or shoulder. Pick what's faster.", tags:["kettlebell","sandbag","conditioning"]},
+
+  // ---- CORE ----
+  {id:34, name:"Core Ignition", focus:["Core","Accessory"], type:"Circuit", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["foot-roller","pull-up-bar"],
+   movements:"4 Rounds:\n20 GHD Sit-Ups (foot roller + declined bench)\n15 Toes-to-Bar\n10 L-Sit Compressions\n20 Russian Twists (20 lb KB)\n:45 rest",
+   notes:"Slow and controlled beats fast and sloppy here.", tags:["core","accessory","ghd-situps"]},
+
+  {id:35, name:"Ab Factory", focus:["Core","Stability"], type:"EMOM", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:[],
+   movements:"EMOM 20:\nMin 1: 30s Plank Hold\nMin 2: 15 V-Ups\nMin 3: 20 Hollow Rocks\nMin 4: 10 Strict Toes-to-Bar",
+   notes:"Quality over quantity. Brace the entire time.", tags:["core","stability","bodyweight"]},
+
+  // ---- MIXED MODAL ----
+  {id:36, name:"Dojo Special", focus:["Mixed Modal","Full Body"], type:"For Time", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"3 Rounds:\n400m Run\n15 Deadlifts (225/155 lb)\n12 Hang Power Cleans\n9 Front Squats\n6 Push Jerks",
+   notes:"All movements from the same bar.", tags:["barbell","running","complex"]},
+
+  {id:37, name:"Heavy Metal", focus:["Strength","Full Body"], type:"Strength Circuit", timecap:"40 MIN",
+   partnerMode:"solo", equipReq:["squat-rack","barbell","bench"],
+   movements:"5 Rounds (every 6 min):\n3 Back Squats @ 80%\n3 Bench Press @ 80%\n3 Deadlifts @ 80%\n\nRest remaining time in interval",
+   notes:"Log weights. Beat them next block.", tags:["strength","powerlifting","barbell"]},
+
+  {id:38, name:"Grip Reaper", focus:["Grip","Pulling"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar","dumbbell"],
+   movements:"AMRAP 20:\n5 Deadhangs (:10 each)\n10 Farmer Carry Steps (50 lb DBs)\n10 Toes-to-Bar\n5 Hang Hold to Max",
+   notes:"Chalk up. Forearm pump is expected and intended.", tags:["grip","gymnastics","pulling"]},
+
+  {id:39, name:"Triple Threat Complex", focus:["Full Body","Barbell"], type:"For Time", timecap:"28 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"7 Rounds:\n7 Thrusters (95/65 lb)\n7 Hang Power Cleans\n7 Sumo Deadlift High Pulls\n200m Run",
+   notes:"Barbell never touches the ground within a round.", tags:["barbell","complex","conditioning"]},
+
+  {id:40, name:"Dojo Deload", focus:["Active Recovery","Mobility"], type:"Flow", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["foot-roller"],
+   movements:"Easy 800m Run\n\n3 Rounds:\n10 PVC Pass-Throughs\n10 Hip 90/90 Rotations\n:30 Pigeon (each side)\n10 Cat-Cow\n:45 Couch Stretch (each side, foot roller)\n\nCool-down: 400m Walk",
+   notes:"This is intentional recovery — not laziness.", tags:["deload","mobility","recovery"]},
+
+  {id:41, name:"The Awakening", focus:["Full Body","Benchmark"], type:"For Time", timecap:"40 MIN",
+   partnerMode:"solo", equipReq:["barbell","pull-up-bar"],
+   movements:"For Time:\n1 Mile Run\n50 Thrusters (45 lb)\n30 Pull-Ups\n\nScale: 800m / 35 lb / Ring Rows",
+   notes:"Log your time — this is a benchmark to beat.", tags:["benchmark","full-body","barbell"]},
+
+  {id:42, name:"Posterior Chain Party", focus:["Back","Legs"], type:"Strength + Metcon", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["barbell","kettlebell","box","foot-roller"],
+   movements:"Romanian Deadlift: 4×8\n\n4 Rounds:\n10 KB Swings (heavy)\n10 GHD Hip Extensions (foot roller + bench decline)\n10 Box Jumps\n:45 rest",
+   notes:"Hinge at the hips — do not round the lower back.", tags:["posterior","deadlift","kettlebell"]},
+
+  {id:43, name:"Sandbag Sufferfest", focus:["Conditioning","Full Body"], type:"For Time", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["sandbag","box"],
+   movements:"5 Rounds:\n10 Sandbag Squats (150 lb)\n10 Sandbag Box Step-Overs (100 lb)\n10 Sandbag Ground-to-Shoulder (each side, 50 lb insert)\n400m Sandbag Carry (50 lb)",
+   notes:"Vary the carry position each round — shoulder, bear hug, zercher.", tags:["sandbag","conditioning","carry"]},
+
+  // ---- PARTNER WODS ----
+  {id:44, name:"The Ryan & Marc", focus:["Mixed Modal","Partner"], type:"I-Go-You-Go", timecap:"35 MIN",
+   partnerMode:"igyo", equipReq:["box","kettlebell"],
+   movements:"I-Go-You-Go — Partner alternates full rounds:\n\n10 Rounds total (5 each):\n10 Burpee Box Jumps\n15 KB Swings (53 lb)\n10 Box Step-Overs\n\nFinisher (together):\n100 Partner Sit-Ups (feet locked)",
+   notes:"While one person works, the other rests. No resting on your rest.", tags:["partner","igyo","full-body","box"]},
+
+  {id:45, name:"Dojo Doubles", focus:["Conditioning","Partner"], type:"I-Go-You-Go", timecap:"30 MIN",
+   partnerMode:"igyo", equipReq:["barbell","pull-up-bar"],
+   movements:"I-Go-You-Go:\n\nPartner A completes full round, then Partner B:\n\n8 Rounds total (4 each):\n400m Run\n10 Deadlifts (225 lb)\n15 Pull-Ups",
+   notes:"Serious load. Pacing the run early pays off later.", tags:["partner","igyo","barbell","pull-ups"]},
+
+  {id:46, name:"Sunday Funday", focus:["Conditioning","Partner"], type:"Partner AMRAP", timecap:"30 MIN",
+   partnerMode:"partner", equipReq:["kettlebell"],
+   movements:"Partner AMRAP 30 (divide reps as needed):\n400m Run (together)\n40 KB Swings (35 lb)\n40 Push-Ups\n40 Air Squats\n20 Pull-Ups\n\n(Repeat)",
+   notes:"Run together, split the reps however you want.", tags:["partner","conditioning","bodyweight"]},
+
+  {id:47, name:"Box Stepover Beatdown", focus:["Legs","Cardio"], type:"I-Go-You-Go", timecap:"25 MIN",
+   partnerMode:"igyo", equipReq:["box","kettlebell","sandbag"],
+   movements:"I-Go-You-Go — 8 rounds each:\n\n10 Box Stepovers (24\" box)\n15 KB Swings (53 lb)\n10 Sandbag Ground-to-Shoulder (50 lb insert, each side)",
+   notes:"Box stepovers: fully extend hips at top of each rep.", tags:["partner","igyo","box","sandbag"]},
+
+  {id:48, name:"Sandbag Relay", focus:["Conditioning","Partner"], type:"I-Go-You-Go", timecap:"20 MIN",
+   partnerMode:"igyo", equipReq:["sandbag"],
+   movements:"I-Go-You-Go:\n\nPartner A carries sandbag 200m (100 lb), Partner B holds plank\nSwitch\n\nRepeat 5 rounds each\n\nFinisher: 3 Rounds Together:\n10 Sandbag Squats (150 lb)\n10 Sandbag Cleans",
+   notes:"Communication on the handoff. Don't drop the bag.", tags:["partner","sandbag","carry"]},
+
+  // ---- FROM YOUR TRAINING LOG ----
+
+  {id:49, name:"Cindy", focus:["Body Movement","Benchmark"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar"],
+   movements:"AMRAP 20:\n5 Pull-Ups\n10 Push-Ups\n15 Air Squats",
+   notes:"Classic Girl WOD. Count your rounds — this is a benchmark to beat every time.", tags:["benchmark","cindy","bodyweight","pull-ups"]},
+
+  {id:50, name:"Cindy + Cleans EMOM", focus:["Body Movement","Olympic Lifting"], type:"EMOM", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar","barbell"],
+   movements:"EMOM 20:\nOdd Minutes: 5 Pull-Ups / 10 Push-Ups / 15 Air Squats\nEven Minutes: 3 Power Cleans (135/155 lb)",
+   notes:"The cleans on even minutes are your active rest from Cindy. Don't rush them.", tags:["cindy","cleans","emom","benchmark"]},
+
+  {id:51, name:"Partner Cindy + Clean Buy-In", focus:["Body Movement","Partner"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"igyo", equipReq:["pull-up-bar","barbell"],
+   movements:"Buy-In (both athletes): 10 Power Cleans @ 135–155 lb\n\nThen I-Go-You-Go AMRAP 20:\n5 Pull-Ups\n10 Push-Ups\n15 Air Squats\n\nOne partner works at a time.",
+   notes:"Get the buy-in done fast and efficiently — it eats into your AMRAP time.", tags:["partner","igyo","cindy","cleans"]},
+
+  {id:52, name:"Helen", focus:["Cardio","Benchmark"], type:"For Time", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["kettlebell","pull-up-bar"],
+   movements:"5 Rounds For Time:\n400m Run\n21 KB Swings (53/35 lb)\n12 Pull-Ups",
+   notes:"Classic Girl WOD. Push the runs — they set the pace for everything else.", tags:["benchmark","helen","running","kettlebell","pull-ups"]},
+
+  {id:53, name:"DT", focus:["Olympic Lifting","Benchmark"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"5 Rounds For Time:\n12 Deadlifts (155/105 lb)\n9 Hang Power Cleans\n6 Push Jerks\n\n(Same bar, same weight throughout)",
+   notes:"Hero WOD. Bar never touches the ground between deadlifts and cleans if you can help it.", tags:["benchmark","hero","dt","barbell","cleans"]},
+
+  {id:54, name:"Daniel", focus:["Full Body","Benchmark"], type:"For Time", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["barbell","pull-up-bar"],
+   movements:"For Time:\n50 Pull-Ups\n400m Run\n21 Thrusters (95/65 lb)\n800m Run\n21 Thrusters (95/65 lb)\n400m Run\n50 Pull-Ups",
+   notes:"Hero WOD. Break the pull-ups early — big sets will destroy your grip for thrusters.", tags:["benchmark","hero","daniel","thrusters","running"]},
+
+  {id:55, name:"Barbell Burner", focus:["Olympic Lifting","Conditioning"], type:"For Time", timecap:"28 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"5 Rounds For Time:\n9 Burpees Over Bar\n7 Hang Power Cleans\n5 Push Press\n3 Thrusters\n400m Run\n\nRX: 135 lb / Scaled: 95 lb\nGoal: 18 min / Cap: 28 min",
+   notes:"The descending rep scheme is deceptive — each round gets heavier feeling. Pace the runs.", tags:["barbell","cleans","thrusters","running","conditioning"]},
+
+  {id:56, name:"Power Clean Triplet", focus:["Olympic Lifting","Conditioning"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["barbell","pull-up-bar"],
+   movements:"7 Rounds For Time:\n7 Power Cleans (135/95 lb)\n7 Bar-Facing Burpees\n7 Toes-to-Bar",
+   notes:"Your actual logged WOD. Bar-facing burpees keep intensity high — don't slow-walk them.", tags:["cleans","burpees","toes-to-bar","barbell"]},
+
+  {id:57, name:"Nancy's Clean Cousin", focus:["Olympic Lifting","Cardio"], type:"For Time", timecap:"22 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"5 Rounds For Time:\n15 Power Cleans (moderate load)\n400m Run",
+   notes:"Choose a weight you can do in 1–2 sets each round. This is a cardio test, not a max effort.", tags:["cleans","running","benchmark"]},
+
+  {id:58, name:"Gretchen", focus:["Back","Body Movement"], type:"For Time", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"10 Rounds For Time:\n10 Bent-Over Rows\n10 Push-Ups\n10 Sit-Ups\n\nScale: DB/KB rows, incline push-ups\nTarget: 15–20 min",
+   notes:"Your logged WOD. Deceptively high volume. Keep rows strict — no hip bounce.", tags:["back","rows","push-ups","core"]},
+
+  {id:59, name:"LEO", focus:["Legs","Olympic Lifting"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"6 Rounds For Time:\n10 Front Squats (95/65 lb)\n10 Front Rack Reverse Lunges\n400m Run",
+   notes:"Your logged WOD. Front rack the whole time — elbows up, core tight on the lunges.", tags:["legs","front-squat","lunges","running","barbell"]},
+
+  {id:60, name:"Strength & Honor", focus:["Olympic Lifting","Conditioning"], type:"For Time", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"For Time:\n30 Clean & Jerks — Work 3:00 ON / 1:00 OFF\n\nThen:\n400m Run\nMax Clean & Jerks in remaining time\n\nRX: 135 lb",
+   notes:"Your logged WOD. Pace the first 30 — you'll need gas for the max effort at the end.", tags:["cleans","conditioning","barbell"]},
+
+  {id:61, name:"Clint E.", focus:["Shoulders","Cardio"], type:"AMRAP", timecap:"15 MIN",
+   partnerMode:"solo", equipReq:["dumbbell","jump-rope"],
+   movements:"AMRAP 15:\n150m Shuttle Run (25m down+back / 50m down+back)\n10 One-Arm DB Push Press (right arm, 50 lb)\n25 Double-Unders\n10 One-Arm DB Push Press (left arm, 50 lb)",
+   notes:"Your logged WOD. The shuttle run recovers your arms for the press.", tags:["shoulders","push-press","double-unders","running"]},
+
+  {id:62, name:"Weighted Vest Chipper", focus:["Conditioning","Full Body"], type:"For Time", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:[],
+   movements:"For Time (vest optional, no vest for sit-ups):\n100 Air Squats\n80 Alt Lunges\n60 Sit-Ups\n40 Push-Ups\n20 Burpees\n40 Push-Ups\n60 Sit-Ups\n80 Alt Lunges\n100 Air Squats",
+   notes:"Your logged WOD. Palindrome chipper — it gets harder going back up. Pace the squats.", tags:["chipper","conditioning","bodyweight","lunges"]},
+
+  {id:63, name:"KB Complex — Single Arm", focus:["Kettlebell","Full Body"], type:"Circuit", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["kettlebell"],
+   movements:"6 Rounds — Complete entire complex on ONE arm, then switch:\n\n10 KB Swings\n6 Hang Cleans\n6 Push Presses\n10 KB Halos (5 each direction)\n20s Overhead Hold\n\nOptional: 10 Overhead Sit-Ups or 10 Russian Twists per side\n\nRest 60–90 sec between rounds.",
+   notes:"Your logged WOD. Use hips on the clean — scoop under the bell, don't bang the forearm.", tags:["kettlebell","single-arm","complex","conditioning"]},
+
+  {id:64, name:"Active Recovery Flow", focus:["Active Recovery","Core"], type:"Circuit", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["kettlebell"],
+   movements:"4 Rounds | Not for Time:\n1. Single-Arm Farmer Carry — 50 ft each side\n2. KB Halos — 20 total (10 each direction)\n3. Overhead Hold — 30 sec per side\n4. Overhead Sit-Ups — 20 reps\n5. Russian Twists — 20 total (10 each side)\n6. Suitcase Carry — 60–90 sec (switch hands every 30s)",
+   notes:"Your logged recovery WOD. Control, posture, and breath — not speed.", tags:["recovery","core","kettlebell","carry"]},
+
+  {id:65, name:"Annie + Core", focus:["Core","Cardio"], type:"For Time", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["jump-rope"],
+   movements:"50-40-30-20-10:\nDouble-Unders\nSit-Ups\n\nFinisher — 3 Rounds:\n10 Russian Twists (each side)\n10 Goblet Squats",
+   notes:"Classic Annie with a core kicker. Unbroken double-under sets are the goal.", tags:["annie","double-unders","sit-ups","core","benchmark"]},
+
+  {id:66, name:"Chelsea", focus:["Body Movement","Benchmark"], type:"EMOM", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar"],
+   movements:"EMOM 30 (scale: EMOM 20):\n5 Pull-Ups\n10 Push-Ups\n15 Air Squats\n\nComplete all reps within the minute. Rest remaining time.",
+   notes:"Classic Girl WOD. If you can't finish in time, scale to 3/6/9.", tags:["benchmark","chelsea","emom","bodyweight","pull-ups"]},
+
+  {id:67, name:"Mary", focus:["Body Movement","Benchmark"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar"],
+   movements:"AMRAP 20:\n5 Handstand Push-Ups (scale: Pike Push-Ups)\n10 Pistols (alternating, scale: Goblet Squats)\n15 Pull-Ups",
+   notes:"Classic Girl WOD. Pistols are the limiter — practice transitions.", tags:["benchmark","mary","gymnastics","hspu","pistols"]},
+
+  {id:68, name:"Hansen", focus:["Conditioning","Full Body"], type:"For Time", timecap:"35 MIN",
+   partnerMode:"solo", equipReq:["kettlebell","foot-roller"],
+   movements:"5 Rounds For Time:\n30 KB Swings (70/53 lb)\n30 Burpees\n30 GHD Sit-Ups (foot roller + declined bench)",
+   notes:"Hero WOD. One of the hardest combinations in CrossFit. Pace rounds 1–2 or you won't finish.", tags:["hero","hansen","kettlebell","burpees","ghd-situps"]},
+
+  {id:69, name:"The Seven", focus:["Full Body","Benchmark"], type:"For Time", timecap:"45 MIN",
+   partnerMode:"solo", equipReq:["barbell","kettlebell","pull-up-bar"],
+   movements:"7 Rounds For Time:\n7 Handstand Push-Ups (scale: Pike)\n7 Thrusters (135/95 lb)\n7 Knees-to-Elbows\n7 Deadlifts (245/165 lb)\n7 Burpees\n7 KB Swings (70/53 lb)\n7 Pull-Ups",
+   notes:"Hero WOD honoring 7 CIA officers. Extremely high volume. Log your time.", tags:["hero","seven","benchmark","full-body","barbell"]},
+
+  {id:70, name:"Murph", focus:["Body Movement","Benchmark"], type:"For Time", timecap:"60 MIN",
+   partnerMode:"solo", equipReq:["pull-up-bar"],
+   movements:"For Time:\n1 Mile Run\n100 Pull-Ups\n200 Push-Ups\n300 Air Squats\n1 Mile Run\n\nPartition pull-ups/push-ups/squats as needed.\nVest optional (20 lb).",
+   notes:"Hero WOD. Cindy partition (5/10/15) = 20 rounds. Start conservative.", tags:["hero","murph","benchmark","running","pull-ups"]},
+
+  {id:71, name:"Mr. Joshua", focus:["Back","Conditioning"], type:"For Time", timecap:"40 MIN",
+   partnerMode:"solo", equipReq:["barbell","foot-roller"],
+   movements:"5 Rounds For Time:\n400m Run\n30 GHD Sit-Ups (foot roller + declined bench)\n15 Deadlifts (250/175 lb)",
+   notes:"Hero WOD. Heavy deadlifts after GHDs will test your lower back — brace hard.", tags:["hero","deadlift","ghd-situps","running"]},
+
+  {id:72, name:"McGhee", focus:["Back","Conditioning"], type:"AMRAP", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:["barbell","box"],
+   movements:"AMRAP 30:\n5 Deadlifts (275/185 lb)\n13 Push-Ups\n9 Box Jumps (24/20\")",
+   notes:"Hero WOD. Deceptively fast — 30 min AMRAP means pacing is everything.", tags:["hero","deadlift","box-jumps","push-ups"]},
+
+  {id:73, name:"Running Intervals", focus:["Cardio","Endurance"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:[],
+   movements:"For Time:\n1600m Run → Rest 3 min\n800m Run → Rest 2 min\n400m Run → Rest 1 min\n200m Run",
+   notes:"Your logged WOD. Goal is to run each interval at max effort — not just comfortable.", tags:["running","intervals","cardio","endurance"]},
+
+  {id:74, name:"Bench + Box Jump Ladder", focus:["Chest","Conditioning"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["barbell","bench","box"],
+   movements:"21-18-15-12-9-6-3 For Time:\nBench Press (155/105 lb)\nBox Jump-Overs (30/24\")",
+   notes:"CrossFit.com daily WOD. Descending ladder — go heavier as reps drop.", tags:["bench","box-jumps","barbell","conditioning"]},
+
+  {id:75, name:"Farmer Carry AMRAP", focus:["Conditioning","Legs"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["kettlebell","dumbbell"],
+   movements:"AMRAP 20:\n12 Weighted Walking Lunges (50 lb DBs)\n40m Farmer Carry (heavy KBs)\n10 Burpees\n200m Run",
+   notes:"Your logged WOD. Keep the carry heavy — that's the point.", tags:["farmer-carry","lunges","conditioning","kettlebell"]},
+
+  {id:76, name:"Overhead Squat Conditioning", focus:["Olympic Lifting","Cardio"], type:"AMRAP", timecap:"15 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"AMRAP 15:\n6 Overhead Squats (45 lb)\n200m Run\n6 Thrusters (45 lb)\n10 Push-Ups",
+   notes:"Your logged WOD. Light barbell — the goal is sustained output.", tags:["overhead-squat","thrusters","running","conditioning"]},
+
+  {id:77, name:"Thruster + Sandbag Pyramid", focus:["Legs","Conditioning"], type:"For Time", timecap:"12 MIN",
+   partnerMode:"partner", equipReq:["barbell","sandbag","box"],
+   movements:"12 Min Time Cap — Both athletes work thrusters independently, box is shared:\n\n20 Thrusters (65 lb) / 18 Sandbag Box Step-Overs (50 lb)\n30 Thrusters / 18 Step-Overs\n40 Thrusters / 18 Step-Overs\n66 Thrusters / 18 Step-Overs\n40 Thrusters / 18 Step-Overs\n30 Thrusters / 18 Step-Overs\n20 Thrusters",
+   notes:"Your logged WOD. Pyramid goes up and comes back down. Share the box, own your bar.", tags:["thrusters","sandbag","box","partner","barbell"]},
+
+  {id:78, name:"Station Rotation", focus:["Legs","Core"], type:"Circuit", timecap:"25 MIN",
+   partnerMode:"partner", equipReq:["box","foot-roller","dumbbell"],
+   movements:"3–4 Athletes / 4 Stations\n1 Min per Station · 1 Min Rest After Round · 4–5 Rounds:\n\nStation 1: Lunges\nStation 2: Box Jumps or Step-Ups\nStation 3: Bicep Curls (DBs)\nStation 4: GHD Sit-Ups (foot roller + declined bench)",
+   notes:"Your logged WOD. Rotate on the clock. Keep rest to the designated minute only.", tags:["rotation","legs","core","box","ghd-situps"]},
+
+  {id:79, name:"Landmine Press + Ring Rotation", focus:["Shoulders","Back"], type:"Circuit", timecap:"30 MIN",
+   partnerMode:"partner", equipReq:["landmine","barbell","rings","dumbbell"],
+   movements:"Strength: Standing Landmine Press — 5×5 per arm\n\nThen Continuous Rotation (4–6 rounds each):\nStation A: Ring Dips (5–8 reps)\nStation B: Ring Rows (8–12 reps)\nStation C: Heavy Plate Pinch Hold (25 lb each hand)\n\nRotate when ring athlete finishes their reps.",
+   notes:"Your logged WOD. The rotation keeps intensity honest — no waiting.", tags:["landmine","rings","shoulders","back","partner"]},
+
+  {id:80, name:"Recovery Yoga Flow", focus:["Active Recovery","Mobility"], type:"Flow", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:[],
+   movements:"Hold each pose 30–60 sec, focus on breath:\n\nCat-Cow × 10 breaths\nDown Dog → Pedal feet\nLow Lunge (Right then Left)\nPigeon Pose (Right then Left)\nSeated Forward Fold\nFigure Four / Reclined Pigeon\nSupine Twist (Right then Left)\nHappy Baby\nChild's Pose × 2 min",
+   notes:"Your logged recovery WOD. This is not optional — it's training. Quads, hip flexors, hamstrings.", tags:["yoga","recovery","mobility","stretching","hip-flexors"]},
+
+  {id:81, name:"9-6-3 Snatch + Box Jump", focus:["Olympic Lifting","Conditioning"], type:"For Time", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["barbell","box"],
+   movements:"4 Sets | For Time:\n9-6-3 Snatches (115/85 lb)\n9-6-3 Burpee Box Jump-Overs\n\nRest 3 min between sets",
+   notes:"Your logged WOD. Explosive and short — go near max effort each set.", tags:["snatch","box-jumps","barbell","conditioning"]},
+
+  {id:82, name:"Ground to Overhead Ladder", focus:["Olympic Lifting","Conditioning"], type:"For Time", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["barbell"],
+   movements:"For Time:\n10-9-8-7-6-5-4-3-2-1 Ground-to-Overhead (135/95 lb)\nAfter each set: 2×50m Shuttle Run (or 1 min run)\n\nGo heavy and explosive.",
+   notes:"Your logged WOD. Ground-to-overhead = any way — clean & jerk, snatch, your choice.", tags:["ground-to-overhead","barbell","running","conditioning"]},
+
+  {id:83, name:"Full Body AMRAP Flow", focus:["Conditioning","Full Body"], type:"AMRAP", timecap:"20 MIN",
+   partnerMode:"solo", equipReq:["kettlebell"],
+   movements:"AMRAP 20:\n6 Alternating Hang Snatches (3 each arm, 50 lb KB)\n6 Goblet Squats (50 lb KB)\n6 Burpees\n\nTarget: 9+ rounds",
+   notes:"Your logged WOD from 10/6. Keep transitions crisp — this one rewards consistency.", tags:["kettlebell","snatch","burpees","conditioning"]},
+
+  {id:84, name:"Box Jump + Toes-to-Bar", focus:["Conditioning","Core"], type:"For Time", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["box","pull-up-bar"],
+   movements:"5 Rounds For Time:\n20 Box Jump-Overs (24/20\")\n15 Toes-to-Bar\n\nRest 1:00 between rounds",
+   notes:"Your logged WOD. The rest is built in — use it to reset your grip.", tags:["box-jumps","toes-to-bar","core","conditioning"]},
+
+  {id:85, name:"Palindrome Chipper", focus:["Conditioning","Full Body"], type:"For Time", timecap:"30 MIN",
+   partnerMode:"solo", equipReq:[],
+   movements:"For Time:\n50 Air Squats\n40 Sit-Ups\n30 Push-Ups\n20 Burpees\n50 Lunges (25 each leg)\n20 Burpees\n30 Push-Ups\n40 Sit-Ups\n50 Air Squats",
+   notes:"Your logged WOD. Mirror structure means the second half is harder. Manage the burpees.", tags:["chipper","bodyweight","conditioning","burpees"]},
+
+  {id:86, name:"Deficit Lunge Strength Flow", focus:["Legs","Accessory"], type:"Circuit", timecap:"25 MIN",
+   partnerMode:"solo", equipReq:["kettlebell","foot-roller"],
+   movements:"4 Sets:\nA. Deficit Reverse Lunge + Knee Drive — 8 reps per leg\nB. Single-Leg RDL — 8 reps per leg\nC. Crane Press — 5 reps per arm (light KB)\nD. Overhead Hold Marches — 40 sec per arm",
+   notes:"Your logged WOD. Control the descent on RDLs — back flat. Use foot roller for deficit.", tags:["legs","single-leg","accessory","stability","kettlebell"]},
+
+  {id:87, name:"Pull-Up / Deadlift I-Go-You-Go", focus:["Back","Partner"], type:"I-Go-You-Go", timecap:"15 MIN",
+   partnerMode:"igyo", equipReq:["pull-up-bar","barbell"],
+   movements:"I-Go-You-Go — Alternate full rounds for 15 min:\n4 Pull-Ups\n12 Deadlifts (135–185 lb)\n8 Hanging Knee Raises\n\nTarget: 10–16 rounds total",
+   notes:"Your logged WOD. Tight transitions between partners keeps the clock moving.", tags:["partner","igyo","pull-ups","deadlift","core"]},
+
+  {id:88, name:"Bench + Partner Step-Ups", focus:["Chest","Partner"], type:"I-Go-You-Go", timecap:"20 MIN",
+   partnerMode:"igyo", equipReq:["barbell","bench","box"],
+   movements:"Strength: Bench Press 5×5 @ 65–75%\n(Ryan ~135–155 lb · Marc ~125–145 lb)\n\nThen I-Go-You-Go — 15 min:\n10 Bench Press (95–115 lb)\n8 Ring Dips\n12 Box Step-Ups (20–24\")\n\nGoal: 6–10 rounds total",
+   notes:"Your logged WOD. Strength first, then partner metcon. Don't skip the step-ups.", tags:["partner","igyo","bench","box","rings"]},
+
+  {id:89, name:"Sandbag + Chin-Up Partner AMRAP", focus:["Full Body","Partner"], type:"AMRAP", timecap:"18 MIN",
+   partnerMode:"partner", equipReq:["sandbag","pull-up-bar","dumbbell"],
+   movements:"Partner AMRAP 18 (split reps as needed):\n20 Sandbag Front Squats (100 lb)\n40 Alternating Lunges\n  (or 20 Single DB Clean & Jerks)\n16 Chin-Ups",
+   notes:"Your logged WOD. Communicate rep splits on the fly — find the fastest combo.", tags:["partner","sandbag","chin-ups","lunges"]},
+
+  {id:90, name:"Deadlift + Dead Hang Partner", focus:["Back","Partner"], type:"AMRAP", timecap:"18 MIN",
+   partnerMode:"igyo", equipReq:["barbell","pull-up-bar"],
+   movements:"I-Go-You-Go — Partner B dead hangs while Partner A works:\n\nPartner A: 10 Deadlifts (135 lb) + 5 Power Cleans (135 lb)\nPartner B: Dead Hang for entire round\n\nSwitch after each round. AMRAP 18.",
+   notes:"Your logged WOD. The hang is the rest — let go and you owe burpees.", tags:["partner","igyo","deadlift","cleans","dead-hang"]},
+];
+
+// =====================================================================
+// STATE
+// =====================================================================
+function getState() {
+  try { const s = localStorage.getItem('dojoWOD_v2'); if(s) return JSON.parse(s); } catch(e){}
+  return { feed: buildInitialFeed(), history: [], completions: {} };
 }
-function save() {
-  localStorage.setItem('cycleData', JSON.stringify({
-    cycleLength,
-    lastPeriodStart: lastPeriodStart?.toISOString(),
-    confirmations,
-    moments,
-  }));
+function saveState(s) {
+  try { localStorage.setItem('dojoWOD_v2', JSON.stringify(s)); } catch(e){}
   autoBackup();
 }
 
-// ── Backup & restore ──────────────────────────────────────────────────────────
+function getEquipment() {
+  try { const s = localStorage.getItem('dojoEquip'); if(s) return JSON.parse(s); } catch(e){}
+  return [...DEFAULT_EQUIPMENT];
+}
+function saveEquipment(eq) {
+  try { localStorage.setItem('dojoEquip', JSON.stringify(eq)); } catch(e){}
+}
+function getCustomEquip() {
+  try { const s = localStorage.getItem('dojoCustomEquip'); if(s) return JSON.parse(s); } catch(e){}
+  return [];
+}
+function saveCustomEquip(list) {
+  try { localStorage.setItem('dojoCustomEquip', JSON.stringify(list)); } catch(e){}
+}
+function getCustomWods() {
+  try { const s = localStorage.getItem('dojoCustomWods'); if(s) return JSON.parse(s); } catch(e){}
+  return [];
+}
+function saveCustomWods(list) {
+  try { localStorage.setItem('dojoCustomWods', JSON.stringify(list)); } catch(e){}
+}
+function getAllWorkouts() { return [...WORKOUT_LIBRARY, ...getCustomWods()]; }
+
+function getBlockedEquipment() {
+  try { const s = localStorage.getItem('dojoBlocked'); if(s) return JSON.parse(s); } catch(e){}
+  // Default: wall ball and rope climb blocked since Ryan doesn't have them
+  return ["wall_ball","rope_climb"];
+}
+function saveBlockedEquipment(list) {
+  try { localStorage.setItem('dojoBlocked', JSON.stringify(list)); } catch(e){}
+}
+function toggleBlockedEquipment(id) {
+  let blocked = getBlockedEquipment();
+  if(blocked.includes(id)) blocked = blocked.filter(e=>e!==id);
+  else blocked.push(id);
+  saveBlockedEquipment(blocked);
+  renderEquipmentPanel();
+  const state = getState();
+  state.feed = state.feed.filter(wid => {
+    const wod = getAllWorkouts().find(w=>w.id===wid);
+    return wod && workoutFeasible(wod);
+  });
+  saveState(state);
+  renderFeed();
+  showToast('Equipment updated — feed refreshed');
+}
+
+// Get all equipment tags currently available (owned AND not blocked)
+function getAvailableEquipTags() {
+  const owned = getEquipment();
+  const blocked = getBlockedEquipment();
+  const customOwned = getCustomEquip().filter(e => e.owned).map(e => e.tag);
+
+  // Collect blocked tags
+  const blockedTags = new Set();
+  Object.values(EQUIP_CATALOG).flat().forEach(item => {
+    if(blocked.includes(item.id)) item.tags.forEach(t => blockedTags.add(t));
+  });
+
+  const tags = new Set();
+  Object.values(EQUIP_CATALOG).flat().forEach(item => {
+    if(owned.includes(item.id)) item.tags.forEach(t => { if(!blockedTags.has(t)) tags.add(t); });
+  });
+  customOwned.forEach(t => { if(!blockedTags.has(t)) tags.add(t); });
+  return tags;
+}
+
+// Check if a workout is doable with current equipment
+function workoutFeasible(wod) {
+  if (!wod.equipReq || wod.equipReq.length === 0) return true;
+  const available = getAvailableEquipTags();
+  return wod.equipReq.every(req => available.has(req));
+}
+
+function buildInitialFeed() {
+  const sequence = [44,49,6,15,53,19,52,11,27,55,30,56,16,20,54,24,34,63,37,4,7,57,22,3,29,13,35,32,64,80,50,17,23,62,70,68];
+  return sequence.filter(id => {
+    const w = WORKOUT_LIBRARY.find(x => x.id === id);
+    return w && workoutFeasible(w);
+  }).slice(0, 7).map(id => id);
+}
+
+// =====================================================================
+// ATHLETES / TABS
+// =====================================================================
+let currentAthlete = 'Ryan';
+let historyFilter = 'all';
+let dragSrcIdx = null;
+let currentLuckyWorkout = null;
+
+function setAthlete(name) {
+  currentAthlete = name;
+  document.getElementById('athleteRyan').classList.toggle('active', name==='Ryan');
+  document.getElementById('athleteMarc').classList.toggle('active', name==='Marc');
+  renderFeed();
+  renderHistory();
+}
+
+const TAB_IDS = ['wod','history','manage','add','equipment'];
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', TAB_IDS[i]===tab));
+  TAB_IDS.forEach(t => { const el=document.getElementById('view-'+t); if(el) el.classList.toggle('active', t===tab); });
+  if(tab==='history') renderHistory();
+  if(tab==='manage') renderManageQueue();
+  if(tab==='add') renderCustomWodList();
+  if(tab==='equipment') renderEquipmentPanel();
+}
+
+// =====================================================================
+// WOD FEED
+// =====================================================================
+function renderFeed() {
+  const state = getState();
+  const el = document.getElementById('wodFeed');
+  if (!state.feed || state.feed.length===0) {
+    el.innerHTML = '<div class="empty">No workouts in feed. Add some or check your equipment settings!</div>';
+    return;
+  }
+  const pending=[], done=[];
+  state.feed.forEach(wid => {
+    const wod = getAllWorkouts().find(w => w.id===wid);
+    if(!wod) return;
+    const key = `${wid}_${currentAthlete}`;
+    if(state.completions[key]) done.push({wod, data:state.completions[key]});
+    else pending.push({wod});
+  });
+  let html = '';
+  if(pending.length>0) {
+    html += `<div class="week-divider">Upcoming — ${pending.length} WODs in Queue</div>`;
+    pending.forEach(({wod},i) => { html += renderWodCard(wod, false, null, i===0); });
+  }
+  if(done.length>0) {
+    html += `<div class="week-divider">Completed by ${currentAthlete}</div>`;
+    done.forEach(({wod,data}) => { html += renderWodCard(wod, true, data, false); });
+  }
+  if(!html) html = '<div class="empty">Nothing here yet.</div>';
+  el.innerHTML = html;
+}
+
+// =====================================================================
+// SCALING ENGINE
+// Auto-generates Easy / Medium versions from Rx movements
+// =====================================================================
+const SCALE_RULES = [
+  // Barbell loads → reduce by %
+  { rx:/(\d+)\s*lb/gi, med:(m)=>m.replace(/(\d+)\s*lb/gi,(_,n)=>Math.round(parseInt(n)*0.8/5)*5+' lb'), easy:(m)=>m.replace(/(\d+)\s*lb/gi,(_,n)=>Math.round(parseInt(n)*0.6/5)*5+' lb') },
+  // Pull-ups
+  { rx:/\bpull-ups\b/gi, med:'Ring Rows or Banded Pull-Ups', easy:'Ring Rows' },
+  { rx:/\bmuscle[-\s]?ups\b/gi, med:'Chest-to-Bar Pull-Ups', easy:'Pull-Ups' },
+  { rx:/\bchest[-\s]?to[-\s]?bar\b/gi, med:'Pull-Ups', easy:'Ring Rows' },
+  // Dips
+  { rx:/\bring dips\b/gi, med:'Bar Dips', easy:'Push-Ups' },
+  // Handstand
+  { rx:/\bhandstand push[-\s]?ups\b/gi, med:'Pike Push-Ups', easy:'Push-Ups' },
+  { rx:/\bhandstand walk\b/gi, med:'Bear Crawl', easy:'Bear Crawl (10m)' },
+  // Double-unders
+  { rx:/\bdouble[-\s]?unders\b/gi, med:'Single-Unders (1.5×)', easy:'Single-Unders' },
+  // Box jumps
+  { rx:/\bbox jumps\b/gi, med:'Box Step-Ups', easy:'Box Step-Ups (lower)' },
+  // Toes to bar
+  { rx:/\btoes[-\s]?to[-\s]?bar\b/gi, med:'Hanging Knee Raises', easy:'Sit-Ups' },
+  // KB swings
+  { rx:/\bKB swings\b/gi, med:'KB Swings (lighter)', easy:'KB Swings (light, Russian)' },
+  // Burpees
+  { rx:/\bburpees\b/gi, med:'Burpees (step-up)', easy:'Squat Thrusts' },
+  // Pistols
+  { rx:/\bpistol squats\b/gi, med:'Box Pistols (assisted)', easy:'Split Squats' },
+  // Rope climb
+  { rx:/\brope climb\b/gi, med:'3 Strict Pull-Ups (sub)', easy:'5 Ring Rows (sub)' },
+  // Rounds / reps reduction (applied last for Easy)
+];
+
+function autoScale(movements, level) {
+  if (!movements) return '';
+  let scaled = movements;
+
+  // Apply movement substitutions
+  SCALE_RULES.forEach(rule => {
+    if (typeof rule.med === 'string' && typeof rule.easy === 'string') {
+      if (level === 'med') scaled = scaled.replace(rule.rx, rule.med);
+      if (level === 'easy') scaled = scaled.replace(rule.rx, rule.easy);
+    } else if (typeof rule.med === 'function') {
+      // Weight scaling functions
+      if (level === 'med') scaled = rule.med(scaled);
+      if (level === 'easy') scaled = rule.easy(scaled);
+    }
+  });
+
+  // For Easy: also reduce rep counts by ~20%
+  if (level === 'easy') {
+    scaled = scaled.replace(/\b(\d{2,3})\s+(reps?|cal|m\b)/gi, (_, n, unit) => {
+      return Math.round(parseInt(n) * 0.8) + ' ' + unit;
+    });
+    // Reduce round counts if ≥ 4
+    scaled = scaled.replace(/\b([4-9]|1\d)\s+Rounds?\b/gi, (_, n) => {
+      return Math.max(2, Math.round(parseInt(n) * 0.7)) + ' Rounds';
+    });
+  }
+
+  return scaled;
+}
+
+function getScales(wod) {
+  return {
+    rx:   { text: wod.movements, auto: false },
+    med:  { text: wod.scaleMed  || autoScale(wod.movements, 'med'),  auto: !wod.scaleMed },
+    easy: { text: wod.scaleEasy || autoScale(wod.movements, 'easy'), auto: !wod.scaleEasy },
+  };
+}
+
+// Track active scale per card: { [wodId]: 'rx'|'med'|'easy' }
+const cardScales = {};
+
+function setCardScale(wodId, level) {
+  cardScales[wodId] = level;
+  // Re-render just the movements + tabs inside this card
+  const movEl = document.getElementById(`movements-${wodId}`);
+  const scales = getScales(getAllWorkouts().find(w => w.id === wodId));
+  if (movEl && scales[level]) movEl.textContent = scales[level].text;
+  // Update tab active states
+  ['easy','med','rx'].forEach(l => {
+    const tab = document.getElementById(`scale-tab-${l}-${wodId}`);
+    if (tab) { tab.className = 'scale-tab' + (l===level ? ` active-${l}` : ''); }
+  });
+}
+
+function renderWodCard(wod, isCompleted, completionData, isNext) {
+  const focusTags = wod.focus.map(f=>`<span class="tag focus">${f}</span>`).join('');
+  const otherTags = (wod.tags||[]).slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('');
+  const isPartner = wod.partnerMode && wod.partnerMode!=='solo';
+  const partnerTag = isPartner ? `<span class="tag partner">${wod.partnerMode==='igyo'?'I-GO-YOU-GO':'PARTNER WOD'}</span>` : '';
+  const partnerBadge = isPartner ? `<div class="partner-badge">🤜 ${wod.partnerMode==='igyo'?'I-Go-You-Go — Alternating Rounds':'Partner WOD — Work Together'}</div>` : '';
+  const completeBtn = !isCompleted
+    ? `<button class="btn-complete" onclick="markComplete(${wod.id})">✓ ${currentAthlete} Done</button>`
+    : `<span class="btn-complete done">✓ ${currentAthlete} Completed</span>`;
+  const feasible = workoutFeasible(wod);
+  const equipWarning = !feasible ? `<div style="font-size:0.72rem;color:var(--red);margin-top:0.4rem;">⚠ Missing equipment — check Equipment tab</div>` : '';
+
+  const activeScale = cardScales[wod.id] || 'rx';
+  const scales = getScales(wod);
+  const activeText = scales[activeScale].text;
+
+  const scaleTabs = `
+  <div class="scale-tabs">
+    <button id="scale-tab-easy-${wod.id}" class="scale-tab${activeScale==='easy'?' active-easy':''}" onclick="setCardScale(${wod.id},'easy')">
+      Easy${scales.easy.auto?`<span class="scale-badge auto">auto</span>`:''}
+    </button>
+    <button id="scale-tab-med-${wod.id}" class="scale-tab${activeScale==='med'?' active-med':''}" onclick="setCardScale(${wod.id},'med')">
+      Med${scales.med.auto?`<span class="scale-badge auto">auto</span>`:''}
+    </button>
+    <button id="scale-tab-rx-${wod.id}" class="scale-tab${activeScale==='rx'?' active-rx':''}" onclick="setCardScale(${wod.id},'rx')">
+      Rx 🔥
+    </button>
+  </div>`;
+
+  return `
+  <div class="wod-card ${isCompleted?'completed':''} ${isNext&&!isCompleted?'next-up':''} ${isPartner?'partner-wod':''}">
+    <div class="wod-card-header">
+      <div>
+        <div class="wod-day">${isCompleted?'✓ DONE':isNext?'UP NEXT':'QUEUED'}</div>
+        <div class="wod-name">${wod.name}</div>
+        <div class="wod-tags">${focusTags}${partnerTag}${otherTags}</div>
+        ${equipWarning}
+      </div>
+      <div class="wod-meta">
+        <div class="wod-type">${wod.type}</div>
+        <div class="wod-timecap">${wod.timecap}</div>
+      </div>
+    </div>
+    <div class="wod-body">
+      ${partnerBadge}
+      ${scaleTabs}
+      <div class="wod-movements" id="movements-${wod.id}">${activeText}</div>
+      ${wod.notes?`<div class="wod-notes">💡 ${wod.notes}</div>`:''}
+    </div>
+    <div class="wod-footer">
+      <div class="complete-group">${completeBtn}</div>
+      <button class="btn-ig" onclick="showIGCaption(${wod.id})">📸 IG Caption</button>
+    </div>
+  </div>`;
+}
+
+function markComplete(wid) {
+  const state = getState();
+  const key = `${wid}_${currentAthlete}`;
+  if(state.completions[key]) return;
+  state.completions[key] = { athlete:currentAthlete, date:new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}), timestamp:Date.now(), rating:0 };
+  state.history.push({ wid, athlete:currentAthlete, date:state.completions[key].date, timestamp:state.completions[key].timestamp, rating:0 });
+  const next = getNextWod(state.feed);
+  if(next) state.feed.push(next.id);
+  saveState(state);
+  renderFeed();
+  showToast(`💪 ${currentAthlete} crushed it!`);
+}
+
+function toggleRetest(athlete, timestamp) {
+  const state = getState();
+  const entry = state.history.find(e => e.athlete===athlete && e.timestamp===timestamp);
+  if(!entry) return;
+  entry.retest = !entry.retest;
+  const key = `${entry.wid}_${athlete}`;
+  if(state.completions[key]) state.completions[key].retest = entry.retest;
+
+  if(entry.retest) {
+    // Add back to feed if not already there — insert after the first pending workout
+    const alreadyInFeed = state.feed.includes(entry.wid);
+    if(!alreadyInFeed) {
+      // Find first pending slot (index 1 so it's not immediate next, but coming soon)
+      const insertAt = Math.min(2, state.feed.length);
+      state.feed.splice(insertAt, 0, entry.wid);
+    }
+    showToast('🔁 Retest added to your upcoming queue!');
+  } else {
+    // Remove from feed if it's still pending (not completed again)
+    const completionKey = `${entry.wid}_${athlete}`;
+    // Only remove the retest instance — check if there's a second copy or it's pending
+    const idx = state.feed.lastIndexOf(entry.wid);
+    if(idx !== -1 && !state.completions[completionKey + '_retest']) {
+      state.feed.splice(idx, 1);
+    }
+    showToast('Retest removed from queue');
+  }
+
+  saveState(state);
+  renderHistory();
+  renderFeed();
+}
+
+function rateWorkout(athlete, timestamp, rating) {
+  const state = getState();
+  const entry = state.history.find(e => e.athlete===athlete && e.timestamp===timestamp);
+  if(entry) {
+    entry.rating = rating;
+    const key = `${entry.wid}_${athlete}`;
+    if(state.completions[key]) state.completions[key].rating = rating;
+
+    // Auto-suggest retest for highly rated workouts (4–5 stars) if not already flagged
+    if(rating >= 4 && !entry.retest) {
+      showToast(`${rating===5?'🔥 Legendary':'⭐ Great workout'} — hit ↩ Retest to queue it again!`);
+    } else {
+      showToast('Rating saved ⭐');
+    }
+    saveState(state);
+    renderHistory();
+  }
+}
+
+function getNextWod(currentFeed) {
+  const state = getState();
+
+  // Check if any retest workouts are flagged but not currently in feed
+  const retestWids = state.history
+    .filter(e => e.retest && e.athlete === currentAthlete && !currentFeed.includes(e.wid))
+    .map(e => e.wid);
+  if(retestWids.length > 0) {
+    const wod = getAllWorkouts().find(w => w.id === retestWids[0] && workoutFeasible(w));
+    if(wod) return wod;
+  }
+
+  // Otherwise pick smart — avoid recent muscle groups, prefer high-rated workouts
+  const recentFocus = currentFeed.slice(-2).flatMap(wid => {
+    const w = getAllWorkouts().find(x => x.id===wid);
+    return w ? w.focus : [];
+  });
+
+  // Build rating map from history
+  const ratingMap = {};
+  state.history.forEach(e => {
+    if(!ratingMap[e.wid] || e.rating > ratingMap[e.wid]) ratingMap[e.wid] = e.rating;
+  });
+
+  const all = getAllWorkouts().filter(w => workoutFeasible(w) && !currentFeed.includes(w.id));
+  const ideal = all.filter(w => !w.focus.some(f => recentFocus.includes(f)));
+  const pool = ideal.length > 0 ? ideal : all;
+
+  // Weighted selection — higher rated workouts appear more often
+  const weighted = [];
+  pool.forEach(w => {
+    const r = ratingMap[w.id] || 3;
+    const weight = r >= 4 ? 3 : r >= 3 ? 2 : 1;
+    for(let i=0; i<weight; i++) weighted.push(w);
+  });
+
+  return weighted[Math.floor(Math.random()*weighted.length)] || null;
+}
+
+// =====================================================================
+// HISTORY
+// =====================================================================
+function renderHistory() {
+  const state = getState();
+  const el = document.getElementById('historyLog');
+  let entries = [...state.history].reverse();
+  if(historyFilter!=='all') entries = entries.filter(e => e.athlete===historyFilter);
+  if(entries.length===0) {
+    el.innerHTML = `<div class="empty">No workouts completed yet${historyFilter!=='all'?' by '+historyFilter:''}.<br>Get after it! 🔥</div>`;
+    return;
+  }
+  el.innerHTML = entries.map(entry => {
+    const wod = getAllWorkouts().find(w => w.id===entry.wid);
+    if(!wod) return '';
+    const focusTags = wod.focus.map(f=>`<span class="tag focus">${f}</span>`).join('');
+    const stars = [1,2,3,4,5].map(s=>`<span class="star ${entry.rating>=s?'filled':''}" onclick="rateWorkout('${entry.athlete}',${entry.timestamp},${s})">★</span>`).join('');
+    const partnerLabel = wod.partnerMode && wod.partnerMode!=='solo' ? ` · <span style="color:var(--blue)">${wod.partnerMode==='igyo'?'I-Go-You-Go':'Partner'}</span>` : '';
+    const isRetest = entry.retest === true;
+    const retestBtn = `<button onclick="toggleRetest('${entry.athlete}',${entry.timestamp})" style="
+      font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;
+      text-transform:uppercase;padding:0.25rem 0.65rem;border-radius:2px;cursor:pointer;margin-top:0.5rem;
+      border:1px solid ${isRetest?'var(--orange)':'var(--border)'};
+      background:${isRetest?'rgba(245,132,31,0.15)':'transparent'};
+      color:${isRetest?'var(--orange)':'var(--muted)'};
+      transition:all 0.2s;display:block;width:100%;text-align:center;">
+      ${isRetest?'🔁 RETEST QUEUED':'↩ Queue Retest'}
+    </button>`;
+    return `
+    <div class="history-entry" style="${isRetest?'border-color:rgba(245,132,31,0.3);':''}" >
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.25rem;">${entry.athlete} · ${entry.date}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">${wod.name}</div>
+        <div class="wod-tags" style="margin-top:0.3rem;">${focusTags}</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem;">${wod.type} · ${wod.timecap}${partnerLabel}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0.1rem;min-width:80px;">
+        <div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-bottom:0.2rem;letter-spacing:0.1em;">RATE IT</div>
+        <div class="stars">${stars}</div>
+        ${retestBtn}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function rateWorkout(athlete, timestamp, rating) {
+  const state = getState();
+  const entry = state.history.find(e => e.athlete===athlete && e.timestamp===timestamp);
+  if(entry) {
+    entry.rating = rating;
+    const key = `${entry.wid}_${athlete}`;
+    if(state.completions[key]) state.completions[key].rating = rating;
+    saveState(state);
+    renderHistory();
+    showToast('Rating saved ⭐');
+  }
+}
+
+function setHistoryFilter(f) {
+  historyFilter = f;
+  ['All','Ryan','Marc'].forEach(n => {
+    const btn = document.getElementById('filter'+n);
+    if(btn) btn.classList.toggle('active', f===n.toLowerCase()||f===n);
+  });
+  document.getElementById('filterAll').classList.toggle('active', f==='all');
+  renderHistory();
+}
+
+// =====================================================================
+// MANAGE QUEUE
+// =====================================================================
+function renderManageQueue() {
+  const state = getState();
+  const el = document.getElementById('manageList');
+  const pending = state.feed.filter(wid => !state.completions[`${wid}_${currentAthlete}`]);
+  if(pending.length===0) { el.innerHTML='<div class="empty">No upcoming workouts.</div>'; return; }
+  el.innerHTML = pending.map((wid,i) => {
+    const wod = getAllWorkouts().find(w => w.id===wid);
+    if(!wod) return '';
+    return `
+    <div class="manage-item" draggable="true" data-wid="${wid}"
+      ondragstart="onDragStart(event,${i})" ondragover="onDragOver(event,${i})"
+      ondrop="onDrop(event,${i})" ondragend="onDragEnd(event)" ondragleave="onDragLeave(event)">
+      <span class="drag-handle">⠿</span>
+      <span class="manage-item-num">${i+1}</span>
+      <div class="manage-item-info">
+        <div class="manage-item-name">${wod.name}</div>
+        <div class="manage-item-meta">${wod.focus.join(' · ')} · ${wod.type} · ${wod.timecap}${wod.partnerMode&&wod.partnerMode!=='solo'?' · 🤜 '+wod.partnerMode:''}</div>
+      </div>
+      <button class="btn-remove" onclick="removeFromQueue(${wid})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function onDragStart(e,idx){ dragSrcIdx=idx; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; }
+function onDragOver(e,idx){ e.preventDefault(); e.dataTransfer.dropEffect='move'; document.querySelectorAll('.manage-item').forEach((el,i)=>el.classList.toggle('drag-over',i===idx&&i!==dragSrcIdx)); }
+function onDragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+function onDragEnd(e){ e.currentTarget.classList.remove('dragging'); document.querySelectorAll('.manage-item').forEach(el=>el.classList.remove('drag-over')); dragSrcIdx=null; }
+function onDrop(e,dropIdx){
+  e.preventDefault();
+  if(dragSrcIdx===null||dragSrcIdx===dropIdx) return;
+  const state = getState();
+  const pendingIndices = state.feed.reduce((acc,wid,i)=>{ if(!state.completions[`${wid}_${currentAthlete}`]) acc.push(i); return acc; },[]);
+  const srcFeedIdx = pendingIndices[dragSrcIdx];
+  const dstFeedIdx = pendingIndices[dropIdx];
+  const [moved] = state.feed.splice(srcFeedIdx,1);
+  state.feed.splice(dstFeedIdx,0,moved);
+  saveState(state); renderManageQueue(); renderFeed();
+}
+function removeFromQueue(wid){
+  const state = getState();
+  state.feed = state.feed.filter(id=>id!==wid);
+  saveState(state); renderManageQueue(); renderFeed();
+  showToast('Removed from queue');
+}
+
+// =====================================================================
+// ADD CUSTOM WOD
+// =====================================================================
+function saveCustomWod(addToTop) {
+  const name = document.getElementById('addName').value.trim();
+  const type = document.getElementById('addType').value;
+  const timecap = document.getElementById('addTimecap').value.trim()||'30 MIN';
+  const focusRaw = document.getElementById('addFocus').value.trim();
+  const partnerMode = document.getElementById('addPartner').value;
+  const equipRaw = document.getElementById('addEquipReq').value.trim();
+  const tagsRaw = document.getElementById('addTags').value.trim();
+  const movements = document.getElementById('addMovements').value.trim();
+  const notes = document.getElementById('addNotes').value.trim();
+  const errEl = document.getElementById('addError');
+  errEl.style.display='none';
+  if(!name){errEl.textContent='WOD Name is required.';errEl.style.display='block';return;}
+  if(!focusRaw){errEl.textContent='At least one Focus Area is required.';errEl.style.display='block';return;}
+  if(!movements){errEl.textContent='Movements/Description is required.';errEl.style.display='block';return;}
+  const focus = focusRaw.split(',').map(s=>s.trim()).filter(Boolean);
+  const equipReq = equipRaw ? equipRaw.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean) : [];
+  const tags = tagsRaw ? tagsRaw.split(',').map(s=>s.trim().toLowerCase()) : focus.map(f=>f.toLowerCase());
+  const customs = getCustomWods();
+  const newId = 1000 + Date.now()%100000;
+  customs.push({id:newId,name,focus,type,timecap,partnerMode,equipReq,movements,notes,tags,custom:true});
+  saveCustomWods(customs);
+  const state = getState();
+  if(addToTop) state.feed.unshift(newId); else state.feed.push(newId);
+  saveState(state);
+  clearAddForm(); renderCustomWodList(); renderFeed();
+  showToast(`"${name}" added to ${addToTop?'top of':'end of'} feed! 🔥`);
+}
+
+function clearAddForm(){
+  ['addName','addTimecap','addFocus','addEquipReq','addTags','addMovements','addNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('addType').selectedIndex=0;
+  document.getElementById('addPartner').selectedIndex=0;
+  document.getElementById('addError').style.display='none';
+}
+
+// =====================================================================
+// BULK IMPORT
+// =====================================================================
+function toggleImportFormat() {
+  const guide = document.getElementById('importFormatGuide');
+  const arrow = document.getElementById('importFormatArrow');
+  const visible = guide.style.display !== 'none';
+  guide.style.display = visible ? 'none' : 'block';
+  arrow.textContent = visible ? '▼' : '▲';
+}
+
+function copyAiPrompt() {
+  const text = document.getElementById('aiPromptBox').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('AI prompt copied! 📋'));
+}
+
+function parseBulkImport(raw) {
+  const blocks = raw.split(/\n---+\n?/).map(b => b.trim()).filter(Boolean);
+  const results = [];
+  const errors = [];
+
+  blocks.forEach((block, i) => {
+    try {
+      const get = (key) => {
+        const regex = new RegExp(`^${key}:\\s*(.*)$`, 'im');
+        const m = block.match(regex);
+        return m ? m[1].trim() : '';
+      };
+
+      // Extract MOVEMENTS block (everything after MOVEMENTS: line until NOTES:, EASY:, MEDIUM:, or end)
+      const movMatch = block.match(/^MOVEMENTS:\s*\n([\s\S]*?)(?=\n^(?:NOTES|EASY|MEDIUM):|$)/im);
+      const movements = movMatch ? movMatch[1].trim() : '';
+
+      // Extract optional scale overrides (multi-line blocks)
+      const easyMatch = block.match(/^EASY:\s*\n([\s\S]*?)(?=\n^(?:NOTES|MEDIUM|---):|$)/im);
+      const medMatch  = block.match(/^MEDIUM:\s*\n([\s\S]*?)(?=\n^(?:NOTES|EASY|---):|$)/im);
+      const scaleEasy = easyMatch ? easyMatch[1].trim() : '';
+      const scaleMed  = medMatch  ? medMatch[1].trim()  : '';
+
+      const name = get('NAME');
+      if (!name) { errors.push(`Block ${i+1}: Missing NAME`); return; }
+
+      const focus = get('FOCUS').split(',').map(s=>s.trim()).filter(Boolean);
+      if (!focus.length) { errors.push(`Block ${i+1} (${name}): Missing FOCUS`); return; }
+      if (!movements) { errors.push(`Block ${i+1} (${name}): Missing MOVEMENTS`); return; }
+
+      const typeRaw = get('TYPE') || 'For Time';
+      const validTypes = ['For Time','AMRAP','EMOM','Strength','Strength + Metcon','Circuit','Partner WOD','I-Go-You-Go','Flow','Other'];
+      const type = validTypes.find(t => t.toLowerCase() === typeRaw.toLowerCase()) || 'For Time';
+
+      const partnerRaw = get('PARTNER').toLowerCase();
+      const partnerMode = partnerRaw === 'igyo' ? 'igyo' : partnerRaw === 'partner' ? 'partner' : 'solo';
+
+      const equipReq = get('EQUIPMENT').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+      const tagsRaw = get('TAGS').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+      const tags = tagsRaw.length ? tagsRaw : focus.map(f=>f.toLowerCase());
+
+      results.push({
+        id: 2000 + Date.now()%100000 + i,
+        name,
+        type,
+        timecap: get('TIMECAP') || 'No Cap',
+        focus,
+        partnerMode,
+        equipReq,
+        tags,
+        movements,
+        notes: get('NOTES'),
+        scaleEasy: scaleEasy || undefined,
+        scaleMed:  scaleMed  || undefined,
+        custom: true
+      });
+    } catch(e) {
+      errors.push(`Block ${i+1}: Parse error — ${e.message}`);
+    }
+  });
+
+  return { results, errors };
+}
+
+function runBulkImport(addToTop) {
+  const raw = document.getElementById('bulkImportText').value.trim();
+  const resultEl = document.getElementById('bulkImportResult');
+  if (!raw) { resultEl.style.display='block'; resultEl.innerHTML='<span style="color:var(--red);">Nothing to import — paste your workouts first.</span>'; return; }
+
+  const { results, errors } = parseBulkImport(raw);
+
+  if (results.length === 0) {
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `<span style="color:var(--red);">❌ No valid workouts found.<br>${errors.map(e=>`• ${e}`).join('<br>')}</span>`;
+    return;
+  }
+
+  // Save all parsed workouts
+  const customs = getCustomWods();
+  const state = getState();
+  results.forEach(wod => {
+    // Ensure unique IDs
+    wod.id = 2000 + Math.floor(Math.random()*900000);
+    customs.push(wod);
+    if (addToTop) state.feed.unshift(wod.id);
+    else state.feed.push(wod.id);
+  });
+  saveCustomWods(customs);
+  saveState(state);
+  renderCustomWodList();
+  renderFeed();
+  document.getElementById('bulkImportText').value = '';
+
+  const errHtml = errors.length ? `<br><span style="color:var(--muted);">⚠ ${errors.length} block(s) skipped:<br>${errors.map(e=>`• ${e}`).join('<br>')}</span>` : '';
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `<span style="color:var(--green);">✅ ${results.length} workout${results.length>1?'s':''} imported successfully!</span>${errHtml}`;
+  showToast(`💪 ${results.length} WOD${results.length>1?'s':''} imported!`);
+}
+
+function renderCustomWodList(){
+  const customs = getCustomWods();
+  const el = document.getElementById('customWodList');
+  if(customs.length===0){el.innerHTML='<div style="color:var(--muted);font-size:0.82rem;padding:0.5rem 0;">No custom WODs saved yet.</div>';return;}
+  el.innerHTML=[...customs].reverse().map(wod=>`
+    <div class="custom-wod-chip">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;">${wod.name}</div>
+        <div style="font-size:0.72rem;color:var(--muted);">${wod.focus.join(' · ')} · ${wod.type}</div>
+      </div>
+      <div class="chip-actions">
+        <button class="btn-chip" onclick="addCustomToFeed(${wod.id},true)">+ Top</button>
+        <button class="btn-chip" onclick="addCustomToFeed(${wod.id},false)">+ End</button>
+        <button class="btn-chip danger" onclick="deleteCustomWod(${wod.id})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function addCustomToFeed(id,toTop){
+  const state=getState();
+  if(state.feed.includes(id)){showToast('Already in queue!');return;}
+  if(toTop) state.feed.unshift(id); else state.feed.push(id);
+  saveState(state); renderFeed();
+  showToast(toTop?'Added to top of feed!':'Added to end of feed!');
+}
+
+function deleteCustomWod(id){
+  let customs=getCustomWods().filter(w=>w.id!==id);
+  saveCustomWods(customs);
+  const state=getState(); state.feed=state.feed.filter(wid=>wid!==id); saveState(state);
+  renderCustomWodList(); renderFeed(); showToast('Custom WOD deleted');
+}
+
+// =====================================================================
+// EQUIPMENT PANEL
+// =====================================================================
+function renderEquipmentPanel() {
+  const owned = getEquipment();
+  const blocked = getBlockedEquipment();
+  const el = document.getElementById('equipmentPanels');
+  let html = '';
+  Object.entries(EQUIP_CATALOG).forEach(([cat, items]) => {
+    const isDontHave = cat.startsWith('❌');
+    const sectionColor = isDontHave ? 'var(--red)' : 'var(--orange)';
+    const sectionNote = isDontHave
+      ? '<div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.6rem;">Check these to permanently block them from your feed. Uncheck if you get the equipment.</div>'
+      : '';
+    html += `<div class="equip-section"><div class="equip-section-title" style="color:${sectionColor}">${cat}</div>${sectionNote}<div class="equip-grid">`;
+    items.forEach(item => {
+      if (isDontHave) {
+        const isBlocked = blocked.includes(item.id);
+        html += `
+        <div class="equip-item ${isBlocked?'blocked':''}" onclick="toggleBlockedEquipment('${item.id}')" style="${isBlocked?'border-color:rgba(229,57,53,0.4);background:rgba(229,57,53,0.07);':''}">
+          <div class="equip-check" style="${isBlocked?'border-color:var(--red);background:var(--red);color:#fff;':''}"> ${isBlocked?'✕':''}</div>
+          <div>
+            <div class="equip-name">${item.name}</div>
+            ${item.detail?`<div class="equip-detail">${item.detail}</div>`:''}
+          </div>
+        </div>`;
+      } else {
+        const has = owned.includes(item.id);
+        html += `
+        <div class="equip-item ${has?'has':''}" onclick="toggleEquipment('${item.id}')">
+          <div class="equip-check">${has?'✓':''}</div>
+          <div>
+            <div class="equip-name">${item.name}</div>
+            ${item.detail?`<div class="equip-detail">${item.detail}</div>`:''}
+          </div>
+        </div>`;
+      }
+    });
+    html += `</div></div>`;
+  });
+  el.innerHTML = html;
+  renderCustomEquipList();
+}
+
+function toggleEquipment(id) {
+  let owned = getEquipment();
+  if(owned.includes(id)) owned = owned.filter(e=>e!==id);
+  else owned.push(id);
+  saveEquipment(owned);
+  renderEquipmentPanel();
+  // Refresh feed to respect new equipment
+  const state = getState();
+  state.feed = state.feed.filter(wid => {
+    const wod = getAllWorkouts().find(w=>w.id===wid);
+    return wod && workoutFeasible(wod);
+  });
+  if(state.feed.length<3) {
+    const next = getNextWod(state.feed);
+    if(next) state.feed.push(next.id);
+  }
+  saveState(state);
+  renderFeed();
+  showToast('Equipment updated — feed refreshed');
+}
+
+function addCustomEquipment() {
+  const name = document.getElementById('customEquipName').value.trim();
+  if(!name) return;
+  const list = getCustomEquip();
+  list.push({ id:'custom_'+Date.now(), name, tag:name.toLowerCase().replace(/\s+/g,'-'), owned:true });
+  saveCustomEquip(list);
+  document.getElementById('customEquipName').value='';
+  renderEquipmentPanel();
+  showToast(`"${name}" added to equipment`);
+}
+
+function renderCustomEquipList() {
+  const list = getCustomEquip();
+  const el = document.getElementById('customEquipList');
+  if(list.length===0){el.innerHTML='';return;}
+  el.innerHTML = list.map(item=>`
+    <div class="equip-item ${item.owned?'has':''}" style="margin-bottom:0.5rem;" onclick="toggleCustomEquip('${item.id}')">
+      <div class="equip-check">${item.owned?'✓':''}</div>
+      <div style="flex:1;">
+        <div class="equip-name">${item.name}</div>
+        <div class="equip-detail">Custom · tag: ${item.tag}</div>
+      </div>
+      <button class="btn-remove" onclick="event.stopPropagation();deleteCustomEquip('${item.id}')">✕</button>
+    </div>`).join('');
+}
+
+function toggleCustomEquip(id) {
+  const list = getCustomEquip();
+  const item = list.find(e=>e.id===id);
+  if(item) item.owned = !item.owned;
+  saveCustomEquip(list);
+  renderEquipmentPanel();
+}
+
+function deleteCustomEquip(id) {
+  saveCustomEquip(getCustomEquip().filter(e=>e.id!==id));
+  renderEquipmentPanel();
+}
+
+// =====================================================================
+// I'M FEELING LUCKY
+// =====================================================================
+function showLuckyModal() {
+  document.getElementById('luckyResult').classList.remove('show');
+  document.getElementById('luckyMovement').value='';
+  document.getElementById('luckyModal').classList.add('show');
+}
+
+function rollLucky() {
+  const movement = document.getElementById('luckyMovement').value.trim().toLowerCase();
+  const state = getState();
+  const recentFocus = state.feed.slice(-2).flatMap(wid => {
+    const w = getAllWorkouts().find(x=>x.id===wid); return w?w.focus:[];
+  });
+  let pool = getAllWorkouts().filter(w => workoutFeasible(w));
+  if(movement) {
+    const filtered = pool.filter(w =>
+      w.movements.toLowerCase().includes(movement) ||
+      (w.tags||[]).some(t=>t.includes(movement)) ||
+      w.focus.some(f=>f.toLowerCase().includes(movement)) ||
+      w.name.toLowerCase().includes(movement)
+    );
+    if(filtered.length>0) pool = filtered;
+  }
+  // Prefer no recent muscle group overlap
+  const ideal = pool.filter(w => !w.focus.some(f=>recentFocus.includes(f)));
+  if(ideal.length>0) pool = ideal;
+  const wod = pool[Math.floor(Math.random()*pool.length)];
+  if(!wod) { showToast('No matching workouts found — try different equipment or movement'); return; }
+  currentLuckyWorkout = wod;
+  const isPartner = wod.partnerMode && wod.partnerMode!=='solo';
+  document.getElementById('luckyName').textContent = `🎲 ${wod.name}`;
+  document.getElementById('luckyPartnerBadge').innerHTML = isPartner ? `<div class="partner-badge" style="margin-bottom:0.5rem;">🤜 ${wod.partnerMode==='igyo'?'I-Go-You-Go':'Partner WOD'}</div>` : '';
+  document.getElementById('luckyMovements').textContent = wod.movements;
+  document.getElementById('luckyNotes').textContent = wod.notes ? `💡 ${wod.notes}` : '';
+  document.getElementById('luckyResult').classList.add('show');
+}
+
+function addLuckyToFeed() {
+  if(!currentLuckyWorkout) return;
+  const state = getState();
+  if(!state.feed.includes(currentLuckyWorkout.id)) { state.feed.unshift(currentLuckyWorkout.id); saveState(state); }
+  closeModal('luckyModal'); renderFeed();
+  showToast('Added to top of feed! 🔥');
+}
+
+// =====================================================================
+// INSTAGRAM CAPTION
+// =====================================================================
+const IG_EMOJIS = ['🔥','💪','⚡','🏋️','🎯','💥','🤜','🦍'];
+const IG_OPENERS = [
+  "No days off at The Dojo.", "Another day, another WOD crushed.", "The barbell doesn't lie.",
+  "Showing up is 90% of the battle.", "Sweat is just fat crying.", "We don't negotiate with rest days.",
+  "Built different at The Dojo.", "Forged in the garage, tested everywhere.",
+  "The Dojo: where excuses go to die.", "Home gym > any commercial gym. Facts.",
+  "Two dudes. One garage. Zero excuses.", "The best gym is the one you actually show up to.",
+];
+const IG_HASHTAGS_MAP = {
+  "Shoulders":["#ShoulderDay","#OHPLife","#PressGang"],
+  "Back":["#BackDay","#DeadliftSzn","#PullGang"],
+  "Chest":["#ChestDay","#BenchPress","#PushDay"],
+  "Legs":["#LegDay","#SquatRack","#NeverSkipLegDay"],
+  "Cardio":["#MetCon","#WODLife","#CrossFitLife"],
+  "Gymnastics":["#BodyweightStrong","#PullUpLife","#RingsWork"],
+  "Full Body":["#FunctionalFitness","#CrossFit","#TrainHard"],
+  "Kettlebell":["#KettlebellKings","#KBLife","#KettlebellWorkout"],
+  "Partner":["#PartnerWOD","#TrainTogether","#AccountabilityPartner"],
+};
+const IG_BASE_TAGS = ["#TheDojo","#ReSilientFitness","#GarageGym","#DojoWOD","#CrossFit","#HomeGym","#WODLife"];
+
+function showIGCaption(wid) {
+  const wod = getAllWorkouts().find(w=>w.id===wid);
+  if(!wod) return;
+  const opener = IG_OPENERS[Math.floor(Math.random()*IG_OPENERS.length)];
+  const emoji = IG_EMOJIS[Math.floor(Math.random()*IG_EMOJIS.length)];
+  const isPartner = wod.partnerMode && wod.partnerMode!=='solo';
+  const partnerLine = isPartner ? `\n🤜 ${wod.partnerMode==='igyo'?'I-Go-You-Go':'Partner WOD'} — Ryan & Marc` : '';
+  const movLines = wod.movements.split('\n').filter(l=>l.trim()&&l.length>3&&!l.match(/^[0-9]+:$/)&&!l.match(/^(AMRAP|EMOM|For Time|Strength|Round)/i));
+  const highlight = movLines.slice(0,3).join(' · ');
+  let tags = new Set(IG_BASE_TAGS);
+  wod.focus.forEach(f=>{ (IG_HASHTAGS_MAP[f]||[]).slice(0,2).forEach(t=>tags.add(t)); });
+  if(isPartner) (IG_HASHTAGS_MAP["Partner"]||[]).forEach(t=>tags.add(t));
+  const hashtagLine = Array.from(tags).slice(0,10).join(' ');
+  const caption = `${emoji} ${opener}\n\nToday's WOD: ${wod.name}${partnerLine}\n${wod.type} · ${wod.timecap}\n\n${highlight?highlight+'\n\n':''}${wod.notes?`"${wod.notes}"\n\n`:''}@re.silient_fitness\n\n${hashtagLine}`;
+  document.getElementById('igCaptionText').textContent = caption;
+  document.getElementById('igModal').classList.add('show');
+}
+
+function copyCaption() {
+  const text = document.getElementById('igCaptionText').textContent;
+  navigator.clipboard.writeText(text).then(()=>showToast('Caption copied! 📋'));
+}
+
+// =====================================================================
+// BACKUP & RESTORE
+// =====================================================================
 let lastBackupTime = null;
 
 function getBackupData() {
   return {
-    version: 5,
+    version: 1,
     exportedAt: new Date().toISOString(),
-    cycleLength,
-    lastPeriodStart: lastPeriodStart?.toISOString() || null,
-    confirmations,
-    moments,
+    dojoWOD_v2:      JSON.parse(localStorage.getItem('dojoWOD_v2')   || '{}'),
+    dojoEquip:       JSON.parse(localStorage.getItem('dojoEquip')     || '[]'),
+    dojoCustomEquip: JSON.parse(localStorage.getItem('dojoCustomEquip')|| '[]'),
+    dojoCustomWods:  JSON.parse(localStorage.getItem('dojoCustomWods') || '[]'),
+    dojoBlocked:     JSON.parse(localStorage.getItem('dojoBlocked')   || '[]'),
   };
 }
 
 function exportBackup() {
   const data = getBackupData();
   const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const dateStr = isoDate(new Date());
-  a.href = url;
-  a.download = `cycletracker_backup_${dateStr}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const dateStr = new Date().toISOString().split('T')[0];
+  const filename = `dojo_wod_backup_${dateStr}.json`;
+  try {
+    // Try blob URL first (works in most browsers)
+    const blob = new Blob([json], { type:'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+  } catch(e) {
+    // Fallback: open JSON in new tab so user can File → Save
+    const w = window.open('', '_blank');
+    w.document.write('<pre>' + json.replace(/</g,'&lt;') + '</pre>');
+    w.document.title = filename;
+    showToast('Save the page as ' + filename);
+    return;
+  }
   lastBackupTime = new Date();
   updateBackupStatus();
+  showToast('Backup saved to Downloads 💾');
 }
 
 function autoBackup() {
-  // Auto-backup silently: saves a timestamped copy to Downloads via the same
-  // download mechanism, but only once per session per save to avoid flooding.
-  // We track the last auto-backup time in sessionStorage.
   try {
-    const lastAuto = sessionStorage.getItem('lastAutoBackup');
+    const lastAuto = sessionStorage.getItem('dojoLastAutoBackup');
     const now = Date.now();
-    // Auto-backup at most once every 10 minutes within a session
     if (lastAuto && now - parseInt(lastAuto) < 10 * 60 * 1000) {
-      updateBackupStatus();
-      return;
+      updateBackupStatus(); return;
     }
     const data = getBackupData();
     const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 16);
-    a.href = url;
-    a.download = `cycletracker_auto_${dateStr}.json`;
+    const dateStr = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
+    const filename = `dojo_wod_auto_${dateStr}.json`;
+    const blob = new Blob([json], { type:'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
     a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    sessionStorage.setItem('lastAutoBackup', now.toString());
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+    sessionStorage.setItem('dojoLastAutoBackup', now.toString());
     lastBackupTime = new Date();
     updateBackupStatus();
-  } catch(e) {
-    console.warn('Auto-backup failed:', e);
-  }
+  } catch(e) { console.warn('Auto-backup failed:', e); }
 }
 
 function updateBackupStatus() {
-  const dot = document.getElementById('backupDot');
+  const dot  = document.getElementById('backupDot');
   const text = document.getElementById('backupStatusText');
   if (!dot || !text) return;
   if (lastBackupTime) {
-    dot.className = 'dot ok';
-    text.textContent = `Last backup: ${lastBackupTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} — saved to Downloads (syncs to Drive)`;
+    dot.className  = 'backup-dot ok';
+    text.textContent = `Backed up at ${lastBackupTime.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`;
   } else {
-    dot.className = 'dot warn';
-    text.textContent = 'No backup yet — will auto-backup on next data change';
+    dot.className  = 'backup-dot warn';
+    text.textContent = 'No backup yet — auto-saves on first data change';
   }
 }
 
@@ -1016,735 +1986,50 @@ function importBackup(event) {
   reader.onload = (e) => {
     try {
       const data = JSON.parse(e.target.result);
-      if (!data.confirmations && !data.moments) {
-        alert('This doesn\'t look like a valid cycle tracker backup file.');
-        return;
+      if (!data.version || !data.dojoWOD_v2) {
+        alert('This does not look like a valid Dojo WOD backup file.'); return;
       }
-      if (!confirm(`Restore backup from ${data.exportedAt ? new Date(data.exportedAt).toLocaleString() : 'unknown date'}?\n\nThis will replace your current data.`)) return;
-      cycleLength = data.cycleLength || 26;
-      lastPeriodStart = data.lastPeriodStart ? new Date(data.lastPeriodStart) : null;
-      confirmations = data.confirmations || [];
-      moments = data.moments || [];
-      localStorage.setItem('cycleData', JSON.stringify({
-        cycleLength,
-        lastPeriodStart: lastPeriodStart?.toISOString(),
-        confirmations,
-        moments,
-      }));
+      const dateStr = data.exportedAt ? new Date(data.exportedAt).toLocaleString() : 'unknown date';
+      if (!confirm(`Restore backup from ${dateStr}?\n\nThis will replace your current workout history, queue, custom WODs, and equipment settings.`)) return;
+      if (data.dojoWOD_v2)      localStorage.setItem('dojoWOD_v2',       JSON.stringify(data.dojoWOD_v2));
+      if (data.dojoEquip)       localStorage.setItem('dojoEquip',        JSON.stringify(data.dojoEquip));
+      if (data.dojoCustomEquip) localStorage.setItem('dojoCustomEquip',  JSON.stringify(data.dojoCustomEquip));
+      if (data.dojoCustomWods)  localStorage.setItem('dojoCustomWods',   JSON.stringify(data.dojoCustomWods));
+      if (data.dojoBlocked)     localStorage.setItem('dojoBlocked',      JSON.stringify(data.dojoBlocked));
       lastBackupTime = new Date();
       updateBackupStatus();
-      render();
-      alert('Backup restored successfully.');
-    } catch(err) {
-      alert('Could not read the backup file. Make sure it\'s a valid cycletracker JSON backup.');
-    }
+      renderFeed(); renderHistory(); renderEquipmentPanel();
+      showToast('✅ Backup restored successfully!');
+    } catch(err) { alert('Could not read the backup file. Make sure it\'s a valid Dojo WOD backup.'); }
   };
   reader.readAsText(file);
-  // Reset input so same file can be re-selected if needed
   event.target.value = '';
 }
 
-// ── Date helpers ──────────────────────────────────────────────────────────────
-function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
-function fmtDate(d) { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
-function fmtShort(d) { return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
-function isoDate(d) { return d.toISOString().split('T')[0]; }
-// Parse YYYY-MM-DD as local time (not UTC) to prevent timezone date shift
-function parseDate(str) {
-  if (!str) return null;
-  const [y, m, d] = str.split('-').map(Number);
-  return new Date(y, m - 1, d);
+// =====================================================================
+// UTILS
+// =====================================================================
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
 }
-
-// ── Phase layout per cycle length ─────────────────────────────────────────────
-function getPhases(cl) {
-  const m = 5;
-  const ov = 1;
-  const lut = 14;
-  const fol = cl - m - ov - lut;
-  return [
-    { key: 'menstrual', days: m },
-    { key: 'follicular', days: Math.max(fol, 6) },
-    { key: 'ovulation', days: ov },
-    { key: 'luteal', days: lut },
-  ];
-}
-
-function getPhaseAtDay(day, cl) {
-  const phases = getPhases(cl);
-  let accum = 0;
-  for (const p of phases) {
-    accum += p.days;
-    if (day <= accum) return p.key;
-  }
-  return 'luteal';
-}
-
-// ── Quarters ──────────────────────────────────────────────────────────────────
-function getQuarters() {
-  const quarters = [];
-  const base = lastPeriodStart
-    ? new Date(lastPeriodStart)
-    : (function() {
-        const d = new Date();
-        d.setDate(d.getDate() - 7);
-        return d;
-      })();
-
-  for (let i = 0; i < 4; i++) {
-    const start = addDays(base, i * cycleLength);
-    const end = addDays(start, cycleLength - 1);
-    quarters.push({ idx: i, start, end });
-  }
-  return quarters;
-}
-
-// ── Render quarters ───────────────────────────────────────────────────────────
-function renderQuarters() {
-  const grid = document.getElementById('quartersGrid');
-  const quarters = getQuarters();
-  const phases = getPhases(cycleLength);
-  const today = new Date(); today.setHours(0,0,0,0);
-  grid.innerHTML = '';
-
-  quarters.forEach((q, qi) => {
-    const card = document.createElement('div');
-    card.className = 'quarter-card';
-
-    // Find confirmation for this quarter
-    const conf = confirmations.find(c => c.quarterIdx === qi);
-
-    // ── Quarter header
-    card.innerHTML = `
-      <div class="quarter-header">
-        <span class="quarter-title">Cycle ${qi + 1}</span>
-        <span class="quarter-dates">${fmtShort(q.start)} — ${fmtShort(q.end)}</span>
-      </div>
-    `;
-
-    // ── Timeline bar
-    const wrap = document.createElement('div');
-    wrap.className = 'timeline-wrap';
-
-    const bar = document.createElement('div');
-    bar.className = 'timeline-bar';
-
-    phases.forEach(p => {
-      const seg = document.createElement('div');
-      seg.className = `phase-segment ${p.key}`;
-      seg.style.width = `${(p.days / cycleLength) * 100}%`;
-      seg.dataset.phase = p.key;
-      seg.dataset.days = p.days;
-      seg.addEventListener('mousemove', (e) => showTooltip(e, p.key, p.days));
-      seg.addEventListener('mouseleave', hideTooltip);
-      bar.appendChild(seg);
-    });
-
-    // Confirmed actual highlight
-    if (conf) {
-      const actualStart = new Date(conf.startDate);
-      const startOffset = Math.max(0, (actualStart - q.start) / (1000*60*60*24));
-      const dur = conf.duration || 5;
-      const leftPct = (startOffset / cycleLength) * 100;
-      const widthPct = (dur / cycleLength) * 100;
-      const marker = document.createElement('div');
-      marker.className = 'confirmed-marker';
-      marker.style.left = `${Math.min(leftPct, 95)}%`;
-      marker.style.width = `${Math.min(widthPct, 100 - leftPct)}%`;
-      bar.style.position = 'relative';
-      bar.appendChild(marker);
-    }
-
-    // Today line
-    const todayOffset = (today - q.start) / (1000*60*60*24);
-    if (todayOffset >= 0 && todayOffset < cycleLength) {
-      const pct = (todayOffset / cycleLength) * 100;
-      const tl = document.createElement('div');
-      tl.className = 'today-line';
-      tl.style.left = `${pct}%`;
-      tl.title = 'Today';
-      const td = document.createElement('div');
-      td.className = 'today-dot';
-      td.style.left = `${pct}%`;
-      td.style.top = '28px';
-      wrap.appendChild(tl);
-    }
-
-    wrap.appendChild(bar);
-
-    // Moment dots row — glowing dots above bar for logged moments
-    const momentRow = document.createElement('div');
-    momentRow.className = 'moment-dot-row';
-    const qMoments = moments.filter(m => {
-      const md = parseDate(m.date); md.setHours(0,0,0,0);
-      return md >= q.start && md <= q.end;
-    });
-    qMoments.forEach(m => {
-      const md = parseDate(m.date); md.setHours(0,0,0,0);
-      const offset = (md - q.start) / (1000*60*60*24);
-      const pct = ((offset + 0.5) / cycleLength) * 100;
-      const dot = document.createElement('div');
-      dot.className = `moment-dot ${m.type}`;
-      dot.style.left = `${pct}%`;
-      dot.title = `${m.type} · ${fmtDate(md)}${m.notes ? ' · ' + m.notes : ''}`;
-      dot.addEventListener('click', () => openMomentModal(m.date, m));
-      dot.addEventListener('mousemove', (e) => {
-        const tip = document.getElementById('tooltip');
-        tip.innerHTML = `<strong style="color:var(--accent)">${capitalize(m.type)}</strong> · Day ${Math.floor(offset)+1}<br><span style="color:var(--text-muted);font-size:0.7rem">${fmtDate(md)}${m.notes ? '<br>' + m.notes : ''}</span>`;
-        tip.classList.add('show');
-      });
-      dot.addEventListener('mouseleave', hideTooltip);
-      momentRow.appendChild(dot);
-    });
-    wrap.appendChild(momentRow);
-
-    // Click overlay on bar to log a moment on that day
-    const clickOverlay = document.createElement('div');
-    clickOverlay.className = 'timeline-click-overlay';
-    clickOverlay.style.top = '0';
-    clickOverlay.style.position = 'absolute';
-    clickOverlay.style.height = '28px';
-    clickOverlay.addEventListener('click', (e) => {
-      const rect = bar.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      const dayOffset = Math.min(Math.round(pct * cycleLength), cycleLength - 1);
-      const clickedDate = addDays(q.start, dayOffset);
-      openMomentModal(isoDate(clickedDate), null);
-    });
-    wrap.style.position = 'relative';
-    bar.style.position = 'relative';
-    bar.appendChild(clickOverlay);
-
-    // Ticks
-    const ticks = document.createElement('div');
-    ticks.className = 'day-ticks';
-    ticks.style.position = 'relative';
-    [1, 7, 14, 21, cycleLength].forEach(d => {
-      const pct = ((d - 1) / cycleLength) * 100;
-      const tick = document.createElement('div');
-      tick.className = 'tick';
-      tick.style.left = `${pct}%`;
-      ticks.appendChild(tick);
-      const lbl = document.createElement('div');
-      lbl.className = 'tick-label';
-      lbl.style.left = `${pct}%`;
-      lbl.textContent = d === cycleLength ? `D${d}` : `D${d}`;
-      ticks.appendChild(lbl);
-    });
-    wrap.appendChild(ticks);
-    card.appendChild(wrap);
-
-    // Mood tags
-    const moodWrap = document.createElement('div');
-    moodWrap.className = 'mood-annotations';
-
-    // Show moods relative to today if this is the active quarter
-    const isActiveQuarter = todayOffset >= 0 && todayOffset < cycleLength;
-    if (isActiveQuarter) {
-      const currentPhase = getPhaseAtDay(todayOffset + 1, cycleLength);
-      PHASE_DATA[currentPhase].moods.forEach(m => {
-        const tag = document.createElement('span');
-        tag.className = `mood-tag ${currentPhase}`;
-        tag.textContent = m;
-        moodWrap.appendChild(tag);
-      });
-    } else {
-      // Show summary tags for all 4 phases
-      phases.forEach(p => {
-        const tag = document.createElement('span');
-        tag.className = `mood-tag ${p.key}`;
-        tag.textContent = PHASE_DATA[p.key].moods[0];
-        moodWrap.appendChild(tag);
-      });
-    }
-    card.appendChild(moodWrap);
-
-    // Confirm area
-    const confirmArea = document.createElement('div');
-    confirmArea.className = 'confirm-area';
-
-    const status = document.createElement('div');
-    status.className = 'confirm-status';
-    if (conf) {
-      status.innerHTML = `<div class="dot-confirmed"></div> Confirmed · ${fmtDate(new Date(conf.startDate))}`;
-    } else {
-      status.innerHTML = `<div class="dot-unconfirmed"></div> Not yet confirmed`;
-    }
-    confirmArea.appendChild(status);
-
-    const btn = document.createElement('button');
-    btn.className = `btn-confirm${conf ? ' confirmed' : ''}`;
-    btn.innerHTML = conf ? '✓ Update' : '+ Confirm';
-    btn.onclick = () => openModal(qi, q);
-    confirmArea.appendChild(btn);
-
-    card.appendChild(confirmArea);
-    grid.appendChild(card);
-  });
-}
-
-// ── Current cycle position bar ────────────────────────────────────────────────
-function renderPositionBar() {
-  const quarters = getQuarters();
-  const today = new Date(); today.setHours(0,0,0,0);
-  const fill = document.getElementById('cycleBarFill');
-  const text = document.getElementById('cyclePositionText');
-  const badge = document.getElementById('currentPhaseBadge');
-
-  let found = false;
-  quarters.forEach((q, qi) => {
-    const offset = (today - q.start) / (1000*60*60*24);
-    if (offset >= 0 && offset < cycleLength) {
-      found = true;
-      const dayNum = Math.floor(offset) + 1;
-      const phaseName = getPhaseAtDay(dayNum, cycleLength);
-      const phaseInfo = PHASE_DATA[phaseName];
-      const pct = (offset / cycleLength) * 100;
-
-      fill.style.width = `${pct}%`;
-      fill.style.background = phaseInfo.color;
-      text.textContent = `Day ${dayNum} of ${cycleLength} (Cycle ${qi + 1})`;
-      badge.textContent = phaseInfo.label;
-      badge.className = `phase-name-badge ${phaseName}`;
-      badge.style.background = `rgba(${phaseInfo.color === 'var(--menstrual)' ? '248,113,113' : phaseInfo.color === 'var(--follicular)' ? '96,165,250' : phaseInfo.color === 'var(--ovulation)' ? '52,211,153' : '251,146,60'},0.15)`;
-      badge.style.color = phaseInfo.color;
-
-      // Also render phase detail panel
-      renderPhaseDetail(phaseName);
-    }
-  });
-
-  if (!found) {
-    fill.style.width = '0%';
-    text.textContent = 'Set last period start to begin';
-    badge.textContent = '';
-  }
-}
-
-function renderPhaseDetail(phaseKey) {
-  let panel = document.getElementById('phasePanel');
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.className = 'phase-panel';
-    panel.id = 'phasePanel';
-    document.getElementById('quartersGrid').before(panel);
-  }
-  const p = PHASE_DATA[phaseKey];
-  const hBars = Object.entries(p.hormones).map(([h, v]) => `
-    <div class="hormone-row">
-      <div class="hormone-label"><span>${h.toUpperCase()}</span><span>${v}%</span></div>
-      <div class="hormone-bar-track">
-        <div class="hormone-bar-fill" style="width:${v}%;background:${HORMONE_COLORS[h]}"></div>
-      </div>
-    </div>
-  `).join('');
-
-  panel.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap">
-      <div style="flex:1">
-        <h3 style="color:${p.color}">Currently: ${p.label} Phase</h3>
-        <p class="phase-desc" style="margin-top:0.4rem">${p.desc}</p>
-      </div>
-    </div>
-    <div class="hormone-bars">${hBars}</div>
-  `;
-  panel.classList.add('visible');
-}
-
-// ── Tooltip ───────────────────────────────────────────────────────────────────
-function showTooltip(e, phaseKey, days) {
-  const tip = document.getElementById('tooltip');
-  const p = PHASE_DATA[phaseKey];
-  tip.innerHTML = `<strong style="color:${p.color}">${p.label}</strong> · ${days} days<br><span style="color:var(--text-muted);font-size:0.7rem">${p.moods.join(' · ')}</span>`;
-  tip.classList.add('show');
-  positionTooltip(e);
-}
-function hideTooltip() { document.getElementById('tooltip').classList.remove('show'); }
-document.addEventListener('mousemove', e => {
-  const tip = document.getElementById('tooltip');
-  if (tip.classList.contains('show')) positionTooltip(e);
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',function(e){ if(e.target===this) this.classList.remove('show'); });
 });
-function positionTooltip(e) {
-  const tip = document.getElementById('tooltip');
-  tip.style.left = `${e.clientX + 14}px`;
-  tip.style.top = `${e.clientY - 10}px`;
+const img=document.getElementById('logoImg');
+img.onerror=function(){ this.style.display='none'; };
+
+// =====================================================================
+// INIT
+// =====================================================================
+// If no feed exists yet (first load), build it
+const initState = getState();
+if(!initState.feed || initState.feed.length===0) {
+  initState.feed = buildInitialFeed();
+  saveState(initState);
 }
-
-// ── Modal ─────────────────────────────────────────────────────────────────────
-function openModal(qi, q) {
-  pendingQuarterIdx = qi;
-  const existing = confirmations.find(c => c.quarterIdx === qi);
-  document.getElementById('modalQuarterLabel').value = `Cycle ${qi + 1} · ${fmtShort(q.start)} – ${fmtShort(q.end)}`;
-  document.getElementById('modalStartDate').value = existing ? existing.startDate : isoDate(q.start);
-  document.getElementById('modalDuration').value = existing ? existing.duration : 5;
-  document.getElementById('modalNotes').value = existing ? existing.notes : '';
-  document.getElementById('modalOverlay').classList.add('open');
-}
-
-// Edit any confirmation entry directly from the log (including historical)
-function editConf(quarterIdx) {
-  const c = confirmations.find(x => x.quarterIdx === quarterIdx);
-  if (!c) return;
-  pendingQuarterIdx = quarterIdx;
-  const isHistorical = quarterIdx < 0;
-  document.getElementById('modalQuarterLabel').value = isHistorical ? `Historical entry · ${fmtDate(parseDate(c.startDate))}` : `Cycle ${quarterIdx + 1}`;
-  document.getElementById('modalStartDate').value = c.startDate;
-  document.getElementById('modalDuration').value = c.duration || 5;
-  document.getElementById('modalNotes').value = c.notes || '';
-  document.getElementById('modalOverlay').classList.add('open');
-}
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  pendingQuarterIdx = null;
-}
-function submitConfirmation() {
-  const startDate = document.getElementById('modalStartDate').value;
-  const duration = parseInt(document.getElementById('modalDuration').value) || 5;
-  const notes = document.getElementById('modalNotes').value.trim();
-  if (!startDate) { alert('Please enter a start date'); return; }
-
-  confirmations = confirmations.filter(c => c.quarterIdx !== pendingQuarterIdx);
-  confirmations.push({
-    quarterIdx: pendingQuarterIdx,
-    startDate,
-    duration,
-    notes,
-    loggedAt: new Date().toISOString(),
-  });
-  save();
-  closeModal();
-  render();
-}
-
-// ── Set start modal ───────────────────────────────────────────────────────────
-function openSetStartModal() {
-  document.getElementById('startDateInput').value = lastPeriodStart ? isoDate(lastPeriodStart) : isoDate(new Date());
-  document.getElementById('startModalOverlay').classList.add('open');
-}
-function closeStartModal() { document.getElementById('startModalOverlay').classList.remove('open'); }
-function saveStartDate() {
-  const v = document.getElementById('startDateInput').value;
-  if (!v) return;
-  lastPeriodStart = new Date(v);
-  save();
-  closeStartModal();
-  render();
-}
-
-// ── Historical modal ──────────────────────────────────────────────────────────
-function openHistoricalModal() {
-  document.getElementById('histStartDate').value = '';
-  document.getElementById('histDuration').value = 5;
-  document.getElementById('histNotes').value = '';
-  document.getElementById('historicalModalOverlay').classList.add('open');
-}
-function closeHistoricalModal() {
-  document.getElementById('historicalModalOverlay').classList.remove('open');
-}
-function submitHistorical() {
-  const startDate = document.getElementById('histStartDate').value;
-  const duration = parseInt(document.getElementById('histDuration').value) || 5;
-  const notes = document.getElementById('histNotes').value.trim();
-  if (!startDate) { alert('Please enter a date'); return; }
-  // Use negative indices for historical entries, going further negative each time
-  const minIdx = confirmations.filter(c => c.quarterIdx < 0).length;
-  confirmations.push({
-    quarterIdx: -(minIdx + 10),
-    startDate,
-    duration,
-    notes: notes || 'Historical entry',
-    loggedAt: new Date().toISOString(),
-  });
-  save();
-  closeHistoricalModal();
-  render();
-}
-document.getElementById('historicalModalOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('historicalModalOverlay')) closeHistoricalModal();
-});
-
-// ── Moment modal ──────────────────────────────────────────────────────────────
-function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-
-function openMomentModal(dateStr, existing) {
-  document.getElementById('momentDate').value = dateStr || isoDate(new Date());
-  // Reset radio
-  document.querySelectorAll('input[name="momentType"]').forEach(r => r.checked = false);
-  if (existing) {
-    const r = document.querySelector(`input[name="momentType"][value="${existing.type}"]`);
-    if (r) r.checked = true;
-  }
-  document.getElementById('momentNotes').value = existing ? existing.notes || '' : '';
-  // Store existing id for editing
-  document.getElementById('momentModalOverlay').dataset.editId = existing ? existing.id : '';
-  document.getElementById('momentModalOverlay').classList.add('open');
-}
-function closeMomentModal() {
-  document.getElementById('momentModalOverlay').classList.remove('open');
-}
-function submitMoment() {
-  const date = document.getElementById('momentDate').value;
-  const typeEl = document.querySelector('input[name="momentType"]:checked');
-  const notes = document.getElementById('momentNotes').value.trim();
-  if (!date) { alert('Please select a date'); return; }
-  if (!typeEl) { alert('Please select a moment type'); return; }
-
-  const editId = document.getElementById('momentModalOverlay').dataset.editId;
-  if (editId) {
-    const idx = moments.findIndex(m => m.id === editId);
-    if (idx !== -1) moments.splice(idx, 1);
-  }
-  // Calculate cycle day
-  const md = new Date(date); md.setHours(0,0,0,0);
-  let cycleDay = null;
-  let phaseKey = null;
-  if (lastPeriodStart) {
-    const totalDays = Math.round((md - lastPeriodStart) / (1000*60*60*24));
-    cycleDay = ((totalDays % cycleLength) + cycleLength) % cycleLength + 1;
-    phaseKey = getPhaseAtDay(cycleDay, cycleLength);
-  }
-  moments.push({
-    id: Date.now().toString(),
-    date,
-    type: typeEl.value,
-    notes,
-    cycleDay,
-    phase: phaseKey,
-    loggedAt: new Date().toISOString(),
-  });
-  save();
-  closeMomentModal();
-  render();
-}
-function deleteMoment(id) {
-  if (!confirm('Remove this moment?')) return;
-  moments = moments.filter(m => m.id !== id);
-  save();
-  render();
-}
-document.getElementById('momentModalOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('momentModalOverlay')) closeMomentModal();
-});
-
-// ── Render moments log ────────────────────────────────────────────────────────
-const MOMENT_COLORS = {
-  affectionate: '#f9a8d4',
-  flirty: '#fde68a',
-  intimate: '#c084fc',
-  spontaneous: '#6ee7b7',
-};
-function renderMoments() {
-  const body = document.getElementById('momentsBody');
-  if (moments.length === 0) {
-    body.innerHTML = '<tr><td colspan="6" class="empty-log">No moments logged yet — click the timeline or use the button above</td></tr>';
-    renderPatternBar();
-    return;
-  }
-  const sorted = [...moments].sort((a,b) => new Date(b.date) - new Date(a.date));
-  body.innerHTML = sorted.map(m => {
-    const col = MOMENT_COLORS[m.type] || 'var(--accent)';
-    const phaseLabel = m.phase ? PHASE_DATA[m.phase].label : '—';
-    return `<tr>
-      <td><strong>${fmtDate(parseDate(m.date))}</strong></td>
-      <td style="color:var(--text-muted)">Day ${m.cycleDay || '—'}</td>
-      <td><span style="font-size:0.72rem;padding:0.15rem 0.55rem;border-radius:10px;background:${m.phase ? `rgba(0,0,0,0.2)` : 'transparent'};color:${m.phase ? PHASE_DATA[m.phase].color : 'var(--text-muted)'};">${phaseLabel}</span></td>
-      <td><span style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.78rem"><span style="width:7px;height:7px;border-radius:50%;background:${col};box-shadow:0 0 5px ${col};display:inline-block"></span>${capitalize(m.type)}</span></td>
-      <td style="color:var(--text-muted);font-size:0.77rem">${m.notes || '—'}</td>
-      <td style="white-space:nowrap">
-        <button onclick="openMomentModal('${m.date}', moments.find(x => x.id === '${m.id}'))" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.75rem;padding:0.2rem 0.4rem;border-radius:4px" title="Edit">&#9998;</button>
-        <button onclick="deleteMoment('${m.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.75rem;padding:0.2rem 0.4rem;border-radius:4px" title="Remove">&#x2715;</button>
-      </td>
-    </tr>`;
-  }).join('');
-  renderPatternBar();
-}
-
-// ── Pattern bar — which cycle days see the most moments ───────────────────────
-function renderPatternBar() {
-  const el = document.getElementById('momentsPatternBar');
-  if (!moments.length || !lastPeriodStart) { el.innerHTML = ''; return; }
-
-  // Count moments by cycle day
-  const counts = new Array(cycleLength).fill(0);
-  const types = new Array(cycleLength).fill(null);
-  moments.forEach(m => {
-    if (m.cycleDay && m.cycleDay >= 1 && m.cycleDay <= cycleLength) {
-      counts[m.cycleDay - 1]++;
-      types[m.cycleDay - 1] = m.type; // last type wins for color
-    }
-  });
-  const max = Math.max(...counts, 1);
-
-  const phases = getPhases(cycleLength);
-  let phaseHtml = '';
-  let accum = 0;
-  phases.forEach(p => {
-    phaseHtml += `<div style="position:absolute;left:${(accum/cycleLength)*100}%;width:${(p.days/cycleLength)*100}%;height:100%;background:${
-      p.key==='menstrual'?'var(--menstrual-soft)':p.key==='follicular'?'var(--follicular-soft)':p.key==='ovulation'?'var(--ovulation-soft)':'var(--luteal-soft)'
-    };opacity:0.4"></div>`;
-    accum += p.days;
-  });
-
-  const bars = counts.map((c, i) => {
-    if (!c) return '';
-    const col = MOMENT_COLORS[types[i]] || 'var(--accent)';
-    const h = Math.max(20, (c / max) * 100);
-    return `<div title="Day ${i+1}: ${c} moment${c>1?'s':''}" style="position:absolute;left:${((i+0.1)/cycleLength)*100}%;width:${(0.8/cycleLength)*100}%;bottom:0;height:${h}%;background:${col};border-radius:2px 2px 0 0;box-shadow:0 0 6px ${col};opacity:0.85"></div>`;
-  }).join('');
-
-  el.innerHTML = `
-    <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem">Pattern — moments by cycle day</div>
-    <div style="position:relative;height:40px;background:var(--surface2);border-radius:6px;overflow:hidden">
-      ${phaseHtml}
-      ${bars}
-    </div>
-  `;
-}
-
-// ── Log table ─────────────────────────────────────────────────────────────────
-function renderLog() {
-  const body = document.getElementById('logBody');
-  if (confirmations.length === 0) {
-    body.innerHTML = '<tr><td colspan="7" class="empty-log">No cycles confirmed yet</td></tr>';
-    renderCycleStats();
-    return;
-  }
-  const sorted = [...confirmations].sort((a,b) => new Date(a.startDate) - new Date(b.startDate));
-  body.innerHTML = sorted.map((c, i) => {
-    const isHistorical = c.quarterIdx < 0;
-    const qLabel = isHistorical ? 'Historical' : `Cycle ${c.quarterIdx + 1}`;
-    const logDate = fmtDate(new Date(c.loggedAt));
-    let gapCell = '&mdash;';
-    if (i < sorted.length - 1) {
-      const gap = Math.round((parseDate(sorted[i+1].startDate) - parseDate(c.startDate)) / (1000*60*60*24));
-      if (gap > 0) gapCell = `<span style="color:${gap >= 25 && gap <= 35 ? 'var(--ovulation)' : 'var(--luteal)'}">${gap}d to next</span>`;
-    }
-    return `<tr>
-      <td style="color:var(--text-muted)">${logDate}</td>
-      <td><strong>${fmtDate(parseDate(c.startDate))}</strong></td>
-      <td>${c.duration} days</td>
-      <td><span style="font-size:0.72rem;padding:0.15rem 0.5rem;border-radius:10px;background:${isHistorical ? 'rgba(139,92,246,0.15)' : 'rgba(96,165,250,0.12)'};color:${isHistorical ? '#a78bfa' : 'var(--follicular)'}">${qLabel}</span></td>
-      <td>${gapCell}</td>
-      <td style="color:var(--text-muted);font-size:0.77rem">${c.notes || '&mdash;'}</td>
-      <td style="white-space:nowrap">
-        <button onclick="editConf(${c.quarterIdx})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.75rem;padding:0.2rem 0.4rem;border-radius:4px" title="Edit">&#9998;</button>
-        <button onclick="deleteConf(${c.quarterIdx})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.75rem;padding:0.2rem 0.4rem;border-radius:4px" title="Remove">&#x2715;</button>
-      </td>
-    </tr>`;
-  }).join('');
-  renderCycleStats();
-}
-
-// ── Cycle gap stats ───────────────────────────────────────────────────────────
-function renderCycleStats() {
-  let el = document.getElementById('cycleStatsBar');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'cycleStatsBar';
-    el.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.4rem;margin-bottom:1.25rem;display:flex;gap:2rem;flex-wrap:wrap;align-items:center';
-    const logSection = document.querySelector('.log-section');
-    const heading = logSection.querySelector('h2');
-    heading.after(el);
-  }
-  el.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:0.2rem">
-      <span style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">Confirmed gaps</span>
-      <span style="font-size:0.85rem;font-weight:500;line-height:1.7">
-        Sep5&rarr;Oct2 <strong style="color:var(--ovulation)">27d</strong> &nbsp;
-        Dec17&rarr;Jan11 <strong style="color:var(--ovulation)">25d</strong> &nbsp;
-        Jan11&rarr;Feb6 <strong style="color:var(--ovulation)">26d</strong> &nbsp;
-        Feb6&rarr;Mar4 <strong style="color:var(--ovulation)">26d</strong>
-      </span>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:0.2rem;border-left:1px solid var(--border);padding-left:2rem">
-      <span style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">Average cycle</span>
-      <span style="font-size:1rem;font-weight:500"><strong style="color:var(--accent)">${cycleLength} days</strong> <span style="font-size:0.72rem;color:var(--text-muted)">(adjust top-right &nearr;)</span></span>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:0.2rem;border-left:1px solid var(--border);padding-left:2rem">
-      <span style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">Anchored from</span>
-      <span style="font-size:1rem;font-weight:500"><strong style="color:var(--follicular)">Mar 4, 2026</strong></span>
-    </div>
-  `;
-}
-
-function deleteConf(qi) {
-  if (!confirm('Remove this confirmation?')) return;
-  confirmations = confirmations.filter(c => c.quarterIdx !== qi);
-  save();
-  render();
-}
-
-// ── Cycle length change ───────────────────────────────────────────────────────
-document.getElementById('cycleLength').addEventListener('change', e => {
-  cycleLength = parseInt(e.target.value) || 28;
-  save();
-  render();
-});
-
-// ── Main render ───────────────────────────────────────────────────────────────
-function render() {
-  document.getElementById('cycleLength').value = cycleLength;
-  renderPositionBar();
-  renderQuarters();
-  renderLog();
-  renderMoments();
-  updateBackupStatus();
-}
-
-// Close modals on overlay click
-document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === document.getElementById('modalOverlay')) closeModal(); });
-document.getElementById('startModalOverlay').addEventListener('click', e => { if (e.target === document.getElementById('startModalOverlay')) closeStartModal(); });
-
-// ── Init ──────────────────────────────────────────────────────────────────────
-load();
-
-// Force reseed with all confirmed dates and correct cycle length
-// Gaps: Sep5→Oct2=27d, Oct2→Dec17=76d(gap), Dec17→Jan11=25d, Jan11→Feb6=26d, Feb6→Mar4=26d
-// Reliable single-cycle gaps: 27, 25, 26, 26 → average = 26 days
-(function reseed() {
-  const knownDates = [
-    { date: '2025-09-05', notes: 'Historical — Sep5→Oct2 gap: 27 days' },
-    { date: '2025-10-02', notes: 'Historical — Oct2→Dec17 gap: 76 days (cycles unknown)' },
-    { date: '2025-12-17', notes: 'Historical — Dec17→Jan11 gap: 25 days' },
-    { date: '2026-01-11', notes: 'Historical — Jan11→Feb6 gap: 26 days' },
-    { date: '2026-02-06', notes: 'Historical — Feb6→Mar4 gap: 26 days' },
-    { date: '2026-03-04', notes: 'Current cycle start (confirmed)' },
-  ];
-
-  // Always reseed historical entries to ensure they are current
-  // Remove all historical entries and re-add them
-  confirmations = confirmations.filter(c => c.quarterIdx >= 0);
-
-  knownDates.forEach((d, i) => {
-    const isCurrentCycle = d.date === '2026-03-04';
-    if (isCurrentCycle) {
-      // Ensure current cycle (quarterIdx 0) is confirmed
-      if (!confirmations.find(c => c.quarterIdx === 0)) {
-        confirmations.push({
-          quarterIdx: 0,
-          startDate: d.date,
-          duration: 5,
-          notes: d.notes,
-          loggedAt: new Date().toISOString(),
-        });
-      }
-    } else {
-      confirmations.push({
-        quarterIdx: -(i + 1),
-        startDate: d.date,
-        duration: 5,
-        notes: d.notes,
-        loggedAt: new Date().toISOString(),
-      });
-    }
-  });
-
-  cycleLength = 26;
-  lastPeriodStart = new Date('2026-03-04');
-  save();
-})();
-
-render();
+renderFeed();
 </script>
 </body>
 </html>
