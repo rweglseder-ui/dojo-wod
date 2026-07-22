@@ -2,202 +2,264 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Dojo WOD Board</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>The Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --orange: #F5841F;
-  --orange-dark: #D4690A;
-  --orange-glow: rgba(245,132,31,0.25);
-  --black: #0D0D0D;
-  --dark: #141414;
-  --card: #1C1C1C;
-  --card2: #222222;
-  --border: #2E2E2E;
-  --text: #F0EDE8;
-  --muted: #888;
-  --white: #FFFFFF;
-  --green: #4CAF50;
-  --red: #E53935;
-  --gold: #FFD700;
-  --blue: #42A5F5;
+  --bg:          #f2f4f7;
+  --surface:     #ffffff;
+  --surface2:    #f7f8fa;
+  --border:      #e4e7ed;
+  --border2:     #d1d5de;
+  --text:        #0f1117;
+  --text2:       #3d4451;
+  --muted:       #8892a0;
+  --accent:      #f5841f;
+  --accent-pale: #fff5ee;
+  --accent-mid:  #fde8d2;
+  --green:       #16a34a;
+  --green-pale:  #f0fdf4;
+  --red:         #dc2626;
+  --blue:        #2563eb;
+  --blue-pale:   #eff6ff;
+  --gold:        #d97706;
+  --shadow-sm:   0 1px 3px rgba(15,17,23,0.07), 0 1px 2px rgba(15,17,23,0.04);
+  --shadow:      0 4px 16px rgba(15,17,23,0.08);
+  --shadow-lg:   0 8px 32px rgba(15,17,23,0.12);
+  --radius:      12px;
+  --radius-sm:   8px;
+  --radius-xs:   6px;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--black); color:var(--text); font-family:'Barlow',sans-serif; min-height:100vh; overflow-x:hidden; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5;min-height:100vh;}
 
-/* HEADER */
-header { background:linear-gradient(180deg,#000 0%,var(--dark) 100%); border-bottom:2px solid var(--orange); padding:0 1rem; position:sticky; top:0; z-index:100; box-shadow:0 4px 30px rgba(245,132,31,0.2); }
-.header-inner { max-width:960px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:0.6rem 0; }
-.logo-area { display:flex; align-items:center; gap:0.75rem; }
-.logo-img { width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid var(--orange); box-shadow:0 0 12px var(--orange-glow); }
-.brand-text h1 { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.08em; color:var(--orange); line-height:1; text-shadow:0 0 20px var(--orange-glow); }
-.brand-text span { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; }
-.header-actions { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+/* ── HEADER ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm);}
+.header-inner{max-width:680px;margin:0 auto;padding:0 1rem;height:56px;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.brand{display:flex;align-items:center;gap:0.6rem;}
+.brand-logo{width:36px;height:36px;border-radius:8px;object-fit:cover;}
+.brand-logo-fallback{width:36px;height:36px;border-radius:8px;background:var(--text);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;letter-spacing:-0.02em;}
+.brand-name{font-size:1.05rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;}
+.brand-sub{font-size:0.65rem;color:var(--muted);font-weight:400;letter-spacing:0.06em;text-transform:uppercase;}
 
-/* ATHLETE BAR */
-.athlete-bar { background:var(--dark); border-bottom:1px solid var(--border); padding:0.5rem 1rem; }
-.athlete-bar-inner { max-width:960px; margin:0 auto; display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; }
-.athlete-label { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; letter-spacing:0.15em; color:var(--muted); text-transform:uppercase; }
-.athlete-btn { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.1em; padding:0.3rem 1rem; border-radius:3px; border:2px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
-.athlete-btn.active { border-color:var(--orange); color:var(--orange); background:rgba(245,132,31,0.1); box-shadow:0 0 8px var(--orange-glow); }
+/* Athlete pills */
+.athlete-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1rem;}
+.athlete-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:0.4rem;padding:0.45rem 0;overflow-x:auto;scrollbar-width:none;}
+.athlete-inner::-webkit-scrollbar{display:none;}
+.athlete-label{font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-right:0.2rem;}
+.athlete-btn{font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:500;padding:0.25rem 0.75rem;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+.athlete-btn.active{background:var(--text);border-color:var(--text);color:#fff;}
 
-/* TABS */
-.tabs { max-width:960px; margin:1.5rem auto 0; padding:0 1rem; display:flex; gap:0; border-bottom:2px solid var(--border); overflow-x:auto; }
-.tab { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.6rem 1rem; border:none; background:transparent; color:var(--muted); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s; white-space:nowrap; }
-.tab.active { color:var(--orange); border-bottom-color:var(--orange); }
+/* ── TABS ── */
+.tabs{background:var(--surface);border-bottom:1px solid var(--border);}
+.tabs-inner{max-width:680px;margin:0 auto;display:flex;padding:0 0.5rem;overflow-x:auto;scrollbar-width:none;}
+.tabs-inner::-webkit-scrollbar{display:none;}
+.tab-btn{font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:500;letter-spacing:0.04em;padding:0.8rem 0.9rem;border:none;background:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--accent);font-weight:600;}
 
-/* MAIN */
-.main { max-width:960px; margin:0 auto; padding:1.5rem 1rem 5rem; }
-.view { display:none; }
-.view.active { display:block; }
+/* ── MAIN ── */
+.main{max-width:680px;margin:0 auto;padding:1rem;}
 
-/* BUTTONS */
-.btn-primary { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:0.1em; padding:0.45rem 1.2rem; border-radius:3px; border:none; background:var(--orange); color:#000; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
-.btn-primary:hover { background:var(--orange-dark); box-shadow:0 0 16px var(--orange-glow); }
-.btn-secondary { font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.45rem 1rem; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
-.btn-secondary:hover { border-color:var(--text); color:var(--text); }
+/* ── SYNC/BACKUP BAR ── */
+.utility-bar{display:flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.5rem 0.75rem;margin-bottom:1rem;flex-wrap:wrap;box-shadow:var(--shadow-sm);}
+.sync-status{display:flex;align-items:center;gap:0.4rem;flex:1;min-width:120px;}
+.sync-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:all 0.3s;}
+.sync-dot.idle{background:var(--border2);}
+.sync-dot.syncing{background:var(--accent);box-shadow:0 0 6px var(--accent);animation:blink 1s infinite;}
+.sync-dot.ok{background:var(--green);box-shadow:0 0 4px var(--green);}
+.sync-dot.error{background:var(--red);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.sync-text{font-size:0.7rem;color:var(--muted);}
+.util-btn{font-size:0.68rem;font-weight:500;padding:0.25rem 0.6rem;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all 0.15s;font-family:'Inter',sans-serif;}
+.util-btn:hover{border-color:var(--accent);color:var(--accent);}
+.util-btn.pull{border-color:var(--accent);color:var(--accent);}
+.util-btn.pull:hover{background:var(--accent);color:#fff;}
 
-/* WOD CARD */
-.wod-card { background:var(--card); border:1px solid var(--border); border-radius:6px; margin-bottom:1rem; overflow:hidden; transition:border-color 0.2s,box-shadow 0.2s; position:relative; }
-.wod-card.next-up { border-color:var(--orange); box-shadow:0 0 20px rgba(245,132,31,0.15); }
-.wod-card.next-up::before { content:'NEXT UP'; position:absolute; top:0; right:0; background:var(--orange); color:#000; font-family:'Bebas Neue',sans-serif; font-size:0.75rem; letter-spacing:0.12em; padding:0.2rem 0.6rem; border-radius:0 0 0 4px; }
-.wod-card.partner-wod { border-left:3px solid var(--blue); }
-.wod-card.completed { opacity:0.5; border-color:#333; }
-.wod-card-header { padding:0.9rem 1rem 0.6rem; display:flex; align-items:flex-start; justify-content:space-between; gap:0.5rem; }
-.wod-day { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.18em; color:var(--orange); text-transform:uppercase; margin-bottom:0.15rem; }
-.wod-name { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:0.06em; color:var(--white); line-height:1; }
-.wod-tags { display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.4rem; }
-.tag { font-family:'Barlow Condensed',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:0.15rem 0.5rem; border-radius:2px; background:var(--card2); color:var(--muted); border:1px solid var(--border); }
-.tag.focus { background:rgba(245,132,31,0.12); color:var(--orange); border-color:rgba(245,132,31,0.3); }
-.tag.partner { background:rgba(66,165,245,0.12); color:var(--blue); border-color:rgba(66,165,245,0.3); }
-.wod-meta { text-align:right; flex-shrink:0; }
-.wod-type { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); }
-.wod-timecap { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--text); }
-.wod-body { padding:0.75rem 1rem; border-top:1px solid var(--border); }
-.wod-movements { font-family:'Barlow Condensed',sans-serif; font-size:0.95rem; font-weight:600; color:var(--text); line-height:1.7; white-space:pre-line; }
-.wod-notes { margin-top:0.5rem; font-size:0.8rem; color:var(--muted); font-style:italic; line-height:1.5; }
-.partner-badge { display:inline-flex; align-items:center; gap:0.3rem; background:rgba(66,165,245,0.1); border:1px solid rgba(66,165,245,0.3); color:var(--blue); font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.2rem 0.6rem; border-radius:2px; margin-bottom:0.6rem; }
-.wod-footer { padding:0.6rem 1rem; background:var(--card2); display:flex; align-items:center; justify-content:space-between; gap:0.5rem; flex-wrap:wrap; border-top:1px solid var(--border); }
-.complete-group { display:flex; gap:0.5rem; flex-wrap:wrap; }
-.btn-complete { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.4rem 0.9rem; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
-.btn-complete:hover { border-color:var(--green); color:var(--green); background:rgba(76,175,80,0.08); }
-.btn-complete.done { border-color:var(--green); color:var(--green); background:rgba(76,175,80,0.12); cursor:default; }
-.btn-ig { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.35rem 0.75rem; border-radius:3px; border:1px solid rgba(245,132,31,0.3); background:rgba(245,132,31,0.08); color:var(--orange); cursor:pointer; transition:all 0.2s; }
-.btn-ig:hover { background:rgba(245,132,31,0.18); border-color:var(--orange); }
+/* ── WOD CARDS ── */
+.wod-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:0.875rem;box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow 0.2s;}
+.wod-card:hover{box-shadow:var(--shadow);}
+.wod-card.next-up{border-left:3px solid var(--accent);background:linear-gradient(135deg,var(--accent-pale) 0%,var(--surface) 60%);}
+.wod-card.completed{opacity:0.5;}
+.wod-card.partner-card{border-left:3px solid var(--blue);}
 
-/* SECTION LABEL */
-.section-label { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border); padding-bottom:0.4rem; margin-bottom:1rem; }
-.week-divider { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--orange); margin:1.5rem 0 0.75rem; display:flex; align-items:center; gap:0.5rem; }
-.week-divider::after { content:''; flex:1; height:1px; background:linear-gradient(to right,var(--border),transparent); }
+.card-header{padding:0.875rem 1rem 0.625rem;display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;}
+.card-status{font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.2rem;}
+.card-status.next{color:var(--accent);}
+.card-name{font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;line-height:1.2;margin-bottom:0.35rem;}
+.card-tags{display:flex;flex-wrap:wrap;gap:0.25rem;}
+.tag{font-size:0.6rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:0.15rem 0.5rem;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--surface2);}
+.tag.focus{background:var(--accent-pale);border-color:var(--accent-mid);color:var(--accent);}
+.tag.partner{background:var(--blue-pale);border-color:#bfdbfe;color:var(--blue);}
+.card-meta{text-align:right;flex-shrink:0;}
+.card-type{font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.15rem;}
+.card-timecap{font-size:1rem;font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
 
-/* HISTORY */
-.history-entry { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.9rem 1rem; margin-bottom:0.75rem; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
-.stars { display:flex; gap:0.2rem; align-items:center; }
-.star { font-size:1.1rem; cursor:pointer; color:var(--border); transition:color 0.15s; line-height:1; }
-.star.filled { color:var(--gold); }
-.star:hover { color:var(--gold); }
+.card-body{padding:0 1rem 0.75rem;}
+.partner-badge{font-size:0.72rem;color:var(--blue);background:var(--blue-pale);border-radius:var(--radius-xs);padding:0.3rem 0.6rem;margin-bottom:0.6rem;}
+.equip-warning{font-size:0.68rem;color:var(--red);margin-top:0.3rem;}
 
-/* FILTER ROW */
-.filter-row { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; align-items:center; }
-.filter-btn { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.25rem 0.75rem; border-radius:2px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.2s; }
-.filter-btn.active { border-color:var(--orange); color:var(--orange); background:rgba(245,132,31,0.1); }
+/* Scale tabs */
+.scale-tabs{display:flex;border:1px solid var(--border);border-radius:20px;overflow:hidden;background:var(--surface2);margin-bottom:0.6rem;}
+.scale-tab{flex:1;font-family:'Inter',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.3rem 0;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.scale-tab.active-easy{background:var(--green-pale);color:var(--green);}
+.scale-tab.active-med{background:#fffbeb;color:var(--gold);}
+.scale-tab.active-rx{background:var(--accent-pale);color:var(--accent);}
+.scale-badge{font-size:0.55rem;opacity:0.6;margin-left:0.2rem;}
 
-/* MANAGE QUEUE */
-.manage-item { background:var(--card); border:1px solid var(--border); border-radius:5px; padding:0.75rem 1rem; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.75rem; cursor:grab; transition:border-color 0.15s,box-shadow 0.15s; user-select:none; }
-.manage-item:active { cursor:grabbing; }
-.manage-item.dragging { border-color:var(--orange); box-shadow:0 4px 20px rgba(245,132,31,0.2); opacity:0.85; }
-.manage-item.drag-over { border-color:var(--orange); border-style:dashed; }
-.drag-handle { color:#444; font-size:1rem; cursor:grab; flex-shrink:0; line-height:1; }
-.manage-item-num { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--orange); min-width:1.5rem; flex-shrink:0; }
-.manage-item-info { flex:1; min-width:0; }
-.manage-item-name { font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.manage-item-meta { font-size:0.72rem; color:var(--muted); margin-top:0.1rem; }
-.btn-remove { background:none; border:none; color:#555; font-size:1rem; cursor:pointer; padding:0.2rem 0.4rem; border-radius:3px; transition:color 0.15s,background 0.15s; flex-shrink:0; line-height:1; }
-.btn-remove:hover { color:var(--red); background:rgba(229,57,53,0.1); }
+.card-movements{font-size:0.82rem;line-height:1.8;color:var(--text2);white-space:pre-wrap;font-variant-numeric:tabular-nums;}
+.card-notes{margin-top:0.6rem;font-size:0.75rem;color:var(--muted);background:var(--surface2);border-radius:var(--radius-xs);padding:0.45rem 0.65rem;line-height:1.5;border-left:2px solid var(--border2);}
 
-/* ADD WOD FORM */
-.add-wod-form { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:1.25rem; }
-.form-group { margin-bottom:0.9rem; }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
-@media(max-width:480px){.form-row{grid-template-columns:1fr;}}
-.form-label { display:block; font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:0.35rem; }
-.form-input { width:100%; background:var(--card2); border:1px solid var(--border); color:var(--text); font-family:'Barlow',sans-serif; font-size:0.88rem; padding:0.55rem 0.75rem; border-radius:3px; outline:none; transition:border-color 0.2s; appearance:none; }
-.form-input:focus { border-color:var(--orange); }
-.form-input::placeholder { color:#555; }
-.form-textarea { resize:vertical; min-height:110px; line-height:1.6; font-family:'Barlow Condensed',sans-serif; font-size:0.9rem; }
-select.form-input { cursor:pointer; }
-select.form-input option { background:var(--card2); }
+.card-footer{padding:0.6rem 1rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:0.5rem;background:var(--surface2);flex-wrap:wrap;}
+.btn-done{font-family:'Inter',sans-serif;font-size:0.72rem;font-weight:600;padding:0.35rem 0.9rem;border-radius:20px;border:none;background:var(--text);color:#fff;cursor:pointer;transition:all 0.2s;}
+.btn-done:hover{background:var(--text2);}
+.btn-done.done-state{background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:default;}
+.btn-retest{font-family:'Inter',sans-serif;font-size:0.68rem;font-weight:500;padding:0.3rem 0.65rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.btn-retest.active{border-color:var(--accent);color:var(--accent);background:var(--accent-pale);}
+.card-footer .spacer{flex:1;}
+.btn-caption{font-family:'Inter',sans-serif;font-size:0.68rem;font-weight:500;padding:0.3rem 0.65rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.btn-caption:hover{border-color:var(--muted);color:var(--text);}
 
-/* EQUIPMENT TAB */
-.equip-section { margin-bottom:1.75rem; }
-.equip-section-title { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:0.1em; color:var(--orange); margin-bottom:0.75rem; }
-.equip-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:0.5rem; }
-.equip-item { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.6rem 0.85rem; display:flex; align-items:center; gap:0.6rem; cursor:pointer; transition:all 0.2s; }
-.equip-item.has { border-color:rgba(76,175,80,0.4); background:rgba(76,175,80,0.07); }
-.equip-item.has .equip-check { color:var(--green); }
-.equip-check { width:16px; height:16px; border:2px solid var(--border); border-radius:3px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.65rem; transition:all 0.2s; }
-.equip-item.has .equip-check { border-color:var(--green); background:var(--green); color:#000; }
-.equip-name { font-family:'Barlow Condensed',sans-serif; font-size:0.88rem; font-weight:600; color:var(--text); }
-.equip-detail { font-size:0.72rem; color:var(--muted); }
-.equip-add-row { display:flex; gap:0.5rem; margin-top:0.75rem; }
-.equip-note { font-size:0.8rem; color:var(--muted); background:rgba(245,132,31,0.05); border:1px solid rgba(245,132,31,0.15); border-radius:4px; padding:0.6rem 0.85rem; margin-bottom:1rem; line-height:1.5; }
+/* ── ADD TAB ── */
+.add-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:0.875rem;box-shadow:var(--shadow-sm);}
+.section-title{font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.4rem;}
+.section-title span{font-size:0.95rem;}
 
-/* LUCKY RESULT */
-.lucky-result { background:var(--card2); border:1px solid var(--orange); border-radius:4px; padding:1rem; margin-top:0.75rem; display:none; }
-.lucky-result.show { display:block; }
-.lucky-result-name { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; color:var(--orange); margin-bottom:0.5rem; }
+.ai-prompt-area{width:100%;padding:0.65rem 0.85rem;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--text);resize:none;min-height:80px;outline:none;transition:border-color 0.15s;line-height:1.6;}
+.ai-prompt-area:focus{border-color:var(--accent);background:var(--surface);}
+.ai-prompt-area::placeholder{color:var(--muted);}
 
-/* MODAL */
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:1000; align-items:center; justify-content:center; padding:1rem; }
-.modal-overlay.show { display:flex; }
-.modal { background:var(--card); border:1px solid var(--orange); border-radius:6px; max-width:540px; width:100%; padding:1.5rem; box-shadow:0 0 40px rgba(245,132,31,0.2); position:relative; max-height:90vh; overflow-y:auto; }
-.modal-close { position:absolute; top:0.75rem; right:0.75rem; background:none; border:none; color:var(--muted); font-size:1.2rem; cursor:pointer; line-height:1; padding:0.2rem; }
-.modal-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--orange); letter-spacing:0.08em; margin-bottom:1rem; }
-.ig-caption-box { background:var(--card2); border:1px solid var(--border); border-radius:4px; padding:1rem; font-size:0.9rem; line-height:1.6; color:var(--text); margin-bottom:0.75rem; white-space:pre-wrap; word-break:break-word; }
-.copy-btn { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.4rem 1rem; border-radius:3px; border:1px solid var(--orange); background:rgba(245,132,31,0.1); color:var(--orange); cursor:pointer; transition:all 0.2s; }
-.copy-btn:hover { background:rgba(245,132,31,0.2); }
+.athlete-select-row{display:flex;align-items:center;gap:0.4rem;margin:0.6rem 0;flex-wrap:wrap;}
+.ai-athlete-label{font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+.ai-athlete-btn{font-family:'Inter',sans-serif;font-size:0.72rem;font-weight:500;padding:0.2rem 0.6rem;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.ai-athlete-btn.sel{background:var(--text);border-color:var(--text);color:#fff;}
 
-/* CUSTOM WOD CHIPS */
-.custom-wod-chip { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.6rem 0.9rem; margin-bottom:0.5rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; flex-wrap:wrap; }
-.chip-actions { display:flex; gap:0.4rem; flex-shrink:0; }
-.btn-chip { font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.2rem 0.5rem; border-radius:2px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; }
-.btn-chip:hover { border-color:var(--orange); color:var(--orange); }
-.btn-chip.danger:hover { border-color:var(--red); color:var(--red); }
+.btn-primary{font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:600;padding:0.5rem 1.25rem;border-radius:20px;border:none;background:var(--accent);color:#fff;cursor:pointer;transition:all 0.2s;letter-spacing:0.01em;}
+.btn-primary:hover{background:#e07518;}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-secondary{font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:500;padding:0.45rem 1rem;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all 0.15s;}
+.btn-secondary:hover{border-color:var(--text2);}
 
-/* TOAST */
-.toast { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%) translateY(3rem); background:var(--orange); color:#000; font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.6rem 1.5rem; border-radius:3px; z-index:9999; opacity:0; transition:all 0.3s ease; white-space:nowrap; }
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.divider{display:flex;align-items:center;gap:0.75rem;margin:0.75rem 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider-text{font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
 
-/* EMPTY */
-.empty { text-align:center; padding:3rem 1rem; color:var(--muted); font-family:'Barlow Condensed',sans-serif; font-size:1rem; letter-spacing:0.05em; }
+.screenshot-btn{display:flex;align-items:center;justify-content:center;gap:0.5rem;width:100%;padding:0.7rem;border-radius:var(--radius-sm);border:1.5px dashed var(--border2);background:var(--surface2);color:var(--text2);font-family:'Inter',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.screenshot-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-pale);}
 
-/* BACKUP BAR */
-.backup-bar { display:flex; align-items:center; gap:0.6rem; background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.5rem 0.85rem; margin-bottom:1rem; flex-wrap:wrap; }
-.backup-status { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; color:var(--muted); display:flex; align-items:center; gap:0.4rem; flex:1; min-width:160px; letter-spacing:0.05em; }
-.backup-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-.backup-dot.ok { background:#4CAF50; box-shadow:0 0 5px #4CAF50; }
-.backup-dot.warn { background:var(--orange); box-shadow:0 0 5px var(--orange); }
-.btn-backup { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.3rem 0.75rem; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
-.btn-backup:hover { border-color:var(--green); color:var(--green); }
-.btn-backup.restore:hover { border-color:#60a5fa; color:#60a5fa; }
+/* Preview card */
+.preview-card{background:var(--surface2);border:1.5px solid var(--accent-mid);border-radius:var(--radius-sm);padding:1rem;margin-top:0.75rem;}
+.preview-name{font-size:1rem;font-weight:700;color:var(--text);letter-spacing:-0.02em;margin-bottom:0.3rem;}
+.preview-meta{font-size:0.7rem;color:var(--muted);margin-bottom:0.6rem;}
+.preview-movements{font-size:0.8rem;line-height:1.75;color:var(--text2);white-space:pre-wrap;max-height:200px;overflow-y:auto;}
+.preview-actions{display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;}
 
-/* SCALE TABS */
-.scale-tabs { display:flex; gap:0; margin-bottom:0.75rem; border:1px solid var(--border); border-radius:4px; overflow:hidden; }
-.scale-tab { flex:1; font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:0.35rem 0; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; border-right:1px solid var(--border); }
-.scale-tab:last-child { border-right:none; }
-.scale-tab.active-easy { background:rgba(76,175,80,0.15); color:#4CAF50; }
-.scale-tab.active-med { background:rgba(255,193,7,0.15); color:#FFC107; }
-.scale-tab.active-rx { background:rgba(245,132,31,0.15); color:var(--orange); }
-.scale-tab:hover:not(.active-easy):not(.active-med):not(.active-rx) { background:var(--card2); color:var(--text); }
-.scale-badge { display:inline-block; font-size:0.62rem; padding:0.1rem 0.35rem; border-radius:2px; margin-left:0.3rem; vertical-align:middle; }
-.scale-badge.auto { background:rgba(255,255,255,0.07); color:var(--muted); }
+/* Form */
+.form-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:0.1rem 0;}
+.form-toggle-label{font-size:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);}
+.form-body{margin-top:0.875rem;}
+.form-group{margin-bottom:0.75rem;}
+.form-row{display:flex;gap:0.6rem;}
+.form-row .form-group{flex:1;}
+.form-label{display:block;font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:0.25rem;}
+.form-input{width:100%;padding:0.5rem 0.7rem;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-xs);font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--text);outline:none;transition:border-color 0.15s;}
+.form-input:focus{border-color:var(--accent);background:var(--surface);}
+.form-textarea{min-height:90px;resize:vertical;line-height:1.6;}
+.form-error{color:var(--red);font-size:0.72rem;margin-top:0.4rem;display:none;}
 
+/* ── HISTORY ── */
+.history-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.8rem 1rem;margin-bottom:0.5rem;display:flex;align-items:flex-start;gap:0.75rem;box-shadow:var(--shadow-sm);}
+.history-entry.retesting{border-color:var(--accent-mid);}
+.history-info{flex:1;min-width:0;}
+.history-who{font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.15rem;}
+.history-name{font-size:0.9rem;font-weight:600;color:var(--text);}
+.history-meta{font-size:0.7rem;color:var(--muted);margin-top:0.1rem;}
+.history-right{display:flex;flex-direction:column;align-items:center;gap:0.35rem;flex-shrink:0;}
+.stars{display:flex;gap:0.1rem;}
+.star{font-size:1rem;color:var(--border2);cursor:pointer;transition:color 0.1s;line-height:1;}
+.star.on{color:var(--gold);}
+.star:hover{color:var(--gold);}
+.btn-retest-sm{font-size:0.62rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all 0.15s;font-family:'Inter',sans-serif;letter-spacing:0.06em;text-transform:uppercase;}
+.btn-retest-sm.active{border-color:var(--accent);color:var(--accent);background:var(--accent-pale);}
+.filter-row{display:flex;gap:0.4rem;margin-bottom:0.875rem;flex-wrap:wrap;}
+.filter-btn{font-family:'Inter',sans-serif;font-size:0.7rem;font-weight:500;padding:0.25rem 0.7rem;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.filter-btn.active{background:var(--text);border-color:var(--text);color:#fff;}
+
+/* ── SETTINGS ── */
+.settings-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:0.875rem;box-shadow:var(--shadow-sm);}
+.settings-title{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.875rem;}
+.equip-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.35rem;}
+.equip-item{display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.65rem;border:1.5px solid var(--border);border-radius:var(--radius-xs);cursor:pointer;transition:all 0.15s;background:var(--bg);}
+.equip-item:hover{border-color:var(--border2);background:var(--surface);}
+.equip-item.has{border-color:rgba(22,163,74,0.3);background:var(--green-pale);}
+.equip-item.blocked{border-color:rgba(220,38,38,0.2);background:#fff5f5;}
+.equip-check{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:0.6rem;flex-shrink:0;}
+.equip-item.has .equip-check{background:var(--green);border-color:var(--green);color:#fff;}
+.equip-item.blocked .equip-check{background:var(--red);border-color:var(--red);color:#fff;}
+.equip-name{font-size:0.77rem;font-weight:500;color:var(--text);}
+.equip-cat-title{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin:0.75rem 0 0.4rem;}
+.equip-cat-title:first-child{margin-top:0;}
+
+/* Manage queue */
+.manage-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xs);padding:0.65rem 0.75rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.6rem;cursor:grab;transition:all 0.15s;box-shadow:var(--shadow-sm);}
+.manage-item.dragging{opacity:0.5;cursor:grabbing;}
+.manage-item.drag-over{border-color:var(--accent);background:var(--accent-pale);}
+.drag-handle{color:var(--border2);font-size:0.9rem;cursor:grab;flex-shrink:0;}
+.manage-num{font-size:0.68rem;font-weight:700;color:var(--muted);min-width:1.1rem;text-align:center;}
+.manage-info{flex:1;min-width:0;}
+.manage-name{font-size:0.85rem;font-weight:600;color:var(--text);}
+.manage-meta{font-size:0.68rem;color:var(--muted);margin-top:0.1rem;}
+.btn-remove{background:none;border:none;color:var(--border2);cursor:pointer;font-size:0.85rem;padding:0.2rem 0.3rem;border-radius:4px;transition:color 0.15s;flex-shrink:0;}
+.btn-remove:hover{color:var(--red);}
+
+/* Custom WOD chip */
+.custom-chip{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-xs);padding:0.55rem 0.75rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;}
+.custom-chip-name{flex:1;font-size:0.82rem;font-weight:500;color:var(--text);min-width:0;}
+.custom-chip-meta{font-size:0.68rem;color:var(--muted);}
+.chip-actions{display:flex;gap:0.3rem;flex-shrink:0;}
+.chip-btn{font-family:'Inter',sans-serif;font-size:0.65rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.chip-btn:hover{border-color:var(--text2);color:var(--text);}
+.chip-btn.danger:hover{border-color:var(--red);color:var(--red);}
+
+/* Bulk import */
+.import-guide-toggle{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.75rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-xs);cursor:pointer;margin-bottom:0.6rem;}
+.import-guide-body{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-xs);padding:0.875rem;margin-bottom:0.6rem;display:none;}
+.import-guide-body.show{display:block;}
+.mono{font-family:'Menlo','Monaco','Fira Code',monospace;font-size:0.72rem;line-height:1.8;color:var(--text2);}
+
+/* AI loading */
+.ai-loading{display:none;align-items:center;gap:0.6rem;padding:0.75rem;font-size:0.8rem;color:var(--muted);}
+.ai-loading.show{display:flex;}
+.spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,17,23,0.45);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:1.25rem;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:var(--radius);padding:1.5rem;max-width:420px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);position:relative;border:1px solid var(--border);}
+.modal-close{position:absolute;top:1rem;right:1rem;background:var(--surface2);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;font-size:0.8rem;transition:all 0.15s;}
+.modal-close:hover{background:var(--border);color:var(--text);}
+.modal-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:-0.02em;}
+.caption-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-xs);padding:0.875rem;font-size:0.82rem;line-height:1.7;color:var(--text2);white-space:pre-wrap;word-break:break-word;margin-bottom:0.75rem;}
+.copy-btn{font-family:'Inter',sans-serif;font-size:0.72rem;font-weight:600;padding:0.4rem 1rem;border-radius:20px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;transition:all 0.2s;}
+.copy-btn:hover{background:var(--accent);color:#fff;}
+
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(3rem);background:var(--text);color:#fff;font-size:0.78rem;font-weight:500;padding:0.55rem 1.25rem;border-radius:20px;z-index:9999;opacity:0;transition:all 0.25s;white-space:nowrap;box-shadow:var(--shadow-lg);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Empty state */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:0.85rem;line-height:1.6;}
+.empty-icon{font-size:2rem;margin-bottom:0.5rem;}
+
+/* Responsive */
 @media(max-width:500px){
-  .brand-text h1{font-size:1.4rem;}
-  .logo-img{width:44px;height:44px;}
-  .wod-name{font-size:1.3rem;}
-  .equip-grid{grid-template-columns:1fr 1fr;}
+  .brand-name{font-size:0.95rem;}
+  .card-name{font-size:1rem;}
+  .equip-grid{grid-template-columns:1fr;}
+  .form-row{flex-direction:column;}
 }
 </style>
 </head>
@@ -205,334 +267,346 @@ select.form-input option { background:var(--card2); }
 
 <header>
   <div class="header-inner">
-    <div class="logo-area">
-      <img src="./Gemini_Generated_Image_l3rr4fl3rr4fl3rr.png" alt="The Dojo" class="logo-img" id="logoImg">
-      <div class="brand-text">
-        <h1>The Dojo</h1>
-        <span>WOD Board · Est. 2024</span>
+    <div class="brand">
+      <img src="./Gemini_Generated_Image_l3rr4fl3rr4fl3rr.png" class="brand-logo" id="brandLogo" onerror="this.style.display='none';document.getElementById('brandFallback').style.display='flex';" alt="The Dojo">
+      <div class="brand-logo-fallback" id="brandFallback" style="display:none;">D</div>
+      <div>
+        <div class="brand-name">The Dojo</div>
+        <div class="brand-sub">WOD Board</div>
       </div>
-    </div>
-    <div class="header-actions">
-      <button class="btn-primary" onclick="showLuckyModal()" style="font-size:0.85rem;padding:0.4rem 0.8rem;">🎲 I'm Feeling Lucky</button>
     </div>
   </div>
 </header>
 
 <div class="athlete-bar">
-  <div class="athlete-bar-inner">
-    <span class="athlete-label">Athlete:</span>
-    <button class="athlete-btn active" id="athleteRyan" onclick="setAthlete('Ryan')">Ryan</button>
-    <button class="athlete-btn" id="athleteMarc" onclick="setAthlete('Marc')">Marc</button>
+  <div class="athlete-inner">
+    <span class="athlete-label">Athlete</span>
+    <button class="athlete-btn active" id="ath-Ryan"    onclick="setAthlete('Ryan')">Ryan</button>
+    <button class="athlete-btn"         id="ath-Marc"    onclick="setAthlete('Marc')">Marc</button>
+    <button class="athlete-btn"         id="ath-Rachael" onclick="setAthlete('Rachael')">Rachael</button>
   </div>
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('wod')">WOD Feed</button>
-  <button class="tab" onclick="switchTab('history')">History</button>
-  <button class="tab" onclick="switchTab('manage')">Manage Queue</button>
-  <button class="tab" onclick="switchTab('add')">+ Add WOD</button>
-  <button class="tab" onclick="switchTab('equipment')">⚙ Equipment</button>
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="switchTab('feed')">Feed</button>
+    <button class="tab-btn"        onclick="switchTab('add')">+ Add Workout</button>
+    <button class="tab-btn"        onclick="switchTab('history')">History</button>
+    <button class="tab-btn"        onclick="switchTab('queue')">Queue</button>
+    <button class="tab-btn"        onclick="switchTab('settings')">Settings</button>
+  </div>
 </div>
 
 <div class="main">
 
-  <!-- BACKUP BAR -->
-  <div class="backup-bar">
-    <div class="backup-status">
-      <div class="backup-dot warn" id="backupDot"></div>
-      <span id="backupStatusText">No backup yet — export anytime to save your data</span>
+  <!-- UTILITY BAR -->
+  <div class="utility-bar">
+    <div class="sync-status">
+      <div class="sync-dot idle" id="syncDot"></div>
+      <span class="sync-text" id="syncText">Sheet not configured</span>
     </div>
-    <button class="btn-backup" onclick="exportBackup()">⬇ Export Backup</button>
-    <button class="btn-backup restore" onclick="document.getElementById('restoreFileInput').click()">⬆ Restore Backup</button>
-    <input type="file" id="restoreFileInput" accept=".json" onchange="importBackup(event)" style="display:none;">
+    <button class="util-btn pull" onclick="syncFromSheet()">⟳ Pull</button>
+    <button class="util-btn" onclick="syncToSheet()">⬆ Push</button>
+    <button class="util-btn" onclick="exportBackup()">⬇ Backup</button>
+    <button class="util-btn" onclick="document.getElementById('restoreInput').click()">Restore</button>
+    <input type="file" id="restoreInput" accept=".json" onchange="importBackup(event)" style="display:none;">
   </div>
 
-  <!-- WOD FEED -->
-  <div class="view active" id="view-wod">
+  <!-- FEED -->
+  <div id="tab-feed" class="tab-view">
     <div id="wodFeed"></div>
   </div>
 
-  <!-- HISTORY -->
-  <div class="view" id="view-history">
-    <div class="filter-row">
-      <span class="athlete-label" style="font-size:0.72rem;">Show:</span>
-      <button class="filter-btn active" id="filterAll" onclick="setHistoryFilter('all')">All</button>
-      <button class="filter-btn" id="filterRyan" onclick="setHistoryFilter('Ryan')">Ryan</button>
-      <button class="filter-btn" id="filterMarc" onclick="setHistoryFilter('Marc')">Marc</button>
+  <!-- ADD WORKOUT -->
+  <div id="tab-add" class="tab-view" style="display:none;">
+
+    <!-- AI Generate -->
+    <div class="add-section">
+      <div class="section-title"><span>🤖</span> Ask AI to Build a Workout</div>
+      <textarea class="ai-prompt-area" id="aiPromptInput" rows="3"
+        placeholder="e.g. &quot;30 min shoulder day with barbell and pull-ups&quot; or &quot;something random with kettlebells for 2 people&quot; or &quot;leg day, no barbell&quot;"></textarea>
+      <div class="athlete-select-row">
+        <span class="ai-athlete-label">For:</span>
+        <button class="ai-athlete-btn sel" data-ath="Ryan"    onclick="toggleAiAthlete('Ryan')">Ryan</button>
+        <button class="ai-athlete-btn sel" data-ath="Marc"    onclick="toggleAiAthlete('Marc')">Marc</button>
+        <button class="ai-athlete-btn"     data-ath="Rachael" onclick="toggleAiAthlete('Rachael')">Rachael</button>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="generateWorkout()" id="btnGenerate">Generate Workout</button>
+        <span style="font-size:0.7rem;color:var(--muted);">Uses your equipment list + athletes selected</span>
+      </div>
+      <div class="ai-loading" id="aiLoading"><div class="spinner"></div>Building your workout…</div>
+      <div id="aiPreview" style="display:none;"></div>
     </div>
-    <div id="historyLog"></div>
+
+    <div class="divider"><span class="divider-text">or</span></div>
+
+    <!-- Screenshot Import -->
+    <div class="add-section">
+      <div class="section-title"><span>📸</span> Import from Screenshot</div>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6;">Upload a screenshot of any workout — from Instagram, WodWell, CrossFit.com, Facebook, wherever. AI will read it and fill in the details.</p>
+      <label class="screenshot-btn" for="screenshotInput">
+        <span style="font-size:1.1rem;">📎</span> Choose Image or Screenshot
+      </label>
+      <input type="file" id="screenshotInput" accept="image/*" onchange="importScreenshot(event)" style="display:none;">
+      <div class="ai-loading" id="screenshotLoading" style="margin-top:0.5rem;"><div class="spinner"></div>Reading workout from image…</div>
+      <div id="screenshotPreview" style="display:none;margin-top:0.75rem;"></div>
+    </div>
+
+    <div class="divider"><span class="divider-text">or add manually</span></div>
+
+    <!-- Manual Form -->
+    <div class="add-section">
+      <div class="form-toggle" onclick="toggleManualForm()">
+        <div class="section-title" style="margin-bottom:0;"><span>✏️</span> Add Manually</div>
+        <span id="manualToggleArrow" style="color:var(--muted);font-size:0.8rem;">▼</span>
+      </div>
+      <div class="form-body" id="manualFormBody" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Workout Name *</label>
+          <input class="form-input" id="addName" placeholder="e.g. Garage Grinder">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-input" id="addType">
+              <option>For Time</option><option>AMRAP</option><option>EMOM</option>
+              <option>Strength</option><option>Strength + Metcon</option><option>Circuit</option>
+              <option>Partner WOD</option><option>I-Go-You-Go</option><option>Flow</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Time Cap</label>
+            <input class="form-input" id="addTimecap" placeholder="e.g. 20 MIN">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Focus Areas *</label>
+            <input class="form-input" id="addFocus" placeholder="e.g. Shoulders, Push">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Partner Mode</label>
+            <select class="form-input" id="addPartner">
+              <option value="solo">Solo</option>
+              <option value="partner">Partner</option>
+              <option value="igyo">I-Go-You-Go</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Equipment (comma separated)</label>
+          <input class="form-input" id="addEquip" placeholder="e.g. barbell, pull-up-bar, box">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Movements / Description *</label>
+          <textarea class="form-input form-textarea" id="addMovements" placeholder="5 Rounds:&#10;10 Deadlifts (225 lb)&#10;15 Box Jumps&#10;20 KB Swings"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes (optional)</label>
+          <input class="form-input" id="addNotes" placeholder="Coach notes, scaling tips…">
+        </div>
+        <div class="form-error" id="addError"></div>
+        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">
+          <button class="btn-primary" onclick="saveManualWod(true)">Add to Top</button>
+          <button class="btn-secondary" onclick="saveManualWod(false)">Add to End</button>
+          <button class="btn-secondary" onclick="clearManualForm()" style="margin-left:auto;">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom WODs list -->
+    <div style="margin-top:0.5rem;">
+      <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">Your Custom Workouts</div>
+      <div id="customWodList"></div>
+    </div>
   </div>
 
-  <!-- MANAGE QUEUE -->
-  <div class="view" id="view-manage">
-    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem;line-height:1.5;">Drag to reorder your upcoming queue. Top card is always next. Click ✕ to remove.</p>
+  <!-- HISTORY -->
+  <div id="tab-history" class="tab-view" style="display:none;">
+    <div class="filter-row">
+      <button class="filter-btn active" id="flt-all"     onclick="setHistFilter('all')">All</button>
+      <button class="filter-btn"         id="flt-Ryan"    onclick="setHistFilter('Ryan')">Ryan</button>
+      <button class="filter-btn"         id="flt-Marc"    onclick="setHistFilter('Marc')">Marc</button>
+      <button class="filter-btn"         id="flt-Rachael" onclick="setHistFilter('Rachael')">Rachael</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  <!-- QUEUE MANAGE -->
+  <div id="tab-queue" class="tab-view" style="display:none;">
+    <p style="font-size:0.78rem;color:var(--muted);margin-bottom:0.875rem;">Drag to reorder. Top card is next up. Tap ✕ to remove.</p>
     <div id="manageList"></div>
   </div>
 
-  <!-- ADD WOD -->
-  <div class="view" id="view-add">
+  <!-- SETTINGS -->
+  <div id="tab-settings" class="tab-view" style="display:none;">
 
-    <!-- BULK IMPORT -->
-    <div class="add-wod-form" style="margin-bottom:1.5rem;">
-      <div class="section-label" style="margin-bottom:0.75rem;">📥 Bulk Import Workouts</div>
-
-      <!-- Format reference (collapsible) -->
-      <div id="importFormatToggle" onclick="toggleImportFormat()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0.75rem;background:var(--card2);border:1px solid var(--border);border-radius:3px;margin-bottom:0.75rem;">
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">📋 View Format Template & AI Prompt</span>
-        <span id="importFormatArrow" style="color:var(--muted);font-size:0.8rem;">▼</span>
+    <!-- API Key -->
+    <div class="settings-section">
+      <div class="settings-title">🤖 Anthropic API Key (for AI features)</div>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6;">Stored only in your browser. Required for AI Generate and Screenshot Import. Get yours at console.anthropic.com.</p>
+      <div style="display:flex;gap:0.5rem;">
+        <input class="form-input" type="password" id="apiKeyInput" placeholder="sk-ant-…" style="flex:1;">
+        <button class="btn-primary" onclick="saveApiKey()">Save</button>
       </div>
-      <div id="importFormatGuide" style="display:none;margin-bottom:0.75rem;">
-        <div style="background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:0.9rem;margin-bottom:0.6rem;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:0.5rem;">Format Template</div>
-          <pre style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;color:var(--text);line-height:1.7;white-space:pre-wrap;">NAME: Workout Name Here
+      <div id="apiKeyStatus" style="font-size:0.72rem;margin-top:0.4rem;color:var(--muted);"></div>
+    </div>
+
+    <!-- Google Sheets Sync -->
+    <div class="settings-section">
+      <div class="settings-title">📊 Google Sheets Sync</div>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6;">Paste your Apps Script Web App URL to sync history and custom workouts across Ryan, Marc, and Rachael.</p>
+      <div style="display:flex;gap:0.5rem;">
+        <input class="form-input" id="sheetUrlInput" placeholder="https://script.google.com/…" style="flex:1;font-size:0.75rem;">
+        <button class="btn-primary" onclick="saveSheetUrl()">Save</button>
+      </div>
+      <div id="sheetUrlStatus" style="font-size:0.72rem;margin-top:0.4rem;color:var(--muted);"></div>
+    </div>
+
+    <!-- Equipment -->
+    <div class="settings-section">
+      <div class="settings-title">🏋️ Equipment</div>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6;">Check what you have. The AI uses this list when generating workouts. ❌ = block that equipment from the feed.</p>
+      <div id="equipmentPanel"></div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
+        <input class="form-input" id="customEquipInput" placeholder="Add custom equipment…" style="flex:1;">
+        <button class="btn-primary" onclick="addCustomEquip()">Add</button>
+      </div>
+      <div id="customEquipList" style="margin-top:0.5rem;"></div>
+    </div>
+
+    <!-- Bulk Import -->
+    <div class="settings-section">
+      <div class="settings-title">📥 Bulk Import</div>
+      <div class="import-guide-toggle" onclick="toggleImportGuide()">
+        <span style="font-size:0.72rem;font-weight:600;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;">View Format Template & AI Prompt</span>
+        <span id="importGuideArrow">▼</span>
+      </div>
+      <div class="import-guide-body" id="importGuideBody">
+        <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;">Template</div>
+        <pre class="mono">NAME: Workout Name
 TYPE: For Time
 TIMECAP: 25 MIN
 FOCUS: Shoulders, Push
 PARTNER: solo
 EQUIPMENT: barbell, pull-up-bar
-TAGS: conditioning, barbell
+TAGS: conditioning
 MOVEMENTS:
 5 Rounds:
 10 Push Press (95 lb)
 15 Pull-Ups
-400m Run
-NOTES: Keep the bar moving.
+NOTES: Keep bar moving.
 MEDIUM:
-5 Rounds:
-10 Push Press (75 lb)
-15 Ring Rows
-400m Run
+(optional scaled version)
 EASY:
-4 Rounds:
-10 Push Press (55 lb)
-15 Ring Rows
-200m Run
+(optional easier version)
 ---
-NAME: Next Workout Here
-TYPE: AMRAP
-...</pre>
+NAME: Next Workout…</pre>
+        <div style="margin-top:0.75rem;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);">AI Formatting Prompt</span>
+          <button class="copy-btn" onclick="copyBulkPrompt()" style="font-size:0.65rem;padding:0.2rem 0.6rem;">Copy Prompt</button>
         </div>
-        <div style="background:rgba(245,132,31,0.06);border:1px solid rgba(245,132,31,0.2);border-radius:3px;padding:0.9rem;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:0.5rem;">AI Formatting Prompt</div>
-          <div style="font-size:0.82rem;color:var(--text);line-height:1.6;">Copy this prompt and paste it into any AI along with your raw workout list:</div>
-          <div id="aiPromptBox" style="background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:0.75rem;margin-top:0.5rem;font-size:0.78rem;color:var(--muted);line-height:1.6;font-style:italic;white-space:pre-wrap;">Format the following workouts into this exact plain text template. Separate each workout with ---. Use only these PARTNER values: solo, partner, igyo. Use only these TYPE values: For Time, AMRAP, EMOM, Strength, Strength + Metcon, Circuit, Partner WOD, I-Go-You-Go, Flow, Other. For EQUIPMENT list only the gear tags needed from: barbell, pull-up-bar, rings, kettlebell, dumbbell, box, bench, sandbag, jump-rope, foot-roller, weight-belt, landmine, double-kb, heavy-kb. If unsure leave EQUIPMENT blank. Keep MOVEMENTS as written but clean up formatting. Optionally include MEDIUM: and EASY: blocks after NOTES with scaled versions (reduce loads by 20% for Medium, 40% + reduce reps/rounds for Easy, substitute movements like pull-ups→ring rows, muscle-ups→pull-ups, etc). Output only the formatted workouts, nothing else.
+        <div class="mono" id="bulkAiPrompt" style="margin-top:0.35rem;background:var(--bg);padding:0.6rem;border-radius:var(--radius-xs);border:1px solid var(--border);white-space:pre-wrap;">Format these workouts into the exact plain text template below. Separate each with ---. PARTNER values: solo, partner, igyo. TYPE values: For Time, AMRAP, EMOM, Strength, Strength + Metcon, Circuit, Partner WOD, I-Go-You-Go, Flow, Other. EQUIPMENT: use tags like barbell, pull-up-bar, rings, kettlebell, dumbbell, box, bench, sandbag, jump-rope. Optionally add MEDIUM: and EASY: scaled versions. Output only the formatted workouts.
 
-NAME: [workout name]
+NAME: [name]
 TYPE: [type]
-TIMECAP: [e.g. 20 MIN]
-FOCUS: [e.g. Legs, Conditioning]
+TIMECAP: [duration]
+FOCUS: [focus areas]
 PARTNER: [solo/partner/igyo]
-EQUIPMENT: [comma separated tags]
-TAGS: [comma separated]
+EQUIPMENT: [tags]
+TAGS: [tags]
 MOVEMENTS:
-[movement text]
-NOTES: [coach notes or blank]
-MEDIUM:
-[optional medium scale]
-EASY:
-[optional easy scale]
+[text]
+NOTES: [or blank]
 ---</div>
-          <button class="copy-btn" onclick="copyAiPrompt()" style="margin-top:0.5rem;font-size:0.72rem;padding:0.3rem 0.75rem;">Copy AI Prompt</button>
-        </div>
       </div>
-
-      <!-- Paste area -->
-      <div class="form-group">
-        <label class="form-label">Paste Formatted Workouts Here</label>
-        <textarea class="form-input form-textarea" id="bulkImportText" style="min-height:180px;font-size:0.8rem;" placeholder="NAME: My Workout&#10;TYPE: For Time&#10;TIMECAP: 20 MIN&#10;FOCUS: Conditioning, Full Body&#10;PARTNER: solo&#10;EQUIPMENT: barbell, pull-up-bar&#10;TAGS: barbell, conditioning&#10;MOVEMENTS:&#10;5 Rounds:&#10;10 Deadlifts&#10;15 Pull-Ups&#10;---&#10;NAME: Next Workout&#10;..."></textarea>
-      </div>
-
-      <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
-        <button class="btn-primary" onclick="runBulkImport(true)">Import → Top of Feed</button>
-        <button class="btn-secondary" onclick="runBulkImport(false)">Import → End of Feed</button>
+      <textarea class="form-input form-textarea" id="bulkImportText" style="min-height:140px;font-size:0.78rem;font-family:'Menlo',monospace;" placeholder="Paste formatted workouts here…"></textarea>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="runBulkImport(true)">Import → Top</button>
+        <button class="btn-secondary" onclick="runBulkImport(false)">Import → End</button>
         <button class="btn-secondary" onclick="document.getElementById('bulkImportText').value=''">Clear</button>
       </div>
-      <div id="bulkImportResult" style="margin-top:0.75rem;font-size:0.82rem;display:none;"></div>
+      <div id="bulkImportResult" style="margin-top:0.5rem;font-size:0.78rem;display:none;"></div>
     </div>
 
-    <!-- SINGLE WOD FORM -->
-    <div class="add-wod-form">
-      <div class="section-label" style="margin-bottom:1.2rem;">Add a Single Workout</div>
-      <div class="form-group">
-        <label class="form-label">WOD Name *</label>
-        <input class="form-input" id="addName" placeholder="e.g. Garage Grinder">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Type</label>
-          <select class="form-input" id="addType">
-            <option>For Time</option><option>AMRAP</option><option>EMOM</option>
-            <option>Strength</option><option>Strength + Metcon</option><option>Circuit</option>
-            <option>Partner WOD</option><option>I-Go-You-Go</option><option>Flow</option><option>Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Time Cap</label>
-          <input class="form-input" id="addTimecap" placeholder="e.g. 20 MIN">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Focus Areas (comma separated) *</label>
-          <input class="form-input" id="addFocus" placeholder="e.g. Shoulders, Push">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Partner Mode</label>
-          <select class="form-input" id="addPartner">
-            <option value="solo">Solo</option>
-            <option value="partner">Partner (simultaneous)</option>
-            <option value="igyo">I-Go-You-Go (alternating)</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Equipment Required (comma separated)</label>
-        <input class="form-input" id="addEquipReq" placeholder="e.g. barbell, pull-up-bar, box">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Tags (comma separated)</label>
-        <input class="form-input" id="addTags" placeholder="e.g. barbell, pressing, conditioning">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Movements / Description *</label>
-        <textarea class="form-input form-textarea" id="addMovements" placeholder="e.g. 3 Rounds:&#10;10 Deadlifts (225 lb)&#10;15 Box Jumps&#10;20 KB Swings"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Coach Notes (optional)</label>
-        <input class="form-input" id="addNotes" placeholder="e.g. Keep a neutral spine on deadlifts.">
-      </div>
-      <div style="display:flex;gap:0.75rem;margin-top:0.5rem;flex-wrap:wrap;align-items:center;">
-        <button class="btn-primary" onclick="saveCustomWod(true)">Add to Top of Feed</button>
-        <button class="btn-secondary" onclick="saveCustomWod(false)">Add to End of Feed</button>
-        <button class="btn-secondary" onclick="clearAddForm()" style="margin-left:auto;">Clear</button>
-      </div>
-      <div id="addError" style="color:var(--red);font-size:0.8rem;margin-top:0.6rem;display:none;"></div>
-    </div>
-    <div style="margin-top:2rem;">
-      <div class="section-label">Your Custom WODs</div>
-      <div id="customWodList" style="margin-top:0.75rem;"></div>
-    </div>
-  </div>
-
-  <!-- EQUIPMENT -->
-  <div class="view" id="view-equipment">
-    <div class="equip-note">
-      ✅ <strong>Have it</strong> — check to include in your feed. &nbsp;❌ <strong>Don't Have</strong> section — check to permanently block those movements from appearing.
-    </div>
-    <div id="equipmentPanels"></div>
-    <div class="equip-section">
-      <div class="equip-section-title">Add Custom Equipment</div>
-      <div class="equip-add-row">
-        <input class="form-input" id="customEquipName" placeholder="Equipment name (e.g. Ski Erg)" style="flex:1;">
-        <button class="btn-primary" onclick="addCustomEquipment()" style="font-size:0.85rem;padding:0.45rem 1rem;">Add</button>
-      </div>
-      <div id="customEquipList" style="margin-top:0.75rem;"></div>
-    </div>
   </div>
 
 </div>
 
-<!-- LUCKY MODAL -->
-<div class="modal-overlay" id="luckyModal">
+<!-- IG Caption Modal -->
+<div class="modal-overlay" id="captionModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal('luckyModal')">✕</button>
-    <div class="modal-title">🎲 I'm Feeling Lucky</div>
-    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem;">Only uses equipment you have. Respects your recent muscle groups.</div>
-    <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;">
-      <input class="form-input" id="luckyMovement" placeholder="Include a movement? (optional)" style="flex:1;min-width:150px;">
-      <button class="btn-primary" onclick="rollLucky()">Roll</button>
-    </div>
-    <div class="lucky-result" id="luckyResult">
-      <div class="lucky-result-name" id="luckyName"></div>
-      <div id="luckyPartnerBadge"></div>
-      <div class="wod-movements" id="luckyMovements" style="font-size:0.9rem;"></div>
-      <div class="wod-notes" id="luckyNotes" style="margin-top:0.4rem;"></div>
-      <div style="display:flex;gap:0.5rem;margin-top:1rem;flex-wrap:wrap;">
-        <button class="btn-primary" onclick="rollLucky()" style="font-size:0.85rem;padding:0.4rem 0.9rem;">Roll Again</button>
-        <button class="btn-secondary" onclick="addLuckyToFeed()">Add to Feed</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- IG CAPTION MODAL -->
-<div class="modal-overlay" id="igModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('igModal')">✕</button>
-    <div class="modal-title">📸 Instagram Caption</div>
-    <div class="ig-caption-box" id="igCaptionText"></div>
+    <button class="modal-close" onclick="closeModal('captionModal')">✕</button>
+    <div class="modal-title">📸 Caption</div>
+    <div class="caption-box" id="captionText"></div>
     <button class="copy-btn" onclick="copyCaption()">Copy Caption</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+
 <script>
 // =====================================================================
+// CONFIG & STORAGE KEYS
+// =====================================================================
+const KEYS = {
+  state:   'dojoWOD_v2',
+  equip:   'dojoEquip_v2',
+  blocked: 'dojoBlocked_v2',
+  customs: 'dojoCustomWods',
+  custEq:  'dojoCustomEquip',
+  apiKey:  'dojoApiKey',
+  sheetUrl:'dojoSheetUrl',
+};
+
+// =====================================================================
 // EQUIPMENT CATALOG
-// Each item has: id, name, detail, category, tags (used to match workouts)
 // =====================================================================
 const EQUIP_CATALOG = {
-  "Barbell & Weights": [
-    {id:"barbell", name:"Barbell (x2)", detail:"Two barbells available", tags:["barbell"]},
-    {id:"bumper260", name:"Bumper Plates", detail:"260 lb total", tags:["barbell","heavy-barbell"]},
-    {id:"metal160", name:"Metal Plates", detail:"160 lb + micro plates (5/2.5 lb)", tags:["barbell","metal-plates"]},
-    {id:"squat_rack", name:"Squat Rack", detail:"Collapsible, with trap-bar squat attachment", tags:["squat-rack","back-squat","front-squat"]},
-    {id:"adj_bench", name:"Adjustable Bench", detail:"Full incline/decline range", tags:["bench","incline-bench","decline-bench"]},
-    {id:"landmine", name:"Landmine Attachment", detail:"Rotational & unilateral work", tags:["landmine"]},
+  "Barbell & Plates": [
+    {id:"barbell",      name:"Barbell (×2)",            tags:["barbell"]},
+    {id:"bumper_plates",name:"Bumper Plates (260 lb)",   tags:["barbell","heavy-barbell"]},
+    {id:"metal_plates", name:"Metal Plates + Micro",     tags:["barbell"]},
+    {id:"squat_rack",   name:"Squat Rack",               tags:["barbell","squat-rack"]},
+    {id:"bench",        name:"Adjustable Bench",          tags:["bench","barbell"]},
+    {id:"landmine",     name:"Landmine Attachment",       tags:["landmine","barbell"]},
   ],
   "Bodyweight / Gymnastics": [
-    {id:"pullup_bar", name:"Pull-Up Bars (x2)", detail:"Two bars available", tags:["pull-up-bar","pull-ups","muscle-ups"]},
-    {id:"dip_rings", name:"Dip Rings", detail:"Ring dips, push-ups, rows, muscle-ups", tags:["rings","ring-dips","ring-rows","muscle-ups"]},
-    {id:"weight_belt", name:"Weight Belt & Chain", detail:"Weighted pull-ups and dips", tags:["weight-belt","weighted-pull-ups","weighted-dips"]},
-    {id:"jump_rope", name:"Speed Jump Ropes", detail:"Double-unders capable", tags:["jump-rope","double-unders","singles"]},
-  ],
-  "Accessories & Stations": [
-    {id:"box", name:"Box (single)", detail:"Box jumps, step-ups, stepovers", tags:["box","box-jumps","step-ups","stepovers"]},
-    {id:"foot_roller", name:"Foot Roller", detail:"Bulgarian split squats + decline GHD sit-ups (with bench)", tags:["foot-roller","bulgarian-split-squat","ghd-situps"]},
+    {id:"pullup_bar",   name:"Pull-Up Bars (×2)",        tags:["pull-up-bar","pull-ups"]},
+    {id:"dip_rings",    name:"Dip Rings",                tags:["rings","dips"]},
+    {id:"weight_belt",  name:"Weight Belt & Chain",      tags:["weight-belt"]},
+    {id:"jump_rope",    name:"Speed Jump Ropes",         tags:["jump-rope","double-unders"]},
+    {id:"box",          name:"Box",                      tags:["box","box-jumps"]},
+    {id:"foot_roller",  name:"Foot Roller",              tags:["foot-roller","ghd"]},
   ],
   "Kettlebells": [
-    {id:"kb_170", name:"170 lb KB", detail:"Single heavy bell", tags:["kettlebell","heavy-kb"]},
-    {id:"kb_50x2", name:"50 lb KB (x2)", detail:"Pair — double KB work", tags:["kettlebell","double-kb"]},
-    {id:"kb_35", name:"35 lb KB", detail:"", tags:["kettlebell"]},
-    {id:"kb_20", name:"20 lb KB", detail:"Lighter conditioning work", tags:["kettlebell"]},
-    {id:"kb_15", name:"15 lb KB", detail:"", tags:["kettlebell"]},
-    {id:"kb_10", name:"10 lb KB", detail:"", tags:["kettlebell"]},
-    {id:"kb_5", name:"5 lb KB", detail:"Warm-up / mobility", tags:["kettlebell"]},
+    {id:"kb_heavy",     name:"170 lb KB",                tags:["kettlebell","heavy-kb"]},
+    {id:"kb_50x2",      name:"50 lb KBs (×2)",           tags:["kettlebell","double-kb"]},
+    {id:"kb_35",        name:"35 lb KB",                 tags:["kettlebell"]},
+    {id:"kb_20",        name:"20 lb KB",                 tags:["kettlebell"]},
+    {id:"kb_light",     name:"15/10/5 lb KBs",           tags:["kettlebell","light-kb"]},
   ],
-  "Dumbbells": [
-    {id:"db_50x2", name:"50 lb Dumbbells (x2)", detail:"Bumper style — pair available", tags:["dumbbell","heavy-db"]},
+  "Dumbbells / Sandbag": [
+    {id:"db_50",        name:"50 lb Dumbbells (×2)",     tags:["dumbbell","heavy-db"]},
+    {id:"sandbag",      name:"Variable Sandbag (200 lb)",tags:["sandbag"]},
   ],
-  "Sandbag": [
-    {id:"sandbag", name:"Variable Sandbag", detail:"4 × 50 lb inserts — use 50/100/150/200 lb", tags:["sandbag"]},
-    {id:"sandbag_inserts", name:"Sandbag Inserts (solo)", detail:"50 lb each — use independently", tags:["sandbag","sandbag-insert"]},
-  ],
-  "❌ Don't Have (blocks these from feed)": [
-    {id:"wall_ball", name:"Wall Ball", detail:"Substituted with KB goblet press", tags:["wall-ball"]},
-    {id:"rope_climb", name:"Rope Climb", detail:"", tags:["rope-climb"]},
-    {id:"rower", name:"Rowing Machine", detail:"", tags:["rower","rowing-machine"]},
-    {id:"assault_bike", name:"Assault / Air Bike", detail:"", tags:["assault-bike"]},
-    {id:"ski_erg", name:"Ski Erg", detail:"", tags:["ski-erg"]},
-    {id:"ghd_machine", name:"GHD Machine", detail:"We use foot roller + bench instead", tags:["ghd-machine"]},
-    {id:"plyo_box_set", name:"Multiple Boxes", detail:"Only have one box", tags:["multiple-boxes"]},
-    {id:"pegboard", name:"Pegboard", detail:"", tags:["pegboard"]},
+  "❌ Don't Have": [
+    {id:"wall_ball",    name:"Wall Ball",                tags:["wall-ball"]},
+    {id:"rower",        name:"Rowing Machine",           tags:["rower","rowing"]},
+    {id:"assault_bike", name:"Assault / Air Bike",       tags:["assault-bike"]},
+    {id:"ski_erg",      name:"Ski Erg",                  tags:["ski-erg"]},
+    {id:"rope_climb",   name:"Rope Climb",               tags:["rope-climb"]},
+    {id:"ghd_machine",  name:"GHD Machine",              tags:["ghd-machine"]},
   ],
 };
 
-// Default equipment (everything Ryan listed)
-const DEFAULT_EQUIPMENT = [
-  "barbell","bumper260","metal160","squat_rack","adj_bench","landmine",
-  "pullup_bar","dip_rings","weight_belt","jump_rope",
-  "box","foot_roller",
-  "kb_170","kb_50x2","kb_35","kb_20","kb_15","kb_10","kb_5",
-  "db_50x2",
-  "sandbag","sandbag_inserts"
-];
+const DEFAULT_EQUIP   = ["barbell","bumper_plates","metal_plates","squat_rack","bench","landmine","pullup_bar","dip_rings","weight_belt","jump_rope","box","foot_roller","kb_heavy","kb_50x2","kb_35","kb_20","kb_light","db_50","sandbag"];
+const DEFAULT_BLOCKED = ["wall_ball","rower","assault_bike","ski_erg","rope_climb","ghd_machine"];
 
 // =====================================================================
-// WORKOUT LIBRARY
-// equipReq: array of equipment tag IDs — workout is only shown if all are available
-// partnerMode: "solo" | "partner" | "igyo" (I-Go-You-Go)
+// WORKOUT LIBRARY (90 workouts — injected below)
 // =====================================================================
 const WORKOUT_LIBRARY = [
   // ---- SHOULDERS / PUSH ----
@@ -999,1013 +1073,929 @@ const WORKOUT_LIBRARY = [
    notes:"Your logged WOD. The hang is the rest — let go and you owe burpees.", tags:["partner","igyo","deadlift","cleans","dead-hang"]},
 ];
 
-// =====================================================================
-// STATE
-// =====================================================================
-function getState() {
-  try { const s = localStorage.getItem('dojoWOD_v2'); if(s) return JSON.parse(s); } catch(e){}
-  return { feed: buildInitialFeed(), history: [], completions: {} };
-}
-function saveState(s) {
-  try { localStorage.setItem('dojoWOD_v2', JSON.stringify(s)); } catch(e){}
-}
-
-function getEquipment() {
-  try { const s = localStorage.getItem('dojoEquip'); if(s) return JSON.parse(s); } catch(e){}
-  return [...DEFAULT_EQUIPMENT];
-}
-function saveEquipment(eq) {
-  try { localStorage.setItem('dojoEquip', JSON.stringify(eq)); } catch(e){}
-}
-function getCustomEquip() {
-  try { const s = localStorage.getItem('dojoCustomEquip'); if(s) return JSON.parse(s); } catch(e){}
-  return [];
-}
-function saveCustomEquip(list) {
-  try { localStorage.setItem('dojoCustomEquip', JSON.stringify(list)); } catch(e){}
-}
-function getCustomWods() {
-  try { const s = localStorage.getItem('dojoCustomWods'); if(s) return JSON.parse(s); } catch(e){}
-  return [];
-}
-function saveCustomWods(list) {
-  try { localStorage.setItem('dojoCustomWods', JSON.stringify(list)); } catch(e){}
-}
-function getAllWorkouts() { return [...WORKOUT_LIBRARY, ...getCustomWods()]; }
-
-function getBlockedEquipment() {
-  try { const s = localStorage.getItem('dojoBlocked'); if(s) return JSON.parse(s); } catch(e){}
-  // Default: wall ball and rope climb blocked since Ryan doesn't have them
-  return ["wall_ball","rope_climb"];
-}
-function saveBlockedEquipment(list) {
-  try { localStorage.setItem('dojoBlocked', JSON.stringify(list)); } catch(e){}
-}
-function toggleBlockedEquipment(id) {
-  let blocked = getBlockedEquipment();
-  if(blocked.includes(id)) blocked = blocked.filter(e=>e!==id);
-  else blocked.push(id);
-  saveBlockedEquipment(blocked);
-  renderEquipmentPanel();
-  const state = getState();
-  state.feed = state.feed.filter(wid => {
-    const wod = getAllWorkouts().find(w=>w.id===wid);
-    return wod && workoutFeasible(wod);
-  });
-  saveState(state);
-  renderFeed();
-  showToast('Equipment updated — feed refreshed');
-}
-
-// Get all equipment tags currently available (owned AND not blocked)
-function getAvailableEquipTags() {
-  const owned = getEquipment();
-  const blocked = getBlockedEquipment();
-  const customOwned = getCustomEquip().filter(e => e.owned).map(e => e.tag);
-
-  // Collect blocked tags
-  const blockedTags = new Set();
-  Object.values(EQUIP_CATALOG).flat().forEach(item => {
-    if(blocked.includes(item.id)) item.tags.forEach(t => blockedTags.add(t));
-  });
-
-  const tags = new Set();
-  Object.values(EQUIP_CATALOG).flat().forEach(item => {
-    if(owned.includes(item.id)) item.tags.forEach(t => { if(!blockedTags.has(t)) tags.add(t); });
-  });
-  customOwned.forEach(t => { if(!blockedTags.has(t)) tags.add(t); });
-  return tags;
-}
-
-// Check if a workout is doable with current equipment
-function workoutFeasible(wod) {
-  if (!wod.equipReq || wod.equipReq.length === 0) return true;
-  const available = getAvailableEquipTags();
-  return wod.equipReq.every(req => available.has(req));
-}
-
-function buildInitialFeed() {
-  const sequence = [44,49,6,15,53,19,52,11,27,55,30,56,16,20,54,24,34,63,37,4,7,57,22,3,29,13,35,32,64,80,50,17,23,62,70,68];
-  return sequence.filter(id => {
-    const w = WORKOUT_LIBRARY.find(x => x.id === id);
-    return w && workoutFeasible(w);
-  }).slice(0, 7).map(id => id);
-}
-
-// =====================================================================
-// ATHLETES / TABS
-// =====================================================================
-let currentAthlete = 'Ryan';
-let historyFilter = 'all';
-let dragSrcIdx = null;
-let currentLuckyWorkout = null;
-
-function setAthlete(name) {
-  currentAthlete = name;
-  document.getElementById('athleteRyan').classList.toggle('active', name==='Ryan');
-  document.getElementById('athleteMarc').classList.toggle('active', name==='Marc');
-  renderFeed();
-  renderHistory();
-}
-
-const TAB_IDS = ['wod','history','manage','add','equipment'];
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', TAB_IDS[i]===tab));
-  TAB_IDS.forEach(t => { const el=document.getElementById('view-'+t); if(el) el.classList.toggle('active', t===tab); });
-  if(tab==='history') renderHistory();
-  if(tab==='manage') renderManageQueue();
-  if(tab==='add') renderCustomWodList();
-  if(tab==='equipment') renderEquipmentPanel();
-}
-
-// =====================================================================
-// WOD FEED
-// =====================================================================
-function renderFeed() {
-  const state = getState();
-  const el = document.getElementById('wodFeed');
-  if (!state.feed || state.feed.length===0) {
-    el.innerHTML = '<div class="empty">No workouts in feed. Add some or check your equipment settings!</div>';
-    return;
-  }
-  const pending=[], done=[];
-  state.feed.forEach(wid => {
-    const wod = getAllWorkouts().find(w => w.id===wid);
-    if(!wod) return;
-    const key = `${wid}_${currentAthlete}`;
-    if(state.completions[key]) done.push({wod, data:state.completions[key]});
-    else pending.push({wod});
-  });
-  let html = '';
-  if(pending.length>0) {
-    html += `<div class="week-divider">Upcoming — ${pending.length} WODs in Queue</div>`;
-    pending.forEach(({wod},i) => { html += renderWodCard(wod, false, null, i===0); });
-  }
-  if(done.length>0) {
-    html += `<div class="week-divider">Completed by ${currentAthlete}</div>`;
-    done.forEach(({wod,data}) => { html += renderWodCard(wod, true, data, false); });
-  }
-  if(!html) html = '<div class="empty">Nothing here yet.</div>';
-  el.innerHTML = html;
-}
 
 // =====================================================================
 // SCALING ENGINE
-// Auto-generates Easy / Medium versions from Rx movements
 // =====================================================================
 const SCALE_RULES = [
-  // Barbell loads → reduce by %
-  { rx:/(\d+)\s*lb/gi, med:(m)=>m.replace(/(\d+)\s*lb/gi,(_,n)=>Math.round(parseInt(n)*0.8/5)*5+' lb'), easy:(m)=>m.replace(/(\d+)\s*lb/gi,(_,n)=>Math.round(parseInt(n)*0.6/5)*5+' lb') },
-  // Pull-ups
-  { rx:/\bpull-ups\b/gi, med:'Ring Rows or Banded Pull-Ups', easy:'Ring Rows' },
-  { rx:/\bmuscle[-\s]?ups\b/gi, med:'Chest-to-Bar Pull-Ups', easy:'Pull-Ups' },
-  { rx:/\bchest[-\s]?to[-\s]?bar\b/gi, med:'Pull-Ups', easy:'Ring Rows' },
-  // Dips
-  { rx:/\bring dips\b/gi, med:'Bar Dips', easy:'Push-Ups' },
-  // Handstand
-  { rx:/\bhandstand push[-\s]?ups\b/gi, med:'Pike Push-Ups', easy:'Push-Ups' },
-  { rx:/\bhandstand walk\b/gi, med:'Bear Crawl', easy:'Bear Crawl (10m)' },
-  // Double-unders
-  { rx:/\bdouble[-\s]?unders\b/gi, med:'Single-Unders (1.5×)', easy:'Single-Unders' },
-  // Box jumps
-  { rx:/\bbox jumps\b/gi, med:'Box Step-Ups', easy:'Box Step-Ups (lower)' },
-  // Toes to bar
-  { rx:/\btoes[-\s]?to[-\s]?bar\b/gi, med:'Hanging Knee Raises', easy:'Sit-Ups' },
-  // KB swings
-  { rx:/\bKB swings\b/gi, med:'KB Swings (lighter)', easy:'KB Swings (light, Russian)' },
-  // Burpees
-  { rx:/\bburpees\b/gi, med:'Burpees (step-up)', easy:'Squat Thrusts' },
-  // Pistols
-  { rx:/\bpistol squats\b/gi, med:'Box Pistols (assisted)', easy:'Split Squats' },
-  // Rope climb
-  { rx:/\brope climb\b/gi, med:'3 Strict Pull-Ups (sub)', easy:'5 Ring Rows (sub)' },
-  // Rounds / reps reduction (applied last for Easy)
+  {rx:/\bMuscle-?Ups?\b/gi,        med:'Chest-to-Bar Pull-Ups',    easy:'Pull-Ups'},
+  {rx:/\bChest-?to-?Bar\b/gi,      med:'Pull-Ups',                 easy:'Ring Rows'},
+  {rx:/\bPull-?Ups?\b/gi,          med:'Banded Pull-Ups',          easy:'Ring Rows'},
+  {rx:/\bHandstand Push-?Ups?\b/gi,med:'Pike Push-Ups',            easy:'Elevated Push-Ups'},
+  {rx:/\bHandstand Walk\b/gi,      med:'Bear Crawl',               easy:'Bear Crawl'},
+  {rx:/\bDouble-?Unders?\b/gi,     med:'Single-Unders (1.5×)',     easy:'Single-Unders'},
+  {rx:/\bBox Jumps?\b/gi,          med:'Box Step-Ups',             easy:'Box Step-Ups'},
+  {rx:/\bToes-?to-?Bar\b/gi,       med:'Hanging Knee Raises',      easy:'Sit-Ups'},
+  {rx:/\bPistols?\b/gi,            med:'Assisted Pistol',          easy:'Reverse Lunges'},
+  {rx:/\bRing Dips?\b/gi,          med:'Bar Dips',                 easy:'Push-Ups'},
+  {rx:/\bBurpees?\b/gi,            med:'Burpees (step-up version)',easy:'Squat Thrusts'},
+  {rx:/(\d+)\s*lb/gi,
+    med: m=>m.replace(/(\d+)\s*lb/gi,(_,n)=>Math.round(parseInt(n)*.8/5)*5+' lb'),
+    easy:m=>m.replace(/(\d+)\s*lb/gi,(_,n)=>Math.round(parseInt(n)*.6/5)*5+' lb')},
 ];
-
 function autoScale(movements, level) {
-  if (!movements) return '';
-  let scaled = movements;
-
-  // Apply movement substitutions
-  SCALE_RULES.forEach(rule => {
-    if (typeof rule.med === 'string' && typeof rule.easy === 'string') {
-      if (level === 'med') scaled = scaled.replace(rule.rx, rule.med);
-      if (level === 'easy') scaled = scaled.replace(rule.rx, rule.easy);
-    } else if (typeof rule.med === 'function') {
-      // Weight scaling functions
-      if (level === 'med') scaled = rule.med(scaled);
-      if (level === 'easy') scaled = rule.easy(scaled);
+  if(!movements) return '';
+  let s=movements;
+  SCALE_RULES.forEach(r=>{
+    if(typeof r.med==='string'){
+      if(level==='med')  s=s.replace(r.rx,r.med);
+      if(level==='easy') s=s.replace(r.rx,r.easy);
+    } else {
+      if(level==='med')  s=r.med(s);
+      if(level==='easy') s=r.easy(s);
     }
   });
-
-  // For Easy: also reduce rep counts by ~20%
-  if (level === 'easy') {
-    scaled = scaled.replace(/\b(\d{2,3})\s+(reps?|cal|m\b)/gi, (_, n, unit) => {
-      return Math.round(parseInt(n) * 0.8) + ' ' + unit;
-    });
-    // Reduce round counts if ≥ 4
-    scaled = scaled.replace(/\b([4-9]|1\d)\s+Rounds?\b/gi, (_, n) => {
-      return Math.max(2, Math.round(parseInt(n) * 0.7)) + ' Rounds';
-    });
+  if(level==='easy'){
+    s=s.replace(/\b(\d{2,3})\s+(reps?|cal)\b/gi,(_,n,u)=>Math.round(parseInt(n)*.8)+' '+u);
+    s=s.replace(/\b([4-9]|1\d)\s+Rounds?\b/gi,(_,n)=>Math.max(2,Math.round(parseInt(n)*.7))+' Rounds');
   }
-
-  return scaled;
+  return s;
 }
-
-function getScales(wod) {
+function getScales(wod){
   return {
-    rx:   { text: wod.movements, auto: false },
-    med:  { text: wod.scaleMed  || autoScale(wod.movements, 'med'),  auto: !wod.scaleMed },
-    easy: { text: wod.scaleEasy || autoScale(wod.movements, 'easy'), auto: !wod.scaleEasy },
+    rx:  {text:wod.movements,                                      auto:false},
+    med: {text:wod.scaleMed  ||autoScale(wod.movements,'med'),    auto:!wod.scaleMed},
+    easy:{text:wod.scaleEasy ||autoScale(wod.movements,'easy'),   auto:!wod.scaleEasy},
   };
 }
-
-// Track active scale per card: { [wodId]: 'rx'|'med'|'easy' }
-const cardScales = {};
-
-function setCardScale(wodId, level) {
-  cardScales[wodId] = level;
-  // Re-render just the movements + tabs inside this card
-  const movEl = document.getElementById(`movements-${wodId}`);
-  const scales = getScales(getAllWorkouts().find(w => w.id === wodId));
-  if (movEl && scales[level]) movEl.textContent = scales[level].text;
-  // Update tab active states
-  ['easy','med','rx'].forEach(l => {
-    const tab = document.getElementById(`scale-tab-${l}-${wodId}`);
-    if (tab) { tab.className = 'scale-tab' + (l===level ? ` active-${l}` : ''); }
+const cardScales={};
+function setCardScale(id,level){
+  cardScales[id]=level;
+  const el=document.getElementById('mv-'+id);
+  const scales=getScales(getAllWods().find(w=>w.id===id));
+  if(el&&scales[level]) el.textContent=scales[level].text;
+  ['easy','med','rx'].forEach(l=>{
+    const t=document.getElementById(`st-${l}-${id}`);
+    if(t) t.className='scale-tab'+(l===level?` active-${l}`:'');
   });
 }
 
-function renderWodCard(wod, isCompleted, completionData, isNext) {
-  const focusTags = wod.focus.map(f=>`<span class="tag focus">${f}</span>`).join('');
-  const otherTags = (wod.tags||[]).slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('');
-  const isPartner = wod.partnerMode && wod.partnerMode!=='solo';
-  const partnerTag = isPartner ? `<span class="tag partner">${wod.partnerMode==='igyo'?'I-GO-YOU-GO':'PARTNER WOD'}</span>` : '';
-  const partnerBadge = isPartner ? `<div class="partner-badge">🤜 ${wod.partnerMode==='igyo'?'I-Go-You-Go — Alternating Rounds':'Partner WOD — Work Together'}</div>` : '';
-  const completeBtn = !isCompleted
-    ? `<button class="btn-complete" onclick="markComplete(${wod.id})">✓ ${currentAthlete} Done</button>`
-    : `<span class="btn-complete done">✓ ${currentAthlete} Completed</span>`;
-  const feasible = workoutFeasible(wod);
-  const equipWarning = !feasible ? `<div style="font-size:0.72rem;color:var(--red);margin-top:0.4rem;">⚠ Missing equipment — check Equipment tab</div>` : '';
+// =====================================================================
+// STORAGE
+// =====================================================================
+const store = {
+  get: (k,def='')=>{try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):def;}catch{return def;}},
+  set: (k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}},
+};
+function getState()    { return store.get(KEYS.state, {feed:[], history:[], completions:{}}); }
+function saveState(s)  { store.set(KEYS.state, s); scheduleSyncPush(); }
+function getEquip()    { return store.get(KEYS.equip,   DEFAULT_EQUIP); }
+function saveEquip(e)  { store.set(KEYS.equip, e); }
+function getBlocked()  { return store.get(KEYS.blocked, DEFAULT_BLOCKED); }
+function saveBlocked(b){ store.set(KEYS.blocked, b); }
+function getCustomWods(){ return store.get(KEYS.customs, []); }
+function saveCustomWods(w){ store.set(KEYS.customs, w); scheduleSyncPush(); }
+function getCustomEquip(){ return store.get(KEYS.custEq, []); }
+function saveCustomEquip(e){ store.set(KEYS.custEq, e); }
+function getApiKey()   { return store.get(KEYS.apiKey, ''); }
+function saveApiKey2(k){ store.set(KEYS.apiKey, k); }
+function getSheetUrl() { return store.get(KEYS.sheetUrl,''); }
+function saveSheetUrl2(u){ store.set(KEYS.sheetUrl, u); }
+function getAllWods()   { return [...WORKOUT_LIBRARY, ...getCustomWods()]; }
 
-  const activeScale = cardScales[wod.id] || 'rx';
-  const scales = getScales(wod);
-  const activeText = scales[activeScale].text;
+// =====================================================================
+// EQUIPMENT LOGIC
+// =====================================================================
+function getAvailTags(){
+  const owned=getEquip(), blocked=getBlocked();
+  const blockedTags=new Set();
+  Object.values(EQUIP_CATALOG).flat().forEach(i=>{if(blocked.includes(i.id))i.tags.forEach(t=>blockedTags.add(t));});
+  const tags=new Set();
+  Object.values(EQUIP_CATALOG).flat().forEach(i=>{if(owned.includes(i.id))i.tags.forEach(t=>{if(!blockedTags.has(t))tags.add(t);});});
+  getCustomEquip().filter(e=>e.owned).forEach(e=>{if(!blockedTags.has(e.tag))tags.add(e.tag);});
+  return tags;
+}
+function wodFeasible(wod){
+  if(!wod.equipReq||!wod.equipReq.length) return true;
+  const avail=getAvailTags();
+  return wod.equipReq.every(r=>avail.has(r));
+}
+function getEquipSummary(){
+  const owned=getEquip();
+  const names=[];
+  Object.values(EQUIP_CATALOG).flat().forEach(i=>{if(owned.includes(i.id)&&!i.id.startsWith('wall')&&!['rower','assault_bike','ski_erg','rope_climb','ghd_machine'].includes(i.id))names.push(i.name);});
+  getCustomEquip().filter(e=>e.owned).forEach(e=>names.push(e.name));
+  return names.join(', ');
+}
 
-  const scaleTabs = `
-  <div class="scale-tabs">
-    <button id="scale-tab-easy-${wod.id}" class="scale-tab${activeScale==='easy'?' active-easy':''}" onclick="setCardScale(${wod.id},'easy')">
-      Easy${scales.easy.auto?`<span class="scale-badge auto">auto</span>`:''}
-    </button>
-    <button id="scale-tab-med-${wod.id}" class="scale-tab${activeScale==='med'?' active-med':''}" onclick="setCardScale(${wod.id},'med')">
-      Med${scales.med.auto?`<span class="scale-badge auto">auto</span>`:''}
-    </button>
-    <button id="scale-tab-rx-${wod.id}" class="scale-tab${activeScale==='rx'?' active-rx':''}" onclick="setCardScale(${wod.id},'rx')">
-      Rx 🔥
-    </button>
-  </div>`;
+function toggleEquip(id){
+  let eq=getEquip();
+  if(eq.includes(id)) eq=eq.filter(e=>e!==id); else eq.push(id);
+  saveEquip(eq); renderEquipment(); renderFeed();
+}
+function toggleBlocked(id){
+  let bl=getBlocked();
+  if(bl.includes(id)) bl=bl.filter(e=>e!==id); else bl.push(id);
+  saveBlocked(bl);
+  const state=getState();
+  state.feed=state.feed.filter(wid=>{const w=getAllWods().find(x=>x.id===wid);return w&&wodFeasible(w);});
+  saveState(state); renderEquipment(); renderFeed();
+  showToast('Equipment updated');
+}
+function addCustomEquip(){
+  const name=document.getElementById('customEquipInput').value.trim();
+  if(!name) return;
+  const tag=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const list=getCustomEquip();
+  list.push({id:'cq'+Date.now(),name,tag,owned:true});
+  saveCustomEquip(list); document.getElementById('customEquipInput').value='';
+  renderEquipment(); renderFeed(); showToast(`"${name}" added`);
+}
+function toggleCustomEquip(id){
+  const list=getCustomEquip();
+  const item=list.find(e=>e.id===id);
+  if(item) item.owned=!item.owned;
+  saveCustomEquip(list); renderEquipment(); renderFeed();
+}
+function deleteCustomEquip(id){
+  saveCustomEquip(getCustomEquip().filter(e=>e.id!==id));
+  renderEquipment(); renderFeed();
+}
 
-  return `
-  <div class="wod-card ${isCompleted?'completed':''} ${isNext&&!isCompleted?'next-up':''} ${isPartner?'partner-wod':''}">
-    <div class="wod-card-header">
-      <div>
-        <div class="wod-day">${isCompleted?'✓ DONE':isNext?'UP NEXT':'QUEUED'}</div>
-        <div class="wod-name">${wod.name}</div>
-        <div class="wod-tags">${focusTags}${partnerTag}${otherTags}</div>
-        ${equipWarning}
+function renderEquipment(){
+  const owned=getEquip(), blocked=getBlocked();
+  const el=document.getElementById('equipmentPanel');
+  let html='';
+  Object.entries(EQUIP_CATALOG).forEach(([cat,items])=>{
+    const isDont=cat.startsWith('❌');
+    html+=`<div class="equip-cat-title" style="color:${isDont?'var(--red)':'var(--muted)'}">${cat}</div>`;
+    if(isDont) html+=`<div style="font-size:0.68rem;color:var(--muted);margin-bottom:0.4rem;">Check to block these from feed</div>`;
+    html+=`<div class="equip-grid">`;
+    items.forEach(item=>{
+      if(isDont){
+        const isBlk=blocked.includes(item.id);
+        html+=`<div class="equip-item${isBlk?' blocked':''}" onclick="toggleBlocked('${item.id}')">
+          <div class="equip-check">${isBlk?'✕':''}</div>
+          <div class="equip-name">${item.name}</div></div>`;
+      } else {
+        const has=owned.includes(item.id);
+        html+=`<div class="equip-item${has?' has':''}" onclick="toggleEquip('${item.id}')">
+          <div class="equip-check">${has?'✓':''}</div>
+          <div class="equip-name">${item.name}</div></div>`;
+      }
+    });
+    html+=`</div>`;
+  });
+  el.innerHTML=html;
+  // Custom equip list
+  const custEl=document.getElementById('customEquipList');
+  const cList=getCustomEquip();
+  custEl.innerHTML=cList.map(e=>`
+    <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem;">
+      <div class="equip-item${e.owned?' has':''}" onclick="toggleCustomEquip('${e.id}')" style="flex:1;">
+        <div class="equip-check">${e.owned?'✓':''}</div>
+        <div class="equip-name">${e.name}</div>
       </div>
-      <div class="wod-meta">
-        <div class="wod-type">${wod.type}</div>
-        <div class="wod-timecap">${wod.timecap}</div>
+      <button class="btn-remove" onclick="deleteCustomEquip('${e.id}')">✕</button>
+    </div>`).join('');
+}
+
+// =====================================================================
+// FEED
+// =====================================================================
+let currentAthlete='Ryan';
+let histFilter='all';
+let dragSrcIdx=null;
+
+function setAthlete(name){
+  currentAthlete=name;
+  ['Ryan','Marc','Rachael'].forEach(n=>document.getElementById('ath-'+n).classList.toggle('active',n===name));
+  renderFeed(); renderHistory();
+}
+
+function buildInitialFeed(){
+  return [1,6,9,14,30,27,43,49,52,53].filter(id=>{
+    const w=WORKOUT_LIBRARY.find(x=>x.id===id);
+    return w&&wodFeasible(w);
+  }).slice(0,7);
+}
+
+function getNextWod(feed){
+  const state=getState();
+  const recentFocus=feed.slice(-2).flatMap(wid=>{const w=getAllWods().find(x=>x.id===wid);return w?w.focus:[];});
+  const ratingMap={};
+  state.history.forEach(e=>{if(!ratingMap[e.wid]||e.rating>ratingMap[e.wid])ratingMap[e.wid]=e.rating;});
+  // Prioritize retests
+  const retestWid=state.history.find(e=>e.retest&&e.athlete===currentAthlete&&!feed.includes(e.wid));
+  if(retestWid){const w=getAllWods().find(x=>x.id===retestWid.wid&&wodFeasible(x));if(w)return w;}
+  const all=getAllWods().filter(w=>wodFeasible(w)&&!feed.includes(w.id));
+  const ideal=all.filter(w=>!w.focus.some(f=>recentFocus.includes(f)));
+  const pool=ideal.length?ideal:all;
+  const weighted=[];
+  pool.forEach(w=>{const r=ratingMap[w.id]||3;for(let i=0;i<(r>=4?3:r>=3?2:1);i++)weighted.push(w);});
+  return weighted[Math.floor(Math.random()*weighted.length)]||null;
+}
+
+function renderFeed(){
+  const state=getState();
+  const el=document.getElementById('wodFeed');
+  if(!state.feed||!state.feed.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">🏋️</div>No workouts in feed yet.<br>Go to + Add Workout to get started.</div>';
+    return;
+  }
+  const pending=[],done=[];
+  state.feed.forEach(wid=>{
+    const wod=getAllWods().find(w=>w.id===wid);
+    if(!wod) return;
+    const key=`${wid}_${currentAthlete}`;
+    if(state.completions[key]) done.push({wod,data:state.completions[key]});
+    else pending.push(wod);
+  });
+  let html='';
+  pending.forEach((wod,i)=>{html+=renderCard(wod,false,null,i===0);});
+  if(done.length){
+    html+=`<div style="font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);padding:0.5rem 0 0.25rem;">✓ Completed</div>`;
+    done.forEach(({wod,data})=>{html+=renderCard(wod,true,data,false);});
+  }
+  el.innerHTML=html||'<div class="empty">Nothing pending.</div>';
+}
+
+function renderCard(wod,isCompleted,data,isNext){
+  const focusTags=wod.focus.map(f=>`<span class="tag focus">${f}</span>`).join('');
+  const otherTags=(wod.tags||[]).slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('');
+  const isPartner=wod.partnerMode&&wod.partnerMode!=='solo';
+  const partnerTag=isPartner?`<span class="tag partner">${wod.partnerMode==='igyo'?'I-Go-You-Go':'Partner'}</span>`:'';
+  const partnerBadge=isPartner?`<div class="partner-badge">🤜 ${wod.partnerMode==='igyo'?'I-Go-You-Go — Alternating':'Partner WOD — Together'}</div>`:'';
+  const feasible=wodFeasible(wod);
+  const equipWarn=!feasible?`<div class="equip-warning">⚠ Missing equipment</div>`:'';
+  const activeScale=cardScales[wod.id]||'rx';
+  const scales=getScales(wod);
+  const scaleTabs=`<div class="scale-tabs">
+    <button id="st-easy-${wod.id}" class="scale-tab${activeScale==='easy'?' active-easy':''}" onclick="setCardScale(${wod.id},'easy')">Easy${scales.easy.auto?'<span class="scale-badge">auto</span>':''}</button>
+    <button id="st-med-${wod.id}"  class="scale-tab${activeScale==='med'?' active-med':''}"  onclick="setCardScale(${wod.id},'med')">Med${scales.med.auto?'<span class="scale-badge">auto</span>':''}</button>
+    <button id="st-rx-${wod.id}"   class="scale-tab${activeScale==='rx'?' active-rx':''}"   onclick="setCardScale(${wod.id},'rx')">Rx 🔥</button>
+  </div>`;
+  const doneBtn=!isCompleted
+    ?`<button class="btn-done" onclick="markDone(${wod.id})">✓ ${currentAthlete} Done</button>`
+    :`<span class="btn-done done-state">✓ Done</span>`;
+  return `
+  <div class="wod-card${isCompleted?' completed':''}${isNext&&!isCompleted?' next-up':''}${isPartner?' partner-card':''}">
+    <div class="card-header">
+      <div>
+        <div class="card-status${isNext&&!isCompleted?' next':''}">${isCompleted?'✓ done':isNext?'Up Next':'Queued'}</div>
+        <div class="card-name">${wod.name}</div>
+        <div class="card-tags">${focusTags}${partnerTag}${otherTags}</div>
+        ${equipWarn}
+      </div>
+      <div class="card-meta">
+        <div class="card-type">${wod.type}</div>
+        <div class="card-timecap">${wod.timecap}</div>
       </div>
     </div>
-    <div class="wod-body">
+    <div class="card-body">
       ${partnerBadge}
       ${scaleTabs}
-      <div class="wod-movements" id="movements-${wod.id}">${activeText}</div>
-      ${wod.notes?`<div class="wod-notes">💡 ${wod.notes}</div>`:''}
+      <div class="card-movements" id="mv-${wod.id}">${scales[activeScale].text}</div>
+      ${wod.notes?`<div class="card-notes">💡 ${wod.notes}</div>`:''}
     </div>
-    <div class="wod-footer">
-      <div class="complete-group">${completeBtn}</div>
-      <button class="btn-ig" onclick="showIGCaption(${wod.id})">📸 IG Caption</button>
+    <div class="card-footer">
+      ${doneBtn}
+      <button class="btn-caption" onclick="showCaption(${wod.id})">📸 Caption</button>
+      <div class="spacer"></div>
+      <button class="btn-remove" onclick="removeFromFeed(${wod.id})" title="Remove">✕</button>
     </div>
   </div>`;
 }
 
-function markComplete(wid) {
-  const state = getState();
-  const key = `${wid}_${currentAthlete}`;
+function markDone(wid){
+  const state=getState();
+  const key=`${wid}_${currentAthlete}`;
   if(state.completions[key]) return;
-  state.completions[key] = { athlete:currentAthlete, date:new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}), timestamp:Date.now(), rating:0 };
-  state.history.push({ wid, athlete:currentAthlete, date:state.completions[key].date, timestamp:state.completions[key].timestamp, rating:0 });
-  const next = getNextWod(state.feed);
+  const date=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  const ts=Date.now();
+  state.completions[key]={athlete:currentAthlete,date,timestamp:ts,rating:0};
+  state.history.push({wid,athlete:currentAthlete,date,timestamp:ts,rating:0});
+  const next=getNextWod(state.feed);
   if(next) state.feed.push(next.id);
+  saveState(state); renderFeed();
+  showToast(`✓ ${currentAthlete} — nice work!`);
+}
+function removeFromFeed(wid){
+  const state=getState();
+  state.feed=state.feed.filter(id=>id!==wid);
+  saveState(state); renderFeed(); renderManageQueue();
+  showToast('Removed from feed');
+}
+
+// =====================================================================
+// AI GENERATE
+// =====================================================================
+let aiAthletes=['Ryan','Marc'];
+function toggleAiAthlete(name){
+  const btn=document.querySelector(`.ai-athlete-btn[data-ath="${name}"]`);
+  if(aiAthletes.includes(name)){aiAthletes=aiAthletes.filter(a=>a!==name);btn.classList.remove('sel');}
+  else{aiAthletes.push(name);btn.classList.add('sel');}
+}
+
+async function generateWorkout(){
+  const apiKey=getApiKey();
+  if(!apiKey){showToast('Add your Anthropic API key in Settings first');return;}
+  const prompt=document.getElementById('aiPromptInput').value.trim();
+  if(!prompt){showToast('Describe what kind of workout you want first');return;}
+  const equipSummary=getEquipSummary();
+  const athleteCount=aiAthletes.length;
+  const athleteList=aiAthletes.join(', ');
+  const numLabel=athleteCount===1?'1 athlete (solo)':athleteCount===2?'2 athletes (partner possible)':'3 athletes (partner/team possible)';
+
+  document.getElementById('btnGenerate').disabled=true;
+  document.getElementById('aiLoading').classList.add('show');
+  document.getElementById('aiPreview').style.display='none';
+
+  const systemPrompt=`You are a CrossFit/strength coach building a custom workout. Available equipment: ${equipSummary||'bodyweight only'}. Athletes: ${numLabel} (${athleteList}).
+
+Return ONLY a valid JSON object with these exact fields:
+{
+  "name": "Workout name",
+  "type": "For Time",
+  "timecap": "20 MIN",
+  "focus": ["Shoulders","Push"],
+  "partnerMode": "solo",
+  "equipReq": ["barbell","pull-up-bar"],
+  "tags": ["conditioning","barbell"],
+  "movements": "Full workout description with sets/reps/weights",
+  "notes": "Coach tip or empty string",
+  "scaleMed": "Medium scaled version",
+  "scaleEasy": "Easier scaled version"
+}
+partnerMode must be solo, partner, or igyo. Only use equipment from the available list. Return ONLY the JSON, no other text.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1500,
+        messages:[{role:'user',content:`${systemPrompt}\n\nUser request: "${prompt}"`}],
+      }),
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    const text=data.content.find(c=>c.type==='text')?.text||'';
+    const clean=text.replace(/```json|```/g,'').trim();
+    const wod=JSON.parse(clean);
+    wod.id=4000+Math.floor(Math.random()*900000);
+    wod.custom=true;
+    showAiPreview(wod,'aiPreview');
+  } catch(e){
+    showToast('AI error — check API key or try again');
+    console.error(e);
+  } finally{
+    document.getElementById('btnGenerate').disabled=false;
+    document.getElementById('aiLoading').classList.remove('show');
+  }
+}
+
+function showAiPreview(wod,containerId){
+  const el=document.getElementById(containerId);
+  el.style.display='block';
+  el.innerHTML=`
+  <div class="preview-card">
+    <div class="preview-name">${wod.name}</div>
+    <div class="preview-meta">${wod.type} · ${wod.timecap} · ${(wod.focus||[]).join(', ')}</div>
+    <div class="preview-movements">${wod.movements}</div>
+    ${wod.notes?`<div class="card-notes" style="margin-top:0.5rem;">💡 ${wod.notes}</div>`:''}
+    <div class="preview-actions">
+      <button class="btn-primary" onclick="addPreviewToFeed('${containerId}',true)">Add to Top of Feed</button>
+      <button class="btn-secondary" onclick="addPreviewToFeed('${containerId}',false)">Add to End</button>
+      <button class="btn-secondary" onclick="document.getElementById('${containerId}').style.display='none'">Discard</button>
+    </div>
+  </div>`;
+  el._pendingWod=wod;
+}
+
+function addPreviewToFeed(containerId,toTop){
+  const el=document.getElementById(containerId);
+  const wod=el._pendingWod;
+  if(!wod) return;
+  const customs=getCustomWods();
+  customs.push(wod);
+  saveCustomWods(customs);
+  const state=getState();
+  if(toTop) state.feed.unshift(wod.id); else state.feed.push(wod.id);
   saveState(state);
-  renderFeed();
-  showToast(`💪 ${currentAthlete} crushed it!`);
+  el.style.display='none';
+  renderFeed(); renderCustomWodList();
+  showToast(`"${wod.name}" added to feed! 💪`);
+  if(containerId==='aiPreview') document.getElementById('aiPromptInput').value='';
 }
 
-function toggleRetest(athlete, timestamp) {
-  const state = getState();
-  const entry = state.history.find(e => e.athlete===athlete && e.timestamp===timestamp);
-  if(!entry) return;
-  entry.retest = !entry.retest;
-  const key = `${entry.wid}_${athlete}`;
-  if(state.completions[key]) state.completions[key].retest = entry.retest;
+// =====================================================================
+// SCREENSHOT IMPORT
+// =====================================================================
+async function importScreenshot(event){
+  const file=event.target.files[0];
+  if(!file) return;
+  const apiKey=getApiKey();
+  if(!apiKey){showToast('Add your Anthropic API key in Settings first');event.target.value='';return;}
 
-  if(entry.retest) {
-    // Add back to feed if not already there — insert after the first pending workout
-    const alreadyInFeed = state.feed.includes(entry.wid);
-    if(!alreadyInFeed) {
-      // Find first pending slot (index 1 so it's not immediate next, but coming soon)
-      const insertAt = Math.min(2, state.feed.length);
-      state.feed.splice(insertAt, 0, entry.wid);
-    }
-    showToast('🔁 Retest added to your upcoming queue!');
-  } else {
-    // Remove from feed if it's still pending (not completed again)
-    const completionKey = `${entry.wid}_${athlete}`;
-    // Only remove the retest instance — check if there's a second copy or it's pending
-    const idx = state.feed.lastIndexOf(entry.wid);
-    if(idx !== -1 && !state.completions[completionKey + '_retest']) {
-      state.feed.splice(idx, 1);
-    }
-    showToast('Retest removed from queue');
-  }
+  document.getElementById('screenshotLoading').classList.add('show');
+  document.getElementById('screenshotPreview').style.display='none';
 
-  saveState(state);
-  renderHistory();
-  renderFeed();
+  try{
+    const base64=await new Promise((res,rej)=>{
+      const r=new FileReader();
+      r.onload=()=>res(r.result.split(',')[1]);
+      r.onerror=()=>rej(new Error('Read failed'));
+      r.readAsDataURL(file);
+    });
+    const mediaType=file.type||'image/jpeg';
+    const equipSummary=getEquipSummary();
+    const sysPrompt=`Extract the workout from this image and return ONLY a valid JSON object. Available equipment at this gym: ${equipSummary}. 
+
+Return ONLY this JSON structure:
+{
+  "name": "Workout name (infer if not shown)",
+  "type": "For Time",
+  "timecap": "duration or No Cap",
+  "focus": ["focus areas"],
+  "partnerMode": "solo",
+  "equipReq": ["equipment tags needed"],
+  "tags": ["tags"],
+  "movements": "exact workout movements as shown",
+  "notes": "any notes or scaling from the image or empty string"
 }
+If the image shows scaling options, put the main version in movements and scaling notes in notes. Return ONLY the JSON.`;
 
-function rateWorkout(athlete, timestamp, rating) {
-  const state = getState();
-  const entry = state.history.find(e => e.athlete===athlete && e.timestamp===timestamp);
-  if(entry) {
-    entry.rating = rating;
-    const key = `${entry.wid}_${athlete}`;
-    if(state.completions[key]) state.completions[key].rating = rating;
-
-    // Auto-suggest retest for highly rated workouts (4–5 stars) if not already flagged
-    if(rating >= 4 && !entry.retest) {
-      showToast(`${rating===5?'🔥 Legendary':'⭐ Great workout'} — hit ↩ Retest to queue it again!`);
-    } else {
-      showToast('Rating saved ⭐');
-    }
-    saveState(state);
-    renderHistory();
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true',
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1500,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+          {type:'text',text:sysPrompt},
+        ]}],
+      }),
+    });
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    const text=data.content.find(c=>c.type==='text')?.text||'';
+    const clean=text.replace(/```json|```/g,'').trim();
+    const wod=JSON.parse(clean);
+    wod.id=5000+Math.floor(Math.random()*900000);
+    wod.custom=true;
+    showAiPreview(wod,'screenshotPreview');
+    showToast('Workout extracted! Review and add to feed.');
+  } catch(e){
+    showToast('Could not read workout — try a clearer image');
+    console.error(e);
+  } finally{
+    document.getElementById('screenshotLoading').classList.remove('show');
+    event.target.value='';
   }
-}
-
-function getNextWod(currentFeed) {
-  const state = getState();
-
-  // Check if any retest workouts are flagged but not currently in feed
-  const retestWids = state.history
-    .filter(e => e.retest && e.athlete === currentAthlete && !currentFeed.includes(e.wid))
-    .map(e => e.wid);
-  if(retestWids.length > 0) {
-    const wod = getAllWorkouts().find(w => w.id === retestWids[0] && workoutFeasible(w));
-    if(wod) return wod;
-  }
-
-  // Otherwise pick smart — avoid recent muscle groups, prefer high-rated workouts
-  const recentFocus = currentFeed.slice(-2).flatMap(wid => {
-    const w = getAllWorkouts().find(x => x.id===wid);
-    return w ? w.focus : [];
-  });
-
-  // Build rating map from history
-  const ratingMap = {};
-  state.history.forEach(e => {
-    if(!ratingMap[e.wid] || e.rating > ratingMap[e.wid]) ratingMap[e.wid] = e.rating;
-  });
-
-  const all = getAllWorkouts().filter(w => workoutFeasible(w) && !currentFeed.includes(w.id));
-  const ideal = all.filter(w => !w.focus.some(f => recentFocus.includes(f)));
-  const pool = ideal.length > 0 ? ideal : all;
-
-  // Weighted selection — higher rated workouts appear more often
-  const weighted = [];
-  pool.forEach(w => {
-    const r = ratingMap[w.id] || 3;
-    const weight = r >= 4 ? 3 : r >= 3 ? 2 : 1;
-    for(let i=0; i<weight; i++) weighted.push(w);
-  });
-
-  return weighted[Math.floor(Math.random()*weighted.length)] || null;
 }
 
 // =====================================================================
 // HISTORY
 // =====================================================================
-function renderHistory() {
-  const state = getState();
-  const el = document.getElementById('historyLog');
-  let entries = [...state.history].reverse();
-  if(historyFilter!=='all') entries = entries.filter(e => e.athlete===historyFilter);
-  if(entries.length===0) {
-    el.innerHTML = `<div class="empty">No workouts completed yet${historyFilter!=='all'?' by '+historyFilter:''}.<br>Get after it! 🔥</div>`;
+function renderHistory(){
+  const state=getState();
+  const el=document.getElementById('historyList');
+  let entries=[...state.history].reverse();
+  if(histFilter!=='all') entries=entries.filter(e=>e.athlete===histFilter);
+  if(!entries.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📋</div>No workouts logged yet${histFilter!=='all'?' for '+histFilter:''}.</div>`;
     return;
   }
-  el.innerHTML = entries.map(entry => {
-    const wod = getAllWorkouts().find(w => w.id===entry.wid);
+  el.innerHTML=entries.map(entry=>{
+    const wod=getAllWods().find(w=>w.id===entry.wid);
     if(!wod) return '';
-    const focusTags = wod.focus.map(f=>`<span class="tag focus">${f}</span>`).join('');
-    const stars = [1,2,3,4,5].map(s=>`<span class="star ${entry.rating>=s?'filled':''}" onclick="rateWorkout('${entry.athlete}',${entry.timestamp},${s})">★</span>`).join('');
-    const partnerLabel = wod.partnerMode && wod.partnerMode!=='solo' ? ` · <span style="color:var(--blue)">${wod.partnerMode==='igyo'?'I-Go-You-Go':'Partner'}</span>` : '';
-    const isRetest = entry.retest === true;
-    const retestBtn = `<button onclick="toggleRetest('${entry.athlete}',${entry.timestamp})" style="
-      font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;
-      text-transform:uppercase;padding:0.25rem 0.65rem;border-radius:2px;cursor:pointer;margin-top:0.5rem;
-      border:1px solid ${isRetest?'var(--orange)':'var(--border)'};
-      background:${isRetest?'rgba(245,132,31,0.15)':'transparent'};
-      color:${isRetest?'var(--orange)':'var(--muted)'};
-      transition:all 0.2s;display:block;width:100%;text-align:center;">
-      ${isRetest?'🔁 RETEST QUEUED':'↩ Queue Retest'}
-    </button>`;
+    const isRetest=entry.retest===true;
+    const stars=[1,2,3,4,5].map(s=>`<span class="star${entry.rating>=s?' on':''}" onclick="rateEntry('${entry.athlete}',${entry.timestamp},${s})">★</span>`).join('');
     return `
-    <div class="history-entry" style="${isRetest?'border-color:rgba(245,132,31,0.3);':''}" >
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.25rem;">${entry.athlete} · ${entry.date}</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);">${wod.name}</div>
-        <div class="wod-tags" style="margin-top:0.3rem;">${focusTags}</div>
-        <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem;">${wod.type} · ${wod.timecap}${partnerLabel}</div>
+    <div class="history-entry${isRetest?' retesting':''}">
+      <div class="history-info">
+        <div class="history-who">${entry.athlete} · ${entry.date}</div>
+        <div class="history-name">${wod.name}</div>
+        <div class="history-meta">${wod.type} · ${wod.timecap} · ${wod.focus.join(', ')}</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:0.1rem;min-width:80px;">
-        <div style="font-size:0.68rem;color:var(--muted);text-align:center;margin-bottom:0.2rem;letter-spacing:0.1em;">RATE IT</div>
+      <div class="history-right">
         <div class="stars">${stars}</div>
-        ${retestBtn}
+        <button class="btn-retest-sm${isRetest?' active':''}" onclick="toggleRetest('${entry.athlete}',${entry.timestamp})">
+          ${isRetest?'🔁 Queued':'↩ Retest'}
+        </button>
       </div>
     </div>`;
   }).join('');
 }
 
-function rateWorkout(athlete, timestamp, rating) {
-  const state = getState();
-  const entry = state.history.find(e => e.athlete===athlete && e.timestamp===timestamp);
-  if(entry) {
-    entry.rating = rating;
-    const key = `${entry.wid}_${athlete}`;
-    if(state.completions[key]) state.completions[key].rating = rating;
-    saveState(state);
-    renderHistory();
-    showToast('Rating saved ⭐');
-  }
+function rateEntry(athlete,ts,rating){
+  const state=getState();
+  const entry=state.history.find(e=>e.athlete===athlete&&e.timestamp===ts);
+  if(!entry) return;
+  entry.rating=rating;
+  const key=`${entry.wid}_${athlete}`;
+  if(state.completions[key]) state.completions[key].rating=rating;
+  if(rating>=4&&!entry.retest) showToast(rating===5?'🔥 Legendary — queue a retest!':'⭐ Great one — queue a retest?');
+  else showToast('Rating saved');
+  saveState(state); renderHistory();
 }
 
-function setHistoryFilter(f) {
-  historyFilter = f;
-  ['All','Ryan','Marc'].forEach(n => {
-    const btn = document.getElementById('filter'+n);
-    if(btn) btn.classList.toggle('active', f===n.toLowerCase()||f===n);
-  });
-  document.getElementById('filterAll').classList.toggle('active', f==='all');
+function toggleRetest(athlete,ts){
+  const state=getState();
+  const entry=state.history.find(e=>e.athlete===athlete&&e.timestamp===ts);
+  if(!entry) return;
+  entry.retest=!entry.retest;
+  if(entry.retest){
+    if(!state.feed.includes(entry.wid)) state.feed.splice(Math.min(2,state.feed.length),0,entry.wid);
+    showToast('🔁 Retest queued!');
+  } else {
+    const idx=state.feed.lastIndexOf(entry.wid);
+    if(idx!==-1) state.feed.splice(idx,1);
+    showToast('Retest removed');
+  }
+  saveState(state); renderHistory(); renderFeed();
+}
+
+function setHistFilter(f){
+  histFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('flt-'+f)?.classList.add('active');
   renderHistory();
 }
 
 // =====================================================================
-// MANAGE QUEUE
+// QUEUE MANAGE
 // =====================================================================
-function renderManageQueue() {
-  const state = getState();
-  const el = document.getElementById('manageList');
-  const pending = state.feed.filter(wid => !state.completions[`${wid}_${currentAthlete}`]);
-  if(pending.length===0) { el.innerHTML='<div class="empty">No upcoming workouts.</div>'; return; }
-  el.innerHTML = pending.map((wid,i) => {
-    const wod = getAllWorkouts().find(w => w.id===wid);
-    if(!wod) return '';
-    return `
-    <div class="manage-item" draggable="true" data-wid="${wid}"
-      ondragstart="onDragStart(event,${i})" ondragover="onDragOver(event,${i})"
-      ondrop="onDrop(event,${i})" ondragend="onDragEnd(event)" ondragleave="onDragLeave(event)">
+function renderManageQueue(){
+  const state=getState();
+  const el=document.getElementById('manageList');
+  const pending=state.feed.filter(wid=>!state.completions[`${wid}_${currentAthlete}`]);
+  if(!pending.length){el.innerHTML='<div class="empty">No upcoming workouts.</div>';return;}
+  el.innerHTML=pending.map((wid,i)=>{
+    const wod=getAllWods().find(w=>w.id===wid); if(!wod) return '';
+    return `<div class="manage-item" draggable="true" data-wid="${wid}"
+      ondragstart="onDS(event,${i})" ondragover="onDO(event,${i})" ondrop="onDrop(event,${i})"
+      ondragend="onDE(event)" ondragleave="onDL(event)">
       <span class="drag-handle">⠿</span>
-      <span class="manage-item-num">${i+1}</span>
-      <div class="manage-item-info">
-        <div class="manage-item-name">${wod.name}</div>
-        <div class="manage-item-meta">${wod.focus.join(' · ')} · ${wod.type} · ${wod.timecap}${wod.partnerMode&&wod.partnerMode!=='solo'?' · 🤜 '+wod.partnerMode:''}</div>
+      <span class="manage-num">${i+1}</span>
+      <div class="manage-info">
+        <div class="manage-name">${wod.name}</div>
+        <div class="manage-meta">${wod.focus.join(' · ')} · ${wod.type} · ${wod.timecap}</div>
       </div>
-      <button class="btn-remove" onclick="removeFromQueue(${wid})">✕</button>
+      <button class="btn-remove" onclick="removeFromFeed(${wid})">✕</button>
     </div>`;
   }).join('');
 }
-
-function onDragStart(e,idx){ dragSrcIdx=idx; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; }
-function onDragOver(e,idx){ e.preventDefault(); e.dataTransfer.dropEffect='move'; document.querySelectorAll('.manage-item').forEach((el,i)=>el.classList.toggle('drag-over',i===idx&&i!==dragSrcIdx)); }
-function onDragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
-function onDragEnd(e){ e.currentTarget.classList.remove('dragging'); document.querySelectorAll('.manage-item').forEach(el=>el.classList.remove('drag-over')); dragSrcIdx=null; }
+function onDS(e,i){dragSrcIdx=i;e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
+function onDO(e,i){e.preventDefault();e.dataTransfer.dropEffect='move';document.querySelectorAll('.manage-item').forEach((el,j)=>el.classList.toggle('drag-over',j===i&&i!==dragSrcIdx));}
+function onDL(e){e.currentTarget.classList.remove('drag-over');}
+function onDE(e){e.currentTarget.classList.remove('dragging');document.querySelectorAll('.manage-item').forEach(el=>el.classList.remove('drag-over'));dragSrcIdx=null;}
 function onDrop(e,dropIdx){
   e.preventDefault();
   if(dragSrcIdx===null||dragSrcIdx===dropIdx) return;
-  const state = getState();
-  const pendingIndices = state.feed.reduce((acc,wid,i)=>{ if(!state.completions[`${wid}_${currentAthlete}`]) acc.push(i); return acc; },[]);
-  const srcFeedIdx = pendingIndices[dragSrcIdx];
-  const dstFeedIdx = pendingIndices[dropIdx];
-  const [moved] = state.feed.splice(srcFeedIdx,1);
-  state.feed.splice(dstFeedIdx,0,moved);
+  const state=getState();
+  const pi=state.feed.reduce((acc,wid,i)=>{if(!state.completions[`${wid}_${currentAthlete}`])acc.push(i);return acc;},[]);
+  const[moved]=state.feed.splice(pi[dragSrcIdx],1);
+  state.feed.splice(pi[dropIdx],0,moved);
   saveState(state); renderManageQueue(); renderFeed();
-}
-function removeFromQueue(wid){
-  const state = getState();
-  state.feed = state.feed.filter(id=>id!==wid);
-  saveState(state); renderManageQueue(); renderFeed();
-  showToast('Removed from queue');
 }
 
 // =====================================================================
-// ADD CUSTOM WOD
+// ADD MANUAL WOD
 // =====================================================================
-function saveCustomWod(addToTop) {
-  const name = document.getElementById('addName').value.trim();
-  const type = document.getElementById('addType').value;
-  const timecap = document.getElementById('addTimecap').value.trim()||'30 MIN';
-  const focusRaw = document.getElementById('addFocus').value.trim();
-  const partnerMode = document.getElementById('addPartner').value;
-  const equipRaw = document.getElementById('addEquipReq').value.trim();
-  const tagsRaw = document.getElementById('addTags').value.trim();
-  const movements = document.getElementById('addMovements').value.trim();
-  const notes = document.getElementById('addNotes').value.trim();
-  const errEl = document.getElementById('addError');
+let manualFormOpen=false;
+function toggleManualForm(){
+  manualFormOpen=!manualFormOpen;
+  document.getElementById('manualFormBody').style.display=manualFormOpen?'block':'none';
+  document.getElementById('manualToggleArrow').textContent=manualFormOpen?'▲':'▼';
+}
+function saveManualWod(toTop){
+  const name=document.getElementById('addName').value.trim();
+  const focusRaw=document.getElementById('addFocus').value.trim();
+  const movements=document.getElementById('addMovements').value.trim();
+  const errEl=document.getElementById('addError');
   errEl.style.display='none';
-  if(!name){errEl.textContent='WOD Name is required.';errEl.style.display='block';return;}
-  if(!focusRaw){errEl.textContent='At least one Focus Area is required.';errEl.style.display='block';return;}
-  if(!movements){errEl.textContent='Movements/Description is required.';errEl.style.display='block';return;}
-  const focus = focusRaw.split(',').map(s=>s.trim()).filter(Boolean);
-  const equipReq = equipRaw ? equipRaw.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean) : [];
-  const tags = tagsRaw ? tagsRaw.split(',').map(s=>s.trim().toLowerCase()) : focus.map(f=>f.toLowerCase());
-  const customs = getCustomWods();
-  const newId = 1000 + Date.now()%100000;
-  customs.push({id:newId,name,focus,type,timecap,partnerMode,equipReq,movements,notes,tags,custom:true});
+  if(!name){errEl.textContent='Name is required.';errEl.style.display='block';return;}
+  if(!focusRaw){errEl.textContent='Focus is required.';errEl.style.display='block';return;}
+  if(!movements){errEl.textContent='Movements are required.';errEl.style.display='block';return;}
+  const focus=focusRaw.split(',').map(s=>s.trim()).filter(Boolean);
+  const type=document.getElementById('addType').value;
+  const timecap=document.getElementById('addTimecap').value||'Open';
+  const partnerMode=document.getElementById('addPartner').value;
+  const equipReq=document.getElementById('addEquip').value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const notes=document.getElementById('addNotes').value.trim();
+  const id=4000+Math.floor(Math.random()*900000);
+  const wod={id,name,focus,type,timecap,partnerMode,equipReq,movements,notes,tags:focus.map(f=>f.toLowerCase()),custom:true};
+  const customs=getCustomWods();
+  customs.push(wod);
   saveCustomWods(customs);
-  const state = getState();
-  if(addToTop) state.feed.unshift(newId); else state.feed.push(newId);
+  const state=getState();
+  if(toTop) state.feed.unshift(id); else state.feed.push(id);
   saveState(state);
-  clearAddForm(); renderCustomWodList(); renderFeed();
-  showToast(`"${name}" added to ${addToTop?'top of':'end of'} feed! 🔥`);
+  clearManualForm(); renderCustomWodList(); renderFeed();
+  showToast(`"${name}" added!`);
 }
-
-function clearAddForm(){
-  ['addName','addTimecap','addFocus','addEquipReq','addTags','addMovements','addNotes'].forEach(id=>document.getElementById(id).value='');
+function clearManualForm(){
+  ['addName','addTimecap','addFocus','addEquip','addMovements','addNotes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('addType').selectedIndex=0;
   document.getElementById('addPartner').selectedIndex=0;
   document.getElementById('addError').style.display='none';
+}
+function renderCustomWodList(){
+  const customs=getCustomWods();
+  const el=document.getElementById('customWodList');
+  if(!customs.length){el.innerHTML='<div style="font-size:0.78rem;color:var(--muted);padding:0.25rem 0;">No custom workouts yet.</div>';return;}
+  el.innerHTML=[...customs].reverse().map(wod=>`
+    <div class="custom-chip">
+      <div style="flex:1;min-width:0;">
+        <div class="custom-chip-name">${wod.name}</div>
+        <div class="custom-chip-meta">${wod.focus.join(' · ')} · ${wod.type}</div>
+      </div>
+      <div class="chip-actions">
+        <button class="chip-btn" onclick="reAddCustom(${wod.id},true)">+ Top</button>
+        <button class="chip-btn" onclick="reAddCustom(${wod.id},false)">+ End</button>
+        <button class="chip-btn danger" onclick="deleteCustom(${wod.id})">Del</button>
+      </div>
+    </div>`).join('');
+}
+function reAddCustom(id,top){
+  const state=getState();
+  if(state.feed.includes(id)){showToast('Already in queue');return;}
+  if(top) state.feed.unshift(id); else state.feed.push(id);
+  saveState(state); renderFeed(); showToast(top?'Added to top':'Added to end');
+}
+function deleteCustom(id){
+  saveCustomWods(getCustomWods().filter(w=>w.id!==id));
+  const state=getState(); state.feed=state.feed.filter(w=>w!==id); saveState(state);
+  renderCustomWodList(); renderFeed(); showToast('Deleted');
 }
 
 // =====================================================================
 // BULK IMPORT
 // =====================================================================
-function toggleImportFormat() {
-  const guide = document.getElementById('importFormatGuide');
-  const arrow = document.getElementById('importFormatArrow');
-  const visible = guide.style.display !== 'none';
-  guide.style.display = visible ? 'none' : 'block';
-  arrow.textContent = visible ? '▼' : '▲';
+function toggleImportGuide(){
+  const body=document.getElementById('importGuideBody');
+  const arrow=document.getElementById('importGuideArrow');
+  const open=body.classList.toggle('show');
+  arrow.textContent=open?'▲':'▼';
 }
-
-function copyAiPrompt() {
-  const text = document.getElementById('aiPromptBox').textContent;
-  navigator.clipboard.writeText(text).then(() => showToast('AI prompt copied! 📋'));
+function copyBulkPrompt(){
+  navigator.clipboard.writeText(document.getElementById('bulkAiPrompt').textContent).then(()=>showToast('Prompt copied!'));
 }
-
-function parseBulkImport(raw) {
-  const blocks = raw.split(/\n---+\n?/).map(b => b.trim()).filter(Boolean);
-  const results = [];
-  const errors = [];
-
-  blocks.forEach((block, i) => {
-    try {
-      const get = (key) => {
-        const regex = new RegExp(`^${key}:\\s*(.*)$`, 'im');
-        const m = block.match(regex);
-        return m ? m[1].trim() : '';
-      };
-
-      // Extract MOVEMENTS block (everything after MOVEMENTS: line until NOTES:, EASY:, MEDIUM:, or end)
-      const movMatch = block.match(/^MOVEMENTS:\s*\n([\s\S]*?)(?=\n^(?:NOTES|EASY|MEDIUM):|$)/im);
-      const movements = movMatch ? movMatch[1].trim() : '';
-
-      // Extract optional scale overrides (multi-line blocks)
-      const easyMatch = block.match(/^EASY:\s*\n([\s\S]*?)(?=\n^(?:NOTES|MEDIUM|---):|$)/im);
-      const medMatch  = block.match(/^MEDIUM:\s*\n([\s\S]*?)(?=\n^(?:NOTES|EASY|---):|$)/im);
-      const scaleEasy = easyMatch ? easyMatch[1].trim() : '';
-      const scaleMed  = medMatch  ? medMatch[1].trim()  : '';
-
-      const name = get('NAME');
-      if (!name) { errors.push(`Block ${i+1}: Missing NAME`); return; }
-
-      const focus = get('FOCUS').split(',').map(s=>s.trim()).filter(Boolean);
-      if (!focus.length) { errors.push(`Block ${i+1} (${name}): Missing FOCUS`); return; }
-      if (!movements) { errors.push(`Block ${i+1} (${name}): Missing MOVEMENTS`); return; }
-
-      const typeRaw = get('TYPE') || 'For Time';
-      const validTypes = ['For Time','AMRAP','EMOM','Strength','Strength + Metcon','Circuit','Partner WOD','I-Go-You-Go','Flow','Other'];
-      const type = validTypes.find(t => t.toLowerCase() === typeRaw.toLowerCase()) || 'For Time';
-
-      const partnerRaw = get('PARTNER').toLowerCase();
-      const partnerMode = partnerRaw === 'igyo' ? 'igyo' : partnerRaw === 'partner' ? 'partner' : 'solo';
-
-      const equipReq = get('EQUIPMENT').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
-      const tagsRaw = get('TAGS').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
-      const tags = tagsRaw.length ? tagsRaw : focus.map(f=>f.toLowerCase());
-
-      results.push({
-        id: 2000 + Date.now()%100000 + i,
-        name,
-        type,
-        timecap: get('TIMECAP') || 'No Cap',
-        focus,
-        partnerMode,
-        equipReq,
-        tags,
-        movements,
-        notes: get('NOTES'),
-        scaleEasy: scaleEasy || undefined,
-        scaleMed:  scaleMed  || undefined,
-        custom: true
+function parseBulkImport(raw){
+  const normalized=raw.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const blocks=normalized.split(/\n---+\n?/).map(b=>b.trim()).filter(Boolean);
+  const results=[],errors=[];
+  blocks.forEach((block,i)=>{
+    try{
+      const lines=block.split('\n');
+      const fields={};
+      let key=null,body=[];
+      const multiKeys=new Set(['MOVEMENTS','NOTES','EASY','MEDIUM']);
+      lines.forEach(line=>{
+        const m=line.match(/^([A-Z]+):\s*(.*)/);
+        if(m&&(multiKeys.has(m[1])||!multiKeys.has(key))){
+          if(key) fields[key]=body.join('\n').trim();
+          key=m[1]; body=m[2]?[m[2]]:[];
+        } else if(key) body.push(line);
       });
-    } catch(e) {
-      errors.push(`Block ${i+1}: Parse error — ${e.message}`);
-    }
+      if(key) fields[key]=body.join('\n').trim();
+      const name=(fields['NAME']||'').trim();
+      if(!name){errors.push(`Block ${i+1}: Missing NAME`);return;}
+      const focus=(fields['FOCUS']||'').split(',').map(s=>s.trim()).filter(Boolean);
+      if(!focus.length){errors.push(`Block ${i+1} (${name}): Missing FOCUS`);return;}
+      const movements=(fields['MOVEMENTS']||'').trim();
+      if(!movements){errors.push(`Block ${i+1} (${name}): Missing MOVEMENTS`);return;}
+      const typeRaw=(fields['TYPE']||'For Time').trim();
+      const validTypes=['For Time','AMRAP','EMOM','Strength','Strength + Metcon','Circuit','Partner WOD','I-Go-You-Go','Flow','Other'];
+      const type=validTypes.find(t=>t.toLowerCase()===typeRaw.toLowerCase())||'For Time';
+      const pr=(fields['PARTNER']||'').toLowerCase().trim();
+      const partnerMode=pr==='igyo'?'igyo':pr==='partner'?'partner':'solo';
+      const equipReq=(fields['EQUIPMENT']||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+      const tagsRaw=(fields['TAGS']||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+      results.push({
+        id:4000+Math.floor(Math.random()*900000),
+        name,type,
+        timecap:(fields['TIMECAP']||'No Cap').trim(),
+        focus,partnerMode,equipReq,
+        tags:tagsRaw.length?tagsRaw:focus.map(f=>f.toLowerCase()),
+        movements,
+        notes:(fields['NOTES']||'').trim(),
+        scaleEasy:(fields['EASY']||'').trim()||undefined,
+        scaleMed:(fields['MEDIUM']||'').trim()||undefined,
+        custom:true,
+      });
+    } catch(e){errors.push(`Block ${i+1}: Parse error — ${e.message}`);}
   });
-
-  return { results, errors };
+  return{results,errors};
 }
-
-function runBulkImport(addToTop) {
-  const raw = document.getElementById('bulkImportText').value.trim();
-  const resultEl = document.getElementById('bulkImportResult');
-  if (!raw) { resultEl.style.display='block'; resultEl.innerHTML='<span style="color:var(--red);">Nothing to import — paste your workouts first.</span>'; return; }
-
-  const { results, errors } = parseBulkImport(raw);
-
-  if (results.length === 0) {
-    resultEl.style.display = 'block';
-    resultEl.innerHTML = `<span style="color:var(--red);">❌ No valid workouts found.<br>${errors.map(e=>`• ${e}`).join('<br>')}</span>`;
-    return;
-  }
-
-  // Save all parsed workouts
-  const customs = getCustomWods();
-  const state = getState();
-  results.forEach(wod => {
-    // Ensure unique IDs
-    wod.id = 2000 + Math.floor(Math.random()*900000);
-    customs.push(wod);
-    if (addToTop) state.feed.unshift(wod.id);
-    else state.feed.push(wod.id);
-  });
-  saveCustomWods(customs);
-  saveState(state);
-  renderCustomWodList();
-  renderFeed();
-  document.getElementById('bulkImportText').value = '';
-
-  const errHtml = errors.length ? `<br><span style="color:var(--muted);">⚠ ${errors.length} block(s) skipped:<br>${errors.map(e=>`• ${e}`).join('<br>')}</span>` : '';
-  resultEl.style.display = 'block';
-  resultEl.innerHTML = `<span style="color:var(--green);">✅ ${results.length} workout${results.length>1?'s':''} imported successfully!</span>${errHtml}`;
-  showToast(`💪 ${results.length} WOD${results.length>1?'s':''} imported!`);
-}
-
-function renderCustomWodList(){
-  const customs = getCustomWods();
-  const el = document.getElementById('customWodList');
-  if(customs.length===0){el.innerHTML='<div style="color:var(--muted);font-size:0.82rem;padding:0.5rem 0;">No custom WODs saved yet.</div>';return;}
-  el.innerHTML=[...customs].reverse().map(wod=>`
-    <div class="custom-wod-chip">
-      <div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;">${wod.name}</div>
-        <div style="font-size:0.72rem;color:var(--muted);">${wod.focus.join(' · ')} · ${wod.type}</div>
-      </div>
-      <div class="chip-actions">
-        <button class="btn-chip" onclick="addCustomToFeed(${wod.id},true)">+ Top</button>
-        <button class="btn-chip" onclick="addCustomToFeed(${wod.id},false)">+ End</button>
-        <button class="btn-chip danger" onclick="deleteCustomWod(${wod.id})">Delete</button>
-      </div>
-    </div>`).join('');
-}
-
-function addCustomToFeed(id,toTop){
+function runBulkImport(toTop){
+  const raw=document.getElementById('bulkImportText').value.trim();
+  const res=document.getElementById('bulkImportResult');
+  if(!raw){res.style.display='block';res.innerHTML='<span style="color:var(--red)">Nothing to import.</span>';return;}
+  const{results,errors}=parseBulkImport(raw);
+  if(!results.length){res.style.display='block';res.innerHTML=`<span style="color:var(--red)">No valid workouts found.<br>${errors.map(e=>`• ${e}`).join('<br>')}</span>`;return;}
+  const customs=getCustomWods();
   const state=getState();
-  if(state.feed.includes(id)){showToast('Already in queue!');return;}
-  if(toTop) state.feed.unshift(id); else state.feed.push(id);
-  saveState(state); renderFeed();
-  showToast(toTop?'Added to top of feed!':'Added to end of feed!');
-}
-
-function deleteCustomWod(id){
-  let customs=getCustomWods().filter(w=>w.id!==id);
-  saveCustomWods(customs);
-  const state=getState(); state.feed=state.feed.filter(wid=>wid!==id); saveState(state);
-  renderCustomWodList(); renderFeed(); showToast('Custom WOD deleted');
+  results.forEach(wod=>{customs.push(wod);if(toTop)state.feed.unshift(wod.id);else state.feed.push(wod.id);});
+  saveCustomWods(customs); saveState(state);
+  document.getElementById('bulkImportText').value='';
+  const errHtml=errors.length?`<br><span style="color:var(--muted)">⚠ ${errors.length} skipped</span>`:'';
+  res.style.display='block';
+  res.innerHTML=`<span style="color:var(--green)">✅ ${results.length} workout${results.length>1?'s':''} imported!</span>${errHtml}`;
+  renderFeed(); renderCustomWodList();
+  showToast(`✅ ${results.length} workout${results.length>1?'s':''} imported!`);
 }
 
 // =====================================================================
-// EQUIPMENT PANEL
+// SETTINGS
 // =====================================================================
-function renderEquipmentPanel() {
-  const owned = getEquipment();
-  const blocked = getBlockedEquipment();
-  const el = document.getElementById('equipmentPanels');
-  let html = '';
-  Object.entries(EQUIP_CATALOG).forEach(([cat, items]) => {
-    const isDontHave = cat.startsWith('❌');
-    const sectionColor = isDontHave ? 'var(--red)' : 'var(--orange)';
-    const sectionNote = isDontHave
-      ? '<div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.6rem;">Check these to permanently block them from your feed. Uncheck if you get the equipment.</div>'
-      : '';
-    html += `<div class="equip-section"><div class="equip-section-title" style="color:${sectionColor}">${cat}</div>${sectionNote}<div class="equip-grid">`;
-    items.forEach(item => {
-      if (isDontHave) {
-        const isBlocked = blocked.includes(item.id);
-        html += `
-        <div class="equip-item ${isBlocked?'blocked':''}" onclick="toggleBlockedEquipment('${item.id}')" style="${isBlocked?'border-color:rgba(229,57,53,0.4);background:rgba(229,57,53,0.07);':''}">
-          <div class="equip-check" style="${isBlocked?'border-color:var(--red);background:var(--red);color:#fff;':''}"> ${isBlocked?'✕':''}</div>
-          <div>
-            <div class="equip-name">${item.name}</div>
-            ${item.detail?`<div class="equip-detail">${item.detail}</div>`:''}
-          </div>
-        </div>`;
-      } else {
-        const has = owned.includes(item.id);
-        html += `
-        <div class="equip-item ${has?'has':''}" onclick="toggleEquipment('${item.id}')">
-          <div class="equip-check">${has?'✓':''}</div>
-          <div>
-            <div class="equip-name">${item.name}</div>
-            ${item.detail?`<div class="equip-detail">${item.detail}</div>`:''}
-          </div>
-        </div>`;
-      }
-    });
-    html += `</div></div>`;
-  });
-  el.innerHTML = html;
-  renderCustomEquipList();
+function saveApiKey(){
+  const key=document.getElementById('apiKeyInput').value.trim();
+  if(!key){showToast('Enter a valid API key');return;}
+  saveApiKey2(key);
+  document.getElementById('apiKeyStatus').textContent='✓ API key saved (stored in this browser only)';
+  document.getElementById('apiKeyInput').value='';
+  showToast('API key saved');
 }
-
-function toggleEquipment(id) {
-  let owned = getEquipment();
-  if(owned.includes(id)) owned = owned.filter(e=>e!==id);
-  else owned.push(id);
-  saveEquipment(owned);
-  renderEquipmentPanel();
-  // Refresh feed to respect new equipment
-  const state = getState();
-  state.feed = state.feed.filter(wid => {
-    const wod = getAllWorkouts().find(w=>w.id===wid);
-    return wod && workoutFeasible(wod);
-  });
-  if(state.feed.length<3) {
-    const next = getNextWod(state.feed);
-    if(next) state.feed.push(next.id);
-  }
-  saveState(state);
-  renderFeed();
-  showToast('Equipment updated — feed refreshed');
-}
-
-function addCustomEquipment() {
-  const name = document.getElementById('customEquipName').value.trim();
-  if(!name) return;
-  const list = getCustomEquip();
-  list.push({ id:'custom_'+Date.now(), name, tag:name.toLowerCase().replace(/\s+/g,'-'), owned:true });
-  saveCustomEquip(list);
-  document.getElementById('customEquipName').value='';
-  renderEquipmentPanel();
-  showToast(`"${name}" added to equipment`);
-}
-
-function renderCustomEquipList() {
-  const list = getCustomEquip();
-  const el = document.getElementById('customEquipList');
-  if(list.length===0){el.innerHTML='';return;}
-  el.innerHTML = list.map(item=>`
-    <div class="equip-item ${item.owned?'has':''}" style="margin-bottom:0.5rem;" onclick="toggleCustomEquip('${item.id}')">
-      <div class="equip-check">${item.owned?'✓':''}</div>
-      <div style="flex:1;">
-        <div class="equip-name">${item.name}</div>
-        <div class="equip-detail">Custom · tag: ${item.tag}</div>
-      </div>
-      <button class="btn-remove" onclick="event.stopPropagation();deleteCustomEquip('${item.id}')">✕</button>
-    </div>`).join('');
-}
-
-function toggleCustomEquip(id) {
-  const list = getCustomEquip();
-  const item = list.find(e=>e.id===id);
-  if(item) item.owned = !item.owned;
-  saveCustomEquip(list);
-  renderEquipmentPanel();
-}
-
-function deleteCustomEquip(id) {
-  saveCustomEquip(getCustomEquip().filter(e=>e.id!==id));
-  renderEquipmentPanel();
+function saveSheetUrl(){
+  const url=document.getElementById('sheetUrlInput').value.trim();
+  if(!url){showToast('Enter the Apps Script URL');return;}
+  saveSheetUrl2(url);
+  document.getElementById('sheetUrlStatus').textContent='✓ Sheet URL saved';
+  setSyncState('idle'); showToast('Sheet URL saved');
 }
 
 // =====================================================================
-// I'M FEELING LUCKY
+// GOOGLE SHEETS SYNC
 // =====================================================================
-function showLuckyModal() {
-  document.getElementById('luckyResult').classList.remove('show');
-  document.getElementById('luckyMovement').value='';
-  document.getElementById('luckyModal').classList.add('show');
+let syncDebounce=null;
+function scheduleSyncPush(){
+  const url=getSheetUrl(); if(!url) return;
+  clearTimeout(syncDebounce);
+  syncDebounce=setTimeout(()=>syncToSheet(),2000);
 }
-
-function rollLucky() {
-  const movement = document.getElementById('luckyMovement').value.trim().toLowerCase();
-  const state = getState();
-  const recentFocus = state.feed.slice(-2).flatMap(wid => {
-    const w = getAllWorkouts().find(x=>x.id===wid); return w?w.focus:[];
-  });
-  let pool = getAllWorkouts().filter(w => workoutFeasible(w));
-  if(movement) {
-    const filtered = pool.filter(w =>
-      w.movements.toLowerCase().includes(movement) ||
-      (w.tags||[]).some(t=>t.includes(movement)) ||
-      w.focus.some(f=>f.toLowerCase().includes(movement)) ||
-      w.name.toLowerCase().includes(movement)
-    );
-    if(filtered.length>0) pool = filtered;
-  }
-  // Prefer no recent muscle group overlap
-  const ideal = pool.filter(w => !w.focus.some(f=>recentFocus.includes(f)));
-  if(ideal.length>0) pool = ideal;
-  const wod = pool[Math.floor(Math.random()*pool.length)];
-  if(!wod) { showToast('No matching workouts found — try different equipment or movement'); return; }
-  currentLuckyWorkout = wod;
-  const isPartner = wod.partnerMode && wod.partnerMode!=='solo';
-  document.getElementById('luckyName').textContent = `🎲 ${wod.name}`;
-  document.getElementById('luckyPartnerBadge').innerHTML = isPartner ? `<div class="partner-badge" style="margin-bottom:0.5rem;">🤜 ${wod.partnerMode==='igyo'?'I-Go-You-Go':'Partner WOD'}</div>` : '';
-  document.getElementById('luckyMovements').textContent = wod.movements;
-  document.getElementById('luckyNotes').textContent = wod.notes ? `💡 ${wod.notes}` : '';
-  document.getElementById('luckyResult').classList.add('show');
+async function syncToSheet(){
+  const url=getSheetUrl(); if(!url) return;
+  setSyncState('syncing');
+  try{
+    const payload={action:'saveAll',data:{state:getState(),history:getState().history,customWods:getCustomWods()}};
+    const res=await fetch(url,{method:'POST',body:JSON.stringify(payload)});
+    const json=await res.json();
+    if(json.ok) setSyncState('ok'); else setSyncState('error');
+  } catch{setSyncState('error');}
 }
-
-function addLuckyToFeed() {
-  if(!currentLuckyWorkout) return;
-  const state = getState();
-  if(!state.feed.includes(currentLuckyWorkout.id)) { state.feed.unshift(currentLuckyWorkout.id); saveState(state); }
-  closeModal('luckyModal'); renderFeed();
-  showToast('Added to top of feed! 🔥');
+async function syncFromSheet(){
+  const url=getSheetUrl();
+  if(!url){showToast('Add Sheet URL in Settings first');return;}
+  setSyncState('syncing'); showToast('Pulling from Sheet…');
+  try{
+    const res=await fetch(`${url}?action=getAll`);
+    const json=await res.json();
+    if(json.error) throw new Error(json.error);
+    if(json.state){
+      const local=getState(),remote=json.state;
+      const allHist=[...(local.history||[]),...(remote.history||[])];
+      const hMap={};
+      allHist.forEach(e=>{hMap[`${e.wid}_${e.athlete}_${e.timestamp}`]=e;});
+      remote.history=Object.values(hMap).sort((a,b)=>a.timestamp-b.timestamp);
+      remote.completions={...(local.completions||{}),...(remote.completions||{})};
+      if((local.feed||[]).length>(remote.feed||[]).length) remote.feed=local.feed;
+      store.set(KEYS.state,remote);
+    }
+    if(json.customWods?.length){
+      const local=getCustomWods(),remote=json.customWods;
+      const merged=[...local];
+      remote.forEach(rw=>{if(!merged.find(lw=>lw.id===rw.id))merged.push(rw);});
+      saveCustomWods(merged);
+    }
+    setSyncState('ok'); renderFeed(); renderHistory();
+    showToast('✅ Synced from Sheet!');
+  } catch(e){setSyncState('error');showToast('Sync failed — check URL');}
 }
-
-// =====================================================================
-// INSTAGRAM CAPTION
-// =====================================================================
-const IG_EMOJIS = ['🔥','💪','⚡','🏋️','🎯','💥','🤜','🦍'];
-const IG_OPENERS = [
-  "No days off at The Dojo.", "Another day, another WOD crushed.", "The barbell doesn't lie.",
-  "Showing up is 90% of the battle.", "Sweat is just fat crying.", "We don't negotiate with rest days.",
-  "Built different at The Dojo.", "Forged in the garage, tested everywhere.",
-  "The Dojo: where excuses go to die.", "Home gym > any commercial gym. Facts.",
-  "Two dudes. One garage. Zero excuses.", "The best gym is the one you actually show up to.",
-];
-const IG_HASHTAGS_MAP = {
-  "Shoulders":["#ShoulderDay","#OHPLife","#PressGang"],
-  "Back":["#BackDay","#DeadliftSzn","#PullGang"],
-  "Chest":["#ChestDay","#BenchPress","#PushDay"],
-  "Legs":["#LegDay","#SquatRack","#NeverSkipLegDay"],
-  "Cardio":["#MetCon","#WODLife","#CrossFitLife"],
-  "Gymnastics":["#BodyweightStrong","#PullUpLife","#RingsWork"],
-  "Full Body":["#FunctionalFitness","#CrossFit","#TrainHard"],
-  "Kettlebell":["#KettlebellKings","#KBLife","#KettlebellWorkout"],
-  "Partner":["#PartnerWOD","#TrainTogether","#AccountabilityPartner"],
-};
-const IG_BASE_TAGS = ["#TheDojo","#ReSilientFitness","#GarageGym","#DojoWOD","#CrossFit","#HomeGym","#WODLife"];
-
-function showIGCaption(wid) {
-  const wod = getAllWorkouts().find(w=>w.id===wid);
-  if(!wod) return;
-  const opener = IG_OPENERS[Math.floor(Math.random()*IG_OPENERS.length)];
-  const emoji = IG_EMOJIS[Math.floor(Math.random()*IG_EMOJIS.length)];
-  const isPartner = wod.partnerMode && wod.partnerMode!=='solo';
-  const partnerLine = isPartner ? `\n🤜 ${wod.partnerMode==='igyo'?'I-Go-You-Go':'Partner WOD'} — Ryan & Marc` : '';
-  const movLines = wod.movements.split('\n').filter(l=>l.trim()&&l.length>3&&!l.match(/^[0-9]+:$/)&&!l.match(/^(AMRAP|EMOM|For Time|Strength|Round)/i));
-  const highlight = movLines.slice(0,3).join(' · ');
-  let tags = new Set(IG_BASE_TAGS);
-  wod.focus.forEach(f=>{ (IG_HASHTAGS_MAP[f]||[]).slice(0,2).forEach(t=>tags.add(t)); });
-  if(isPartner) (IG_HASHTAGS_MAP["Partner"]||[]).forEach(t=>tags.add(t));
-  const hashtagLine = Array.from(tags).slice(0,10).join(' ');
-  const caption = `${emoji} ${opener}\n\nToday's WOD: ${wod.name}${partnerLine}\n${wod.type} · ${wod.timecap}\n\n${highlight?highlight+'\n\n':''}${wod.notes?`"${wod.notes}"\n\n`:''}@re.silient_fitness\n\n${hashtagLine}`;
-  document.getElementById('igCaptionText').textContent = caption;
-  document.getElementById('igModal').classList.add('show');
-}
-
-function copyCaption() {
-  const text = document.getElementById('igCaptionText').textContent;
-  navigator.clipboard.writeText(text).then(()=>showToast('Caption copied! 📋'));
+function setSyncState(s){
+  const dot=document.getElementById('syncDot'),text=document.getElementById('syncText');
+  if(!dot||!text) return;
+  const now=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  if(s==='syncing'){dot.className='sync-dot syncing';text.textContent='Syncing…';}
+  else if(s==='ok'){dot.className='sync-dot ok';text.textContent=`Synced ${now}`;}
+  else if(s==='error'){dot.className='sync-dot error';text.textContent='Sync error — offline mode';}
+  else{dot.className='sync-dot idle';text.textContent=getSheetUrl()?'Not synced yet':'Sheet not configured';}
 }
 
 // =====================================================================
-// BACKUP & RESTORE
+// BACKUP
 // =====================================================================
-let lastBackupTime = null;
-
-function getBackupData() {
-  return {
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    dojoWOD_v2:      JSON.parse(localStorage.getItem('dojoWOD_v2')   || '{}'),
-    dojoEquip:       JSON.parse(localStorage.getItem('dojoEquip')     || '[]'),
-    dojoCustomEquip: JSON.parse(localStorage.getItem('dojoCustomEquip')|| '[]'),
-    dojoCustomWods:  JSON.parse(localStorage.getItem('dojoCustomWods') || '[]'),
-    dojoBlocked:     JSON.parse(localStorage.getItem('dojoBlocked')   || '[]'),
+function exportBackup(){
+  const data={version:1,exportedAt:new Date().toISOString(),
+    [KEYS.state]:store.get(KEYS.state,{}),
+    [KEYS.equip]:store.get(KEYS.equip,[]),
+    [KEYS.blocked]:store.get(KEYS.blocked,[]),
+    [KEYS.customs]:store.get(KEYS.customs,[]),
+    [KEYS.custEq]:store.get(KEYS.custEq,[]),
   };
-}
-
-function exportBackup() {
-  const data = getBackupData();
-  const json = JSON.stringify(data, null, 2);
-  const dateStr = new Date().toISOString().split('T')[0];
-  const filename = `dojo_wod_backup_${dateStr}.json`;
-  try {
-    // Try blob URL first (works in most browsers)
-    const blob = new Blob([json], { type:'application/json' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = filename;
-    a.style.display = 'none';
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
-  } catch(e) {
-    // Fallback: open JSON in new tab so user can File → Save
-    const w = window.open('', '_blank');
-    w.document.write('<pre>' + json.replace(/</g,'&lt;') + '</pre>');
-    w.document.title = filename;
-    showToast('Save the page as ' + filename);
-    return;
+  const json=JSON.stringify(data,null,2);
+  const dateStr=new Date().toISOString().split('T')[0];
+  const filename=`dojo_backup_${dateStr}.json`;
+  try{
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=filename;a.style.display='none';
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},500);
+  } catch{
+    const w=window.open('','_blank');
+    w.document.write('<pre>'+json.replace(/</g,'&lt;')+'</pre>');
+    w.document.title=filename;
   }
-  lastBackupTime = new Date();
-  updateBackupStatus();
-  showToast('Backup saved to Downloads 💾');
+  showToast('Backup saved 💾');
 }
-
-
-function updateBackupStatus() {
-  const dot  = document.getElementById('backupDot');
-  const text = document.getElementById('backupStatusText');
-  if (!dot || !text) return;
-  if (lastBackupTime) {
-    dot.className  = 'backup-dot ok';
-    text.textContent = `Backed up at ${lastBackupTime.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}`;
-  } else {
-    dot.className  = 'backup-dot warn';
-    text.textContent = 'No backup yet — auto-saves on first data change';
-  }
-}
-
-function importBackup(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.version || !data.dojoWOD_v2) {
-        alert('This does not look like a valid Dojo WOD backup file.'); return;
-      }
-      const dateStr = data.exportedAt ? new Date(data.exportedAt).toLocaleString() : 'unknown date';
-      if (!confirm(`Restore backup from ${dateStr}?\n\nThis will replace your current workout history, queue, custom WODs, and equipment settings.`)) return;
-      if (data.dojoWOD_v2)      localStorage.setItem('dojoWOD_v2',       JSON.stringify(data.dojoWOD_v2));
-      if (data.dojoEquip)       localStorage.setItem('dojoEquip',        JSON.stringify(data.dojoEquip));
-      if (data.dojoCustomEquip) localStorage.setItem('dojoCustomEquip',  JSON.stringify(data.dojoCustomEquip));
-      if (data.dojoCustomWods)  localStorage.setItem('dojoCustomWods',   JSON.stringify(data.dojoCustomWods));
-      if (data.dojoBlocked)     localStorage.setItem('dojoBlocked',      JSON.stringify(data.dojoBlocked));
-      lastBackupTime = new Date();
-      updateBackupStatus();
-      renderFeed(); renderHistory(); renderEquipmentPanel();
-      showToast('✅ Backup restored successfully!');
-    } catch(err) { alert('Could not read the backup file. Make sure it\'s a valid Dojo WOD backup.'); }
+function importBackup(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.version){alert('Not a valid Dojo backup file.');return;}
+      const d=data.exportedAt?new Date(data.exportedAt).toLocaleString():'unknown date';
+      if(!confirm(`Restore backup from ${d}?\nThis will replace your current data.`)) return;
+      [KEYS.state,KEYS.equip,KEYS.blocked,KEYS.customs,KEYS.custEq].forEach(k=>{if(data[k]!==undefined)store.set(k,data[k]);});
+      renderFeed();renderHistory();renderEquipment();
+      showToast('✅ Backup restored!');
+    } catch{alert('Could not read backup file.');}
   };
   reader.readAsText(file);
-  event.target.value = '';
+  event.target.value='';
 }
 
 // =====================================================================
-// UTILS
+// IG CAPTION
 // =====================================================================
-function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+const OPENERS=['Ready to work.','Showed up.','Built different.','No days off.','Earned it.','Put in the work.','Let\'s get it.','Another one.'];
+function showCaption(wid){
+  const wod=getAllWods().find(w=>w.id===wid); if(!wod) return;
+  const opener=OPENERS[Math.floor(Math.random()*OPENERS.length)];
+  const lines=wod.movements.split('\n').slice(0,6).join('\n');
+  const caption=`${opener}\n\n${wod.name.toUpperCase()}\n${wod.type} · ${wod.timecap}\n${wod.focus.join(' + ')}\n\n${lines}\n\n#thedojo #crossfit #${wod.type.toLowerCase().replace(/\s+/g,'')} #${wod.focus[0].toLowerCase().replace(/\s+/g,'')} #wodboard #workedfor`;
+  document.getElementById('captionText').textContent=caption;
+  document.getElementById('captionModal').classList.add('show');
+}
+function copyCaption(){
+  navigator.clipboard.writeText(document.getElementById('captionText').textContent).then(()=>showToast('Caption copied! 📸'));
+}
+
+// =====================================================================
+// TABS & NAV
+// =====================================================================
+const TABS=['feed','add','history','queue','settings'];
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',TABS[i]===tab));
+  TABS.forEach(t=>{ const el=document.getElementById('tab-'+t); if(el) el.style.display=t===tab?'block':'none'; });
+  if(tab==='history')   renderHistory();
+  if(tab==='queue')     renderManageQueue();
+  if(tab==='add')       renderCustomWodList();
+  if(tab==='settings')  {renderEquipment();loadSettingsValues();}
+}
+function loadSettingsValues(){
+  const key=getApiKey();
+  if(key) document.getElementById('apiKeyStatus').textContent='✓ API key is set';
+  const url=getSheetUrl();
+  if(url){document.getElementById('sheetUrlInput').value=url;document.getElementById('sheetUrlStatus').textContent='✓ URL configured';}
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');}));
+
 function showToast(msg){
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
 }
-document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click',function(e){ if(e.target===this) this.classList.remove('show'); });
-});
-const img=document.getElementById('logoImg');
-img.onerror=function(){ this.style.display='none'; };
 
 // =====================================================================
 // INIT
 // =====================================================================
-// If no feed exists yet (first load), build it
-const initState = getState();
-if(!initState.feed || initState.feed.length===0) {
-  initState.feed = buildInitialFeed();
-  saveState(initState);
-}
-renderFeed();
+(function init(){
+  // Show only feed by default
+  TABS.forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.style.display=t==='feed'?'block':'none';});
+
+  // Build initial feed if empty
+  const state=getState();
+  if(!state.feed||!state.feed.length){
+    state.feed=buildInitialFeed();
+    saveState(state);
+  }
+
+  renderFeed();
+  setSyncState('idle');
+
+  // Auto-pull from sheet on load
+  const url=getSheetUrl();
+  if(url) syncFromSheet();
+})();
 </script>
 </body>
 </html>
